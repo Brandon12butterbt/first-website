@@ -119,26 +119,26 @@ export class ResetPasswordComponent {
   }
   
   async onSubmit() {
-    if (this.resetForm.invalid) return;
-    
-    this.isLoading = true;
-    this.errorMessage = '';
-    this.successMessage = '';
-    
-    const { email } = this.resetForm.value;
-    
-    try {
-      const { error } = await this.supabaseService.resetPassword(email);
+    if (this.resetForm.valid) {
+      this.isLoading = true;
+      this.errorMessage = '';
       
-      if (error) {
-        this.errorMessage = error.message;
-      } else {
-        this.successMessage = 'Reset link sent! Check your email for instructions.';
+      try {
+        const { success, error } = await this.supabaseService.resetPassword(
+          this.resetForm.get('email')?.value
+        );
+        
+        if (success) {
+          this.successMessage = 'Password reset instructions have been sent to your email';
+          this.errorMessage = '';
+        } else {
+          this.errorMessage = error || 'An error occurred while resetting your password';
+        }
+      } catch (err: any) {
+        this.errorMessage = err.message || 'An error occurred while resetting your password';
+      } finally {
+        this.isLoading = false;
       }
-    } catch (error: any) {
-      this.errorMessage = error.message || 'An unexpected error occurred';
-    } finally {
-      this.isLoading = false;
     }
   }
 } 

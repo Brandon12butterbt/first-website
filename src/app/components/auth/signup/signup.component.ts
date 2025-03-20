@@ -124,6 +124,7 @@ export class SignupComponent {
   errorMessage: string = '';
   hidePassword: boolean = true;
   hideConfirmPassword: boolean = true;
+  successMessage: string = '';
   
   constructor(
     private fb: FormBuilder,
@@ -147,26 +148,27 @@ export class SignupComponent {
   }
   
   async onSubmit() {
-    if (this.signupForm.invalid) return;
-    
-    this.isLoading = true;
-    this.errorMessage = '';
-    
-    const { email, password } = this.signupForm.value;
-    
-    try {
-      const { user, error } = await this.supabaseService.signUp(email, password);
+    if (this.signupForm.valid) {
+      this.isLoading = true;
+      this.errorMessage = '';
       
-      if (error) {
-        this.errorMessage = error.message;
-      } else {
-        // Successfully signed up
-        this.router.navigate(['/dashboard']);
+      try {
+        const { success, error } = await this.supabaseService.signUp(
+          this.signupForm.get('email')?.value,
+          this.signupForm.get('password')?.value
+        );
+        
+        if (success) {
+          this.successMessage = 'Account created successfully! Please check your email to verify your account.';
+          this.errorMessage = '';
+        } else {
+          this.errorMessage = error || 'An error occurred during signup';
+        }
+      } catch (err: any) {
+        this.errorMessage = err.message || 'An error occurred during signup';
+      } finally {
+        this.isLoading = false;
       }
-    } catch (error: any) {
-      this.errorMessage = error.message || 'An unexpected error occurred';
-    } finally {
-      this.isLoading = false;
     }
   }
 } 

@@ -5,13 +5,14 @@ import { ResetPasswordComponent } from './components/auth/reset-password/reset-p
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { GenerateComponent } from './components/generate/generate.component';
 import { UpgradeComponent } from './components/upgrade/upgrade.component';
+import { AuthGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
-  { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
+  { path: '', redirectTo: '/generate', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'signup', component: SignupComponent },
   { path: 'reset-password', component: ResetPasswordComponent },
-  { path: 'dashboard', component: DashboardComponent },
-  { path: 'generate', component: GenerateComponent },
-  { path: 'upgrade', component: UpgradeComponent }
+  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
+  { path: 'generate', component: GenerateComponent, canActivate: [AuthGuard] },
+  { path: 'upgrade', component: UpgradeComponent, canActivate: [AuthGuard] }
 ];

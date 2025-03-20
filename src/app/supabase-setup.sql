@@ -1,48 +1,114 @@
--- Create profiles table if it doesn't exist
+-- Drop existing tables if they exist (in reverse order of dependencies)
+DROP TABLE IF EXISTS public.generated_images;
+DROP TABLE IF EXISTS public.token_purchases;
+DROP TABLE IF EXISTS public.profiles;
+DROP FUNCTION IF EXISTS public.increment_images_generated;
+
+-- Create profiles table
 CREATE TABLE IF NOT EXISTS public.profiles (
-  id SERIAL PRIMARY KEY,
-  user_id UUID REFERENCES auth.users(id) NOT NULL,
-  credits INT NOT NULL DEFAULT 5,
-  images_generated INT NOT NULL DEFAULT 0,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
-  UNIQUE(user_id)
+  id uuid references auth.users on delete cascade,
+  email text,
+  credits integer default 5,
+  images_generated integer default 0,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  primary key (id)
+);
+
+-- Create token_purchases table
+CREATE TABLE IF NOT EXISTS public.token_purchases (
+  id uuid default uuid_generate_v4() primary key,
+  user_id uuid references auth.users on delete cascade not null,
+  amount integer not null,
+  price decimal(10,2) not null,
+  stripe_payment_intent_id text not null,
+  status text not null default 'pending',
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  updated_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
 -- Create generated_images table
 CREATE TABLE IF NOT EXISTS public.generated_images (
-  id SERIAL PRIMARY KEY,
-  user_id UUID REFERENCES auth.users(id) NOT NULL,
-  prompt TEXT NOT NULL,
-  image_url TEXT NOT NULL,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
+  id uuid default uuid_generate_v4() primary key,
+  user_id uuid references auth.users on delete cascade not null,
+  image_url text not null,
+  prompt text not null,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
--- Set up Row Level Security
+-- Create function to increment images_generated
+CREATE OR REPLACE FUNCTION public.increment_images_generated(user_id uuid)
+RETURNS void AS $$
+BEGIN
+  UPDATE profiles
+  SET 
+    images_generated = images_generated + 1,
+    credits = credits - 1
+  WHERE id = user_id;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Create function to update token_purchases updated_at
+CREATE OR REPLACE FUNCTION public.update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = timezone('utc'::text, now());
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Create trigger for token_purchases updated_at
+CREATE TRIGGER update_token_purchases_updated_at
+  BEFORE UPDATE ON public.token_purchases
+  FOR EACH ROW
+  EXECUTE FUNCTION public.update_updated_at_column();
+
+-- Enable Row Level Security
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.token_purchases ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.generated_images ENABLE ROW LEVEL SECURITY;
 
--- Create policies for profiles
-CREATE POLICY "Users can view their own profile" 
-  ON public.profiles FOR SELECT 
+-- Profiles policies
+CREATE POLICY "Users can view their own profile"
+  ON public.profiles FOR SELECT
+  USING (auth.uid() = id);
+
+CREATE POLICY "Users can update their own profile"
+  ON public.profiles FOR UPDATE
+  USING (auth.uid() = id);
+
+CREATE POLICY "Users can insert their own profile"
+  ON public.profiles FOR INSERT
+  WITH CHECK (auth.uid() = id);
+
+-- Token purchases policies
+CREATE POLICY "Users can view their own token purchases"
+  ON public.token_purchases FOR SELECT
   USING (auth.uid() = user_id);
 
-CREATE POLICY "Users can update their own profile" 
-  ON public.profiles FOR UPDATE 
-  USING (auth.uid() = user_id);
-
--- Create policies for generated_images
-CREATE POLICY "Users can view their own images" 
-  ON public.generated_images FOR SELECT 
-  USING (auth.uid() = user_id);
-
-CREATE POLICY "Users can insert their own images" 
-  ON public.generated_images FOR INSERT 
+CREATE POLICY "Users can insert their own token purchases"
+  ON public.token_purchases FOR INSERT
   WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update their own token purchases"
+  ON public.token_purchases FOR UPDATE
+  USING (auth.uid() = user_id);
+
+-- Generated images policies
+CREATE POLICY "Users can view their own generated images"
+  ON public.generated_images FOR SELECT
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert their own generated images"
+  ON public.generated_images FOR INSERT
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can delete their own generated images"
+  ON public.generated_images FOR DELETE
+  USING (auth.uid() = user_id);
 
 -- Grant permissions to authenticated users
 GRANT USAGE ON SCHEMA public TO authenticated;
 GRANT SELECT, UPDATE, INSERT ON public.profiles TO authenticated;
-GRANT SELECT, INSERT ON public.generated_images TO authenticated;
-GRANT USAGE, SELECT ON SEQUENCE public.profiles_id_seq TO authenticated;
-GRANT USAGE, SELECT ON SEQUENCE public.generated_images_id_seq TO authenticated; 
+GRANT SELECT, INSERT, UPDATE ON public.token_purchases TO authenticated;
+GRANT SELECT, INSERT, DELETE ON public.generated_images TO authenticated;
+GRANT EXECUTE ON FUNCTION public.increment_images_generated TO authenticated; 

@@ -1,208 +1,294 @@
 import { Injectable } from '@angular/core';
-import { createClient, SupabaseClient, User, AuthChangeEvent } from '@supabase/supabase-js';
+import { SupabaseClient, User } from '@supabase/supabase-js';
 import { environment } from '../../environments/environment';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, from } from 'rxjs';
+import { map, catchError, retry } from 'rxjs/operators';
+import { SupabaseClientService } from './supabase-client.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SupabaseService {
   private supabase: SupabaseClient;
-  private userSubject = new BehaviorSubject<User | null>(null);
-  user$ = this.userSubject.asObservable();
-  
-  constructor() {
-    this.supabase = createClient(environment.supabase.url, environment.supabase.anonKey);
-    
-    this.supabase.auth.onAuthStateChange((event, session) => {
-      this.userSubject.next(session?.user || null);
-    });
-    
-    // Try to get initial user
-    this.supabase.auth.getSession().then(({ data }) => {
-      this.userSubject.next(data.session?.user || null);
-    });
-  }
+  private currentUserSubject = new BehaviorSubject<User | null>(null);
+  private retryCount = 0;
+  private maxRetries = 5; // Maximum number of retries
+  private authStateChangeListenerAdded = false; // Flag to track listener
+  currentUser$ = this.currentUserSubject.asObservable();
   
   get currentUser(): User | null {
-    return this.userSubject.value;
+    return this.currentUserSubject.value;
   }
   
-  async signUp(email: string, password: string): Promise<{ user: User | null; error: any }> {
-    const { data, error } = await this.supabase.auth.signUp({
-      email,
-      password
+  constructor(private supabaseClientService: SupabaseClientService) {
+    this.supabase = this.supabaseClientService.client;
+    
+    // Subscribe to session changes
+    this.supabaseClientService.session$.subscribe(session => {
+      if (session) {
+        this.currentUserSubject.next(session.user);
+      } else {
+        this.currentUserSubject.next(null);
+      }
     });
-    
-    if (data.user) {
-      // Create profile record with default credits
-      await this.createProfile(data.user.id);
-    }
-    
-    return { user: data.user, error };
   }
   
-  async signIn(email: string, password: string): Promise<{ user: User | null; error: any }> {
-    const { data, error } = await this.supabase.auth.signInWithPassword({
-      email,
-      password
-    });
-    
-    if (data.user) {
-      // Ensure profile exists
-      await this.createProfile(data.user.id);
-    }
-    
-    return { user: data.user, error };
-  }
-  
-  async signOut(): Promise<{ error: any }> {
-    const { error } = await this.supabase.auth.signOut();
-    return { error };
-  }
-  
-  async resetPassword(email: string): Promise<{ error: any }> {
-    const { error } = await this.supabase.auth.resetPasswordForEmail(email);
-    return { error };
-  }
-  
-  async createProfile(userId: string): Promise<void> {
+  private async initializeUserState() {
     try {
-      // First try to insert a new profile
-      const { error: insertError } = await this.supabase
+      // Wait for initial session to be ready
+      const session = this.supabaseClientService.currentSession;
+      if (!session) {
+        console.log('No session available, waiting for initialization...');
+        return;
+      }
+
+      this.currentUserSubject.next(session.user);
+      
+      // Reset retry count on success
+      this.retryCount = 0;
+    } catch (error: any) {
+      console.warn('Error initializing user state:', error);
+      console.warn('Error details:', {
+        name: error.name,
+        message: error.message,
+        stack: error.stack,
+      });
+  
+      // Check if it's a NavigatorLockAcquireTimeoutError
+      if (error.name === 'NavigatorLockAcquireTimeoutError') {
+        if (this.retryCount < this.maxRetries) {
+          console.log('Retrying due to NavigatorLockAcquireTimeoutError...');
+          // Use exponential backoff for retries
+          const retryDelay = Math.min(1000 * Math.pow(2, this.retryCount), 10000);
+          this.retryCount++;
+          setTimeout(() => this.initializeUserState(), retryDelay);
+        } else {
+          console.error('Max retries reached. Giving up.');
+        }
+      } else {
+        // For other errors, use a simple retry
+        if (this.retryCount < this.maxRetries) {
+          setTimeout(() => this.initializeUserState(), 1000);
+          this.retryCount++;
+        } else {
+          console.error('Max retries reached. Giving up.');
+        }
+      }
+    }
+  }
+  
+  async signUp(email: string, password: string): Promise<{ success: boolean; error?: string }> {
+    try {
+      const { data, error } = await this.supabase.auth.signUp({
+        email,
+        password
+      });
+      
+      if (error) throw error;
+      
+      // Create a profile for the new user
+      if (data.user) {
+        await this.createProfile(data.user.id, email);
+      }
+      
+      return { success: true };
+    } catch (error: any) {
+      console.error('Sign up error:', error);
+      return { success: false, error: error.message };
+    }
+  }
+  
+  async signIn(email: string, password: string): Promise<{ success: boolean; error?: string }> {
+    try {
+      const { data, error } = await this.supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+      
+      if (error) throw error;
+      
+      // Check if profile exists and create one if it doesn't
+      if (data.user) {
+        const { data: profile, error: profileError } = await this.supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', data.user.id)
+          .single();
+          
+        if (profileError || !profile) {
+          // Profile doesn't exist, create one
+          await this.createProfile(data.user.id, email);
+        }
+      }
+      
+      return { success: true };
+    } catch (error: any) {
+      console.error('Sign in error:', error);
+      return { success: false, error: error.message };
+    }
+  }
+  
+  async signOut(): Promise<void> {
+    try {
+      await this.supabase.auth.signOut();
+    } catch (error) {
+      console.error('Sign out error:', error);
+      throw error;
+    }
+  }
+  
+  async resetPassword(email: string): Promise<{ success: boolean; error?: string }> {
+    try {
+      const { error } = await this.supabase.auth.resetPasswordForEmail(email);
+      if (error) throw error;
+      return { success: true };
+    } catch (error: any) {
+      console.error('Reset password error:', error);
+      return { success: false, error: error.message };
+    }
+  }
+  
+  private async createProfile(userId: string, email: string): Promise<void> {
+    try {
+      const { error } = await this.supabase
         .from('profiles')
         .insert([
-          { 
-            user_id: userId, 
+          {
+            id: userId,  // This is the primary key that references auth.users
+            email: email,
             credits: 5,
-            images_generated: 0,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
+            images_generated: 0
           }
         ]);
       
-      // If insert fails because profile exists (conflict), ignore the error
-      if (insertError && !insertError.message.includes('duplicate key')) {
-        console.error('Error creating profile:', insertError);
-      }
+      if (error) throw error;
     } catch (error) {
-      console.error('Unexpected error in createProfile:', error);
+      console.error('Error creating profile:', error);
+      throw error;
     }
   }
   
   async getProfile(): Promise<any> {
-    if (!this.currentUser) return null;
-    
     try {
+      // Check if we have a valid user ID
+      if (!this.currentUser?.id) {
+        console.warn('No user ID available');
+        return null;
+      }
+
       const { data, error } = await this.supabase
         .from('profiles')
         .select('*')
-        .eq('user_id', this.currentUser.id)
+        .eq('id', this.currentUser.id)
         .single();
-        
-      if (error) {
-        // Check if it's a "not found" error
-        if (error.code === 'PGRST116') {
-          console.log('Profile not found, creating a new one');
-          
-          try {
-            await this.createProfile(this.currentUser.id);
-            
-            // Try to fetch the newly created profile
-            const { data: newData, error: newError } = await this.supabase
-              .from('profiles')
-              .select('*')
-              .eq('user_id', this.currentUser.id)
-              .single();
-              
-            if (newError) {
-              console.error('Error fetching new profile:', newError);
-              // Create a fallback profile object if we can't fetch it
-              return { credits: 5, images_generated: 0 };
-            }
-            
-            return newData;
-          } catch (createError) {
-            console.error('Error creating profile:', createError);
-            // Return a fallback profile if creation fails
-            return { credits: 5, images_generated: 0 };
-          }
-        } else {
-          console.error('Error fetching profile:', error);
-          // Return a default profile for other errors
-          return { credits: 5, images_generated: 0 };
-        }
-      }
       
+      if (error) throw error;
       return data;
-    } catch (unexpectedError) {
-      console.error('Unexpected error in getProfile:', unexpectedError);
-      // Return a fallback profile for unexpected errors
-      return { credits: 5, images_generated: 0 };
+    } catch (error) {
+      console.error('Error getting profile:', error);
+      throw error;
     }
   }
   
   async updateCredits(credits: number): Promise<void> {
-    if (!this.currentUser) return;
-    
-    await this.supabase
-      .from('profiles')
-      .update({ credits })
-      .eq('user_id', this.currentUser.id);
+    try {
+      if (!this.currentUser?.id) {
+        console.warn('No user ID available');
+        return;
+      }
+      
+      const { error } = await this.supabase
+        .from('profiles')
+        .update({ credits })
+        .eq('id', this.currentUser.id);
+      
+      if (error) throw error;
+    } catch (error) {
+      console.error('Error updating credits:', error);
+      throw error;
+    }
   }
   
   async incrementImagesGenerated(): Promise<void> {
-    if (!this.currentUser) return;
-    
-    const profile = await this.getProfile();
-    if (!profile) return;
-    
-    await this.supabase
-      .from('profiles')
-      .update({ 
-        images_generated: (profile.images_generated || 0) + 1,
-        credits: profile.credits - 1 
-      })
-      .eq('user_id', this.currentUser.id);
+    try {
+      if (!this.currentUser?.id) {
+        console.warn('No user ID available');
+        return;
+      }
+      
+      // Get the current profile to update
+      const { data: profile, error: profileError } = await this.supabase
+        .from('profiles')
+        .select('credits, images_generated')
+        .eq('id', this.currentUser.id)
+        .single();
+      
+      if (profileError) throw profileError;
+      
+      if (profile) {
+        // Update the profile with incremented images and decremented credits
+        const { error } = await this.supabase
+          .from('profiles')
+          .update({ 
+            images_generated: profile.images_generated + 1,
+            credits: profile.credits - 1
+          })
+          .eq('id', this.currentUser.id);
+        
+        if (error) throw error;
+      }
+    } catch (error) {
+      console.error('Error incrementing images generated:', error);
+      throw error;
+    }
   }
   
   async saveGeneratedImage(imageUrl: string, prompt: string): Promise<void> {
-    if (!this.currentUser) return;
-    
-    await this.supabase
-      .from('generated_images')
-      .insert([
-        { 
-          user_id: this.currentUser.id, 
-          image_url: imageUrl,
-          prompt,
-          created_at: new Date().toISOString()
-        }
-      ]);
+    try {
+      const { error } = await this.supabase
+        .from('generated_images')
+        .insert([
+          {
+            user_id: this.currentUser?.id,
+            image_url: imageUrl,
+            prompt: prompt
+          }
+        ]);
+      
+      if (error) throw error;
+    } catch (error) {
+      console.error('Error saving generated image:', error);
+      throw error;
+    }
   }
   
   async getGeneratedImages(): Promise<any[]> {
-    if (!this.currentUser) return [];
-    
     try {
+      // Wait for user state to be initialized
+      if (!this.currentUser?.id) {
+        // Wait up to 5 seconds for user state to be ready
+        let attempts = 0;
+        while (!this.currentUser?.id && attempts < 5) {
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          attempts++;
+        }
+        
+        if (!this.currentUser?.id) {
+          console.warn('User state not initialized after waiting, returning empty array');
+          return [];
+        }
+      }
+
       const { data, error } = await this.supabase
         .from('generated_images')
         .select('*')
         .eq('user_id', this.currentUser.id)
         .order('created_at', { ascending: false });
-        
-      if (error) {
-        console.warn('Error fetching images, using mock data:', error);
-        
-        // Return mock data for testing purposes
-        return [];
-      }
       
+      if (error) throw error;
       return data || [];
     } catch (error) {
-      console.error('Unexpected error fetching images:', error);
-      
-      // Return empty array for any errors
+      console.error('Error getting generated images:', error);
       return [];
     }
   }

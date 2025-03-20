@@ -131,26 +131,26 @@ export class LoginComponent {
   }
   
   async onSubmit() {
-    if (this.loginForm.invalid) return;
-    
-    this.isLoading = true;
-    this.errorMessage = '';
-    
-    const { email, password } = this.loginForm.value;
-    
-    try {
-      const { user, error } = await this.supabaseService.signIn(email, password);
+    if (this.loginForm.valid) {
+      this.isLoading = true;
+      this.errorMessage = '';
       
-      if (error) {
-        this.errorMessage = error.message;
-      } else {
-        // Successfully signed in
-        this.router.navigate(['/dashboard']);
+      try {
+        const { success, error } = await this.supabaseService.signIn(
+          this.loginForm.get('email')?.value,
+          this.loginForm.get('password')?.value
+        );
+        
+        if (success) {
+          this.router.navigate(['/dashboard']);
+        } else {
+          this.errorMessage = error || 'An error occurred during login';
+        }
+      } catch (err: any) {
+        this.errorMessage = err.message || 'An error occurred during login';
+      } finally {
+        this.isLoading = false;
       }
-    } catch (error: any) {
-      this.errorMessage = error.message || 'An unexpected error occurred';
-    } finally {
-      this.isLoading = false;
     }
   }
 } 
