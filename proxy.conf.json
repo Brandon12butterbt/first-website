@@ -1,0 +1,20 @@
+{
+  "/api/flux": {
+    "target": "https://api.flux.ai/v1",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/api/flux": ""
+    },
+    "logLevel": "debug",
+    "headers": {
+      "Connection": "keep-alive"
+    },
+    "onProxyReq": function(proxyReq, req, res) {
+      // Keep the original authorization header
+      if (req.headers.authorization) {
+        proxyReq.setHeader('Authorization', req.headers.authorization);
+      }
+    }
+  }
+} 

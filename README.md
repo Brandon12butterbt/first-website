@@ -1,59 +1,75 @@
-# ImageGenerator
+# FluxGen - AI Image Generator
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.4.
+FluxGen is a web application that allows users to generate AI images using the Flux AI API. It's built with Angular, Tailwind CSS, Supabase, and Stripe.
 
-## Development server
+## Features
 
-To start a local development server, run:
+- User authentication (signup, login, password reset) via Supabase
+- AI image generation using Flux AI
+- Credit system for image generation
+- Stripe integration for purchasing credits
+- Dashboard to view generated images
+- Responsive design with Tailwind CSS and Angular Material
 
-```bash
-ng serve
-```
+## Technologies Used
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+- **Frontend:** Angular, Tailwind CSS, Angular Material
+- **Backend:** Supabase (Authentication, Database)
+- **Payments:** Stripe
+- **AI Image Generation:** Flux AI
 
-## Code scaffolding
+## Development Setup
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+1. Clone the repository
+   ```
+   git clone https://github.com/yourusername/fluxgen.git
+   cd fluxgen
+   ```
 
-```bash
-ng generate component component-name
-```
+2. Install dependencies
+   ```
+   npm install
+   ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+3. Set up environment variables
+   - Create a Supabase account and project
+   - Set up Stripe account
+   - Get API key for Flux AI
+   - Create environment files with your API keys
 
-```bash
-ng generate --help
-```
+4. Run the development server
+   ```
+   ng serve
+   ```
 
-## Building
+5. Navigate to `http://localhost:4200/`
 
-To build the project run:
+## Database Schema
 
-```bash
-ng build
-```
+The application uses two main tables in Supabase:
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+1. **profiles** - Stores user profile information including credit balance
+2. **generated_images** - Stores all generated images with metadata
 
-## Running unit tests
+## Payment System
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+The application uses Stripe for processing payments. Users can purchase different credit packages:
 
-```bash
-ng test
-```
+- Basic: 10 credits for $4.99
+- Standard: 50 credits for $19.99
+- Premium: 120 credits for $39.99
 
-## Running end-to-end tests
+Each image generation costs 1 credit.
 
-For end-to-end (e2e) testing, run:
+## Image Generation
 
-```bash
-ng e2e
-```
+The application uses Flux AI API for image generation. Users can:
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+- Enter text prompts
+- Add negative prompts
+- Adjust image dimensions
+- Save and download generated images
 
-## Additional Resources
+## License
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+This project is licensed under the MIT License - see the LICENSE file for details.
