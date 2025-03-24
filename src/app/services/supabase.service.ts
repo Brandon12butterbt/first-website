@@ -292,4 +292,20 @@ export class SupabaseService {
       return [];
     }
   }
+  
+  async deleteGeneratedImage(imageId: string): Promise<boolean> {
+    try {
+      const { error } = await this.supabase
+        .from('generated_images')
+        .delete()
+        .eq('id', imageId)
+        .eq('user_id', this.currentUser?.id); // Security check to ensure user only deletes their own images
+      
+      if (error) throw error;
+      return true;
+    } catch (error) {
+      console.error('Error deleting generated image:', error);
+      return false;
+    }
+  }
 } 

@@ -28,21 +28,20 @@ import { RouterModule } from '@angular/router';
     <div class="min-h-screen bg-gray-900 flex flex-col">
       <!-- Top Navigation -->
       <mat-toolbar class="bg-gray-800 border-b border-gray-700">
-        <a routerLink="/dashboard" class="text-xl font-bold text-purple-400">FluxGen</a>
-        <span class="flex-1"></span>
-        
-        <div class="flex items-center">
-          <div *ngIf="profile" class="mr-4 px-3 py-1 bg-gray-700 rounded-full flex items-center">
-            <mat-icon class="text-yellow-400 mr-1">stars</mat-icon>
-            <span class="text-white">{{ profile.credits }} credits</span>
-          </div>
+        <div class="container mx-auto flex items-center justify-center">
+          <a routerLink="/dashboard" class="text-xl font-bold text-purple-400 mr-6">AFluxGen</a>
           
-          <button mat-button routerLink="/dashboard" class="text-white hover:bg-gray-700">
+          <button mat-button routerLink="/dashboard" class="text-white hover:bg-gray-700 mx-2">
             <mat-icon>dashboard</mat-icon>
             <span class="ml-1">Dashboard</span>
           </button>
           
-          <button mat-button routerLink="/generate" class="text-white hover:bg-gray-700">
+          <div *ngIf="profile" class="px-2 py-0.5 bg-gray-700 rounded-full flex items-center mx-2 text-sm">
+            <mat-icon class="text-yellow-400 mr-1" style="font-size: 16px; height: 16px; width: 16px; line-height: 16px;">stars</mat-icon>
+            <span class="text-white">{{ profile.credits }} credits</span>
+          </div>
+          
+          <button mat-button routerLink="/generate" class="text-white hover:bg-gray-700 mx-2">
             <mat-icon>add_photo_alternate</mat-icon>
             <span class="ml-1">Generate</span>
           </button>

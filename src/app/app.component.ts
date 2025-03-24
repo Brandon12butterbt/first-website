@@ -10,7 +10,7 @@ import { SupabaseClientService } from './services/supabase-client.service';
   styles: []
 })
 export class AppComponent implements OnInit {
-  title = 'FluxGen AI Image Generator';
+  title = 'AFluxGen AI Image Generator';
 
   constructor(
     private supabaseClientService: SupabaseClientService,

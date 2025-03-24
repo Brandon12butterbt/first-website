@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { FluxService } from '../../services/flux.service';
@@ -10,9 +10,9 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSliderModule } from '@angular/material/slider';
 import { CommonModule } from '@angular/common';
 import { MatMenuModule } from '@angular/material/menu';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-generate',
@@ -27,7 +27,6 @@ import { MatMenuModule } from '@angular/material/menu';
     MatIconModule,
     MatToolbarModule,
     MatProgressSpinnerModule,
-    MatSliderModule,
     RouterModule,
     MatMenuModule
   ],
@@ -35,21 +34,20 @@ import { MatMenuModule } from '@angular/material/menu';
     <div class="min-h-screen bg-gray-900 flex flex-col">
       <!-- Top Navigation -->
       <mat-toolbar class="bg-gray-800 border-b border-gray-700">
-        <a routerLink="/dashboard" class="text-xl font-bold text-purple-400">FluxGen</a>
-        <span class="flex-1"></span>
-        
-        <div class="flex items-center">
-          <div *ngIf="profile" class="mr-4 px-3 py-1 bg-gray-700 rounded-full flex items-center">
-            <mat-icon class="text-white mr-1">stars</mat-icon>
-            <span class="text-white">{{ profile.credits }} credits</span>
-          </div>
+        <div class="container mx-auto flex items-center justify-center">
+          <a routerLink="/dashboard" class="text-xl font-bold text-purple-400 mr-6">AFluxGen</a>
           
-          <button mat-button [routerLink]="['/dashboard']" class="text-white hover:bg-gray-700">
+          <button mat-button [routerLink]="['/dashboard']" class="text-white hover:bg-gray-700 mx-2">
             <mat-icon class="text-white">dashboard</mat-icon>
             <span class="ml-1">Dashboard</span>
           </button>
 
-          <button mat-button [matMenuTriggerFor]="userMenu" class="text-white hover:bg-gray-700">
+          <div *ngIf="profile" class="px-2 py-0.5 bg-gray-700 rounded-full flex items-center mx-2 text-sm">
+            <mat-icon class="text-white mr-1" style="font-size: 16px; height: 16px; width: 16px; line-height: 16px;">stars</mat-icon>
+            <span class="text-white">{{ profile.credits }} credits</span>
+          </div>
+          
+          <button mat-button [matMenuTriggerFor]="userMenu" class="text-white hover:bg-gray-700 mx-2">
             <mat-icon class="text-white">account_circle</mat-icon>
             <span class="ml-1">{{ userEmail }}</span>
           </button>
@@ -94,34 +92,6 @@ import { MatMenuModule } from '@angular/material/menu';
                 </mat-error>
               </mat-form-field>
               
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <p class="text-gray-300 mb-2">
-                    Width: {{ generateForm.get('width')?.value ? generateForm.get('width')?.value + 'px' : 'Default (4:3)' }}
-                  </p>
-                  <mat-slider
-                    min="512"
-                    max="1024"
-                    step="64"
-                    class="w-full">
-                    <input matSliderThumb formControlName="width">
-                  </mat-slider>
-                </div>
-                
-                <div>
-                  <p class="text-gray-300 mb-2">
-                    Height: {{ generateForm.get('height')?.value ? generateForm.get('height')?.value + 'px' : 'Default (4:3)' }}
-                  </p>
-                  <mat-slider
-                    min="512"
-                    max="1024"
-                    step="64"
-                    class="w-full">
-                    <input matSliderThumb formControlName="height">
-                  </mat-slider>
-                </div>
-              </div>
-              
               <div class="pt-4">
                 <button 
                   mat-raised-button 
@@ -165,6 +135,7 @@ import { MatMenuModule } from '@angular/material/menu';
                 <div class="text-center">
                   <mat-spinner diameter="64" class="mx-auto mb-4"></mat-spinner>
                   <p class="text-gray-300">Creating your masterpiece...</p>
+                  <p class="text-gray-400 text-sm mt-2">This may take up to 30 seconds</p>
                 </div>
               </div>
               
@@ -178,12 +149,6 @@ import { MatMenuModule } from '@angular/material/menu';
               <div *ngIf="!isGenerating && generatedImage" class="flex-1 flex flex-col">
                 <div class="relative flex-1">
                   <img [src]="generatedImage" alt="Generated image" class="w-full h-full object-contain rounded-lg">
-                  
-                  <!-- Save notification -->
-                  <div *ngIf="showSaveNotification" class="absolute bottom-4 right-4 left-4 bg-opacity-90 p-3 rounded-lg text-center"
-                    [ngClass]="saveMessage.includes('Error') ? 'bg-red-700' : 'bg-green-700'">
-                    <p class="text-white">{{ saveMessage }}</p>
-                  </div>
                 </div>
                 
                 <div class="flex justify-between mt-4">
@@ -202,6 +167,16 @@ import { MatMenuModule } from '@angular/material/menu';
               </div>
             </mat-card>
           </div>
+        </div>
+      </div>
+      
+      <!-- Fixed position save notification that won't be hidden by scrolling -->
+      <div *ngIf="showSaveNotification" 
+        class="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 px-6 py-4 rounded-lg text-center shadow-xl min-w-64 animate-bounce-in"
+        [ngClass]="saveMessage.includes('Error') ? 'bg-red-600 text-white' : 'bg-green-600 text-white'">
+        <div class="flex items-center justify-center">
+          <mat-icon class="mr-2">{{ saveMessage.includes('Error') ? 'error' : 'check_circle' }}</mat-icon>
+          <p class="text-lg font-medium">{{ saveMessage }}</p>
         </div>
       </div>
     </div>
@@ -235,15 +210,28 @@ import { MatMenuModule } from '@angular/material/menu';
     ::ng-deep .mat-form-field-invalid .mat-form-field-ripple {
       background-color: #f44336 !important;
     }
+    
+    /* Animation for notification */
+    @keyframes bounceIn {
+      0% { transform: translate(-50%, -20px); opacity: 0; }
+      50% { transform: translate(-50%, 10px); opacity: 0.7; }
+      100% { transform: translate(-50%, 0); opacity: 1; }
+    }
+    
+    .animate-bounce-in {
+      animation: bounceIn 0.5s ease-out forwards;
+    }
   `]
 })
-export class GenerateComponent implements OnInit {
+export class GenerateComponent implements OnInit, OnDestroy {
   generateForm: FormGroup;
   isGenerating: boolean = false;
   errorMessage: string = '';
   generatedImage: string | null = null;
   profile: any = null;
   userEmail: string = '';
+  lastUpdateTime: string = 'Not started';
+  imageUrl: string | null = null;
   
   // Add a property to track save status
   saveMessage: string = '';
@@ -257,12 +245,11 @@ export class GenerateComponent implements OnInit {
     private fb: FormBuilder,
     private fluxService: FluxService,
     private supabaseService: SupabaseService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {
     this.generateForm = this.fb.group({
-      prompt: ['', [Validators.required]],
-      width: [null],
-      height: [null]
+      prompt: ['', [Validators.required]]
     });
   }
   
@@ -295,101 +282,151 @@ export class GenerateComponent implements OnInit {
     }
   }
   
-  onSubmit() {
+  async onSubmit() {
     if (this.generateForm.invalid || !this.hasCredits) return;
     
     this.isGenerating = true;
     this.errorMessage = '';
+    this.lastUpdateTime = new Date().toLocaleTimeString();
     
-    const { prompt, width, height } = this.generateForm.value;
+    const { prompt } = this.generateForm.value;
     
-    this.fluxService.generateImage(prompt, width || undefined, height || undefined)
-      .subscribe({
-        next: (response) => {
-          console.log('API response:', response);
-          
-          // Extract the image URL from the response
-          if (response && response.images && response.images.length > 0) {
-            this.generatedImage = response.images[0].url;
-          } else {
-            // Fallback to placeholder if response structure is unexpected
-            this.generatedImage = 'https://via.placeholder.com/1024x1024/3a3a3a/FFFFFF?text=Generated+Image';
-            console.warn('Unexpected API response structure', response);
-          }
-          
-          // Decrement user's credits
-          this.supabaseService.incrementImagesGenerated()
-            .then(() => {
-              // Refresh user profile
-              this.loadUserProfile();
-            });
-            
-          this.isGenerating = false;
-        },
-        error: (error) => {
-          console.error('Error generating image:', error);
-          this.errorMessage = 'Error generating image. Please try again.';
-          this.isGenerating = false;
+    console.log('Starting image generation...');
+    
+    // Set a safety timeout to ensure the spinner stops even if something goes wrong
+    setTimeout(() => {
+      if (this.isGenerating) {
+        console.log('Safety timeout triggered - forcing spinner to stop');
+        this.isGenerating = false;
+        this.lastUpdateTime = new Date().toLocaleTimeString() + ' (timeout)';
+        
+        if (!this.generatedImage) {
+          this.generatedImage = 'https://via.placeholder.com/1024x1024/3a3a3a/FFFFFF?text=Generated+Image';
+          this.errorMessage = 'Generation timeout. Please try again.';
         }
-      });
+      }
+    }, 30000);
+    
+    try {
+      // Call the API and get the image blob
+      const imageBlob = await firstValueFrom(
+        this.fluxService.generateImage(prompt)
+      );
+      
+      console.log('Image blob received in component, size:', imageBlob.size);
+      this.lastUpdateTime = new Date().toLocaleTimeString() + ' (success)';
+      
+      // Create a URL for the blob (temporary, for display only)
+      this.generatedImage = URL.createObjectURL(imageBlob);
+      console.log('Image URL created:', this.generatedImage);
+      
+      // Decrement user's credits
+      await this.supabaseService.incrementImagesGenerated();
+      await this.loadUserProfile();
+      
+    } catch (error) {
+      console.error('Error in component when generating image:', error);
+      this.errorMessage = 'Error generating image. Please try again.';
+      this.generatedImage = null;
+      this.lastUpdateTime = new Date().toLocaleTimeString() + ' (error)';
+    } finally {
+      console.log('Generation process completed');
+      this.isGenerating = false;
+      this.lastUpdateTime = new Date().toLocaleTimeString() + ' (complete)';
+      
+      // Force Angular to detect changes
+      try {
+        this.cdr.detectChanges();
+        console.log('Change detection triggered');
+      } catch (e) {
+        console.warn('Error during change detection:', e);
+      }
+    }
   }
   
   downloadImage() {
     if (!this.generatedImage) return;
     
-    // Create a fetch request to get the image data
-    fetch(this.generatedImage)
-      .then(response => response.blob())
-      .then(blob => {
-        // Create a blob URL for the image
-        const blobUrl = window.URL.createObjectURL(blob);
-        
-        // Create a temporary anchor element
-        const link = document.createElement('a');
-        link.href = blobUrl;
-        link.download = `generated-image-${Date.now()}.jpg`; // Generate a unique filename
-        link.style.display = 'none';
-        
-        // Add to the DOM, trigger click, then clean up
-        document.body.appendChild(link);
-        link.click();
-        
-        // Clean up
-        setTimeout(() => {
-          document.body.removeChild(link);
-          window.URL.revokeObjectURL(blobUrl);
-        }, 100);
-      })
-      .catch(error => {
-        console.error('Error downloading image:', error);
-      });
+    // For blob URLs, we can use them directly
+    if (this.generatedImage.startsWith('blob:')) {
+      const link = document.createElement('a');
+      link.href = this.generatedImage;
+      link.download = `generated-image-${Date.now()}.png`;
+      link.style.display = 'none';
+      
+      document.body.appendChild(link);
+      link.click();
+      
+      setTimeout(() => {
+        document.body.removeChild(link);
+        // Don't revoke here as we might still need it for display
+      }, 100);
+    } 
+    // For data URLs or other formats
+    else {
+      const link = document.createElement('a');
+      link.href = this.generatedImage;
+      link.download = `generated-image-${Date.now()}.png`;
+      link.style.display = 'none';
+      
+      document.body.appendChild(link);
+      link.click();
+      
+      setTimeout(() => {
+        document.body.removeChild(link);
+      }, 100);
+    }
   }
   
   async saveImage() {
     if (this.generatedImage && this.generateForm.valid) {
       try {
         this.isSaving = true;
+        this.showSaveNotification = false; // Reset notification
         const { prompt } = this.generateForm.value;
-        await this.supabaseService.saveGeneratedImage(this.generatedImage, prompt);
+        
+        // Convert blob URL to a data URL that can be stored persistently
+        const response = await fetch(this.generatedImage);
+        const blob = await response.blob();
+        
+        // Convert blob to base64 data URL
+        const reader = new FileReader();
+        const dataUrlPromise = new Promise<string>((resolve) => {
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.readAsDataURL(blob);
+        });
+        
+        const dataUrl = await dataUrlPromise;
+        
+        // Now save the data URL to Supabase
+        await this.supabaseService.saveGeneratedImage(dataUrl, prompt);
         
         // Show success notification
         this.saveMessage = 'Image saved to your gallery!';
         this.showSaveNotification = true;
         
-        // Hide notification after 3 seconds
+        // Ensure the change is detected
+        this.cdr.detectChanges();
+        
+        // Hide notification after 5 seconds (increased from 3)
         setTimeout(() => {
           this.showSaveNotification = false;
-        }, 3000);
+          this.cdr.detectChanges();
+        }, 5000);
         
       } catch (error) {
         console.error('Error saving image:', error);
         this.saveMessage = 'Error saving image. Please try again.';
         this.showSaveNotification = true;
         
-        // Hide notification after 3 seconds
+        // Ensure the change is detected
+        this.cdr.detectChanges();
+        
+        // Hide notification after 5 seconds (increased from 3)
         setTimeout(() => {
           this.showSaveNotification = false;
-        }, 3000);
+          this.cdr.detectChanges();
+        }, 5000);
       } finally {
         this.isSaving = false;
       }
@@ -399,5 +436,13 @@ export class GenerateComponent implements OnInit {
   async signOut() {
     await this.supabaseService.signOut();
     this.router.navigate(['/login']);
+  }
+
+  // Add this to clean up blob URLs when no longer needed
+  ngOnDestroy() {
+    // Revoke any blob URLs to prevent memory leaks
+    if (this.generatedImage && this.generatedImage.startsWith('blob:')) {
+      URL.revokeObjectURL(this.generatedImage);
+    }
   }
 } 

@@ -31,21 +31,20 @@ import { RouterModule } from '@angular/router';
     <div class="min-h-screen bg-gray-900 flex flex-col">
       <!-- Top Navigation -->
       <mat-toolbar class="bg-gray-800 border-b border-gray-700">
-        <span class="text-xl font-bold text-purple-400">FluxGen</span>
-        <span class="flex-1"></span>
-        
-        <div class="flex items-center">
-          <div *ngIf="profile" class="mr-4 px-3 py-1 bg-gray-700 rounded-full flex items-center">
-            <mat-icon class="text-yellow-400 mr-1">stars</mat-icon>
-            <span class="text-white">{{ profile.credits }} credits</span>
-          </div>
+        <div class="container mx-auto flex items-center justify-center">
+          <span class="text-xl font-bold text-purple-400 mr-6">AFluxGen</span>
           
-          <button mat-button routerLink="/generate" class="text-white hover:bg-gray-700">
+          <button mat-button routerLink="/generate" class="text-white hover:bg-gray-700 mx-2">
             <mat-icon>add_photo_alternate</mat-icon>
             <span class="ml-1">Generate</span>
           </button>
           
-          <button mat-button [matMenuTriggerFor]="userMenu" class="text-white hover:bg-gray-700">
+          <div *ngIf="profile" class="px-2 py-0.5 bg-gray-700 rounded-full flex items-center mx-2 text-sm">
+            <mat-icon class="text-yellow-400 mr-1" style="font-size: 16px; height: 16px; width: 16px; line-height: 16px;">stars</mat-icon>
+            <span class="text-white">{{ profile.credits }} credits</span>
+          </div>
+          
+          <button mat-button [matMenuTriggerFor]="userMenu" class="text-white hover:bg-gray-700 mx-2">
             <mat-icon>account_circle</mat-icon>
             <span class="ml-1">{{ userEmail }}</span>
           </button>
@@ -102,11 +101,11 @@ import { RouterModule } from '@angular/router';
               <p class="text-gray-500 text-xs mt-1">{{ image.created_at | date }}</p>
             </mat-card-content>
             <mat-card-actions class="p-4 pt-0 flex justify-between">
-              <button mat-button class="text-purple-400">
+              <button mat-button class="text-purple-400" (click)="downloadImage(image)">
                 <mat-icon>download</mat-icon> Download
               </button>
-              <button mat-button class="text-purple-400" [routerLink]="['/edit', image.id]">
-                <mat-icon>edit</mat-icon> Edit
+              <button mat-button class="text-red-400" (click)="deleteImage(image.id)">
+                <mat-icon>delete</mat-icon> Delete
               </button>
             </mat-card-actions>
           </mat-card>
@@ -182,5 +181,52 @@ export class DashboardComponent implements OnInit {
   async signOut() {
     await this.supabaseService.signOut();
     this.router.navigate(['/login']);
+  }
+  
+  downloadImage(image: any) {
+    if (!image.image_url) return;
+    
+    const link = document.createElement('a');
+    link.href = image.image_url;
+    link.download = `generated-image-${Date.now()}.png`;
+    link.style.display = 'none';
+    
+    document.body.appendChild(link);
+    link.click();
+    
+    setTimeout(() => {
+      document.body.removeChild(link);
+    }, 100);
+  }
+  
+  async deleteImage(imageId: string) {
+    try {
+      const success = await this.supabaseService.deleteGeneratedImage(imageId);
+      if (success) {
+        this.snackBar.open('Image deleted successfully', 'Close', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'bottom',
+          panelClass: ['bg-gray-800', 'text-white']
+        });
+        // Refresh the image list
+        this.loadImages();
+      } else {
+        this.snackBar.open('Failed to delete image', 'Close', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'bottom',
+          panelClass: ['bg-red-700', 'text-white']
+        });
+      }
+    } catch (error) {
+      console.error('Error deleting image:', error);
+      this.snackBar.open('Error deleting image', 'Close', {
+        duration: 3000,
+        horizontalPosition: 'center',
+        verticalPosition: 'bottom',
+        panelClass: ['bg-red-700', 'text-white']
+      });
+    }
   }
 } 
