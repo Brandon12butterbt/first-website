@@ -35,12 +35,11 @@ import { NavBarComponent } from '../shared/nav-bar.component';
       
       <!-- Main Content -->
       <div class="flex-1 p-6">
-        <h1 class="text-2xl font-bold text-white mb-6">Generate AI Image</h1>
         
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <!-- Generation Form -->
-          <mat-card class="bg-gray-800 p-6">
-            <h2 class="text-xl font-semibold text-white mb-4">Image Settings</h2>
+          <mat-card class="bg-gray-800 p-6 min-h-[60vh]">
+            <h2 class="text-xl font-semibold text-white mb-4 select-none">Image Settings</h2>
             
             <form [formGroup]="generateForm" (ngSubmit)="onSubmit()" class="space-y-4">
               <mat-form-field appearance="fill" class="w-full">
@@ -49,14 +48,15 @@ import { NavBarComponent } from '../shared/nav-bar.component';
                   matInput 
                   formControlName="prompt" 
                   placeholder="Describe the image you want to generate" 
-                  rows="3"
+                  rows="12"
+                  class="text-lg"
                   required></textarea>
                 <mat-error *ngIf="generateForm.get('prompt')?.hasError('required')">
                   Prompt is required
                 </mat-error>
               </mat-form-field>
               
-              <div class="pt-4">
+              <div class="pt-8">
                 <button 
                   mat-raised-button 
                   color="primary" 
@@ -92,8 +92,8 @@ import { NavBarComponent } from '../shared/nav-bar.component';
           
           <!-- Preview Area -->
           <div class="flex flex-col">
-            <mat-card class="bg-gray-800 p-6 h-full flex flex-col">
-              <h2 class="text-xl font-semibold text-white mb-4">Image Preview</h2>
+            <mat-card class="bg-gray-800 p-6 h-full flex flex-col min-h-[60vh]">
+              <h2 class="text-xl font-semibold text-white mb-4 select-none">Image Preview</h2>
               
               <div *ngIf="isGenerating" class="flex-1 flex items-center justify-center">
                 <div class="text-center">

@@ -20,7 +20,7 @@ import { MatMenuModule } from '@angular/material/menu';
   template: `
     <mat-toolbar class="bg-gray-800 border-b border-gray-700">
       <div class="container mx-auto flex items-center justify-center">
-        <a routerLink="/home" class="text-xl font-bold text-purple-400 mr-6">AFluxGen</a>
+        <a routerLink="/home" class="text-xl font-bold text-purple-400 mr-6 select-none cursor-pointer">AFluxGen</a>
         
         <button mat-button routerLink="/gallery" class="text-white hover:bg-gray-700 mx-2">
           <mat-icon>dashboard</mat-icon>
@@ -32,9 +32,9 @@ import { MatMenuModule } from '@angular/material/menu';
           <span class="ml-1">Generate</span>
         </button>
         
-        <div *ngIf="profile" class="px-2 py-0.5 bg-gray-700 rounded-full flex items-center mx-2 text-sm">
+        <div class="px-2 py-0.5 bg-gray-700 rounded-full flex items-center mx-2 text-sm">
           <mat-icon class="text-yellow-400 mr-1" style="font-size: 16px; height: 16px; width: 16px; line-height: 16px;">stars</mat-icon>
-          <span class="text-white">{{ profile.credits }} credits</span>
+          <span class="text-white select-none">{{ profile?.credits || 0 }} credits</span>
         </div>
         
         <button mat-button [matMenuTriggerFor]="userMenu" class="text-white hover:bg-gray-700 mx-2">
@@ -43,10 +43,6 @@ import { MatMenuModule } from '@angular/material/menu';
         </button>
         
         <mat-menu #userMenu="matMenu">
-          <button mat-menu-item routerLink="/settings">
-            <mat-icon>settings</mat-icon>
-            <span>Settings</span>
-          </button>
           <button mat-menu-item routerLink="/upgrade">
             <mat-icon>upgrade</mat-icon>
             <span>Upgrade</span>
@@ -59,7 +55,14 @@ import { MatMenuModule } from '@angular/material/menu';
       </div>
     </mat-toolbar>
   `,
-  styles: []
+  styles: [`
+    .select-none {
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+    }
+  `]
 })
 export class NavBarComponent {
   @Input() userEmail: string = '';

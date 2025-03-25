@@ -27,12 +27,14 @@ import { NavBarComponent } from '../shared/nav-bar.component';
   template: `
     <div class="min-h-screen bg-gray-900 flex flex-col">
       <!-- Top Navigation -->
-      <app-nav-bar [userEmail]="profile?.email || ''" [profile]="profile" (signOut)="signOut()"></app-nav-bar>
+      <app-nav-bar [userEmail]="userEmail" [profile]="profile" (signOut)="signOut()"></app-nav-bar>
       
       <!-- Main Content -->
       <div class="flex-1 p-6">
-        <h1 class="text-2xl font-bold text-white mb-2">Upgrade Your Account</h1>
-        <p class="text-gray-400 mb-8">Choose a credit package to generate more amazing AI images</p>
+        <div class="max-w-2xl mx-auto text-center">
+          <h1 class="text-2xl font-bold text-white mb-2">Upgrade Your Account</h1>
+          <p class="text-gray-400 mb-8">Choose a credit package to generate more amazing AI images</p>
+        </div>
         
         <div *ngIf="isLoading" class="flex justify-center py-12">
           <mat-spinner></mat-spinner>
@@ -59,7 +61,7 @@ import { NavBarComponent } from '../shared/nav-bar.component';
                 class="w-full bg-purple-600 hover:bg-purple-700 py-2"
                 [disabled]="isPurchasing">
                 <span *ngIf="!isPurchasing">
-                  <mat-icon>shopping_cart</mat-icon>
+                  <mat-icon class="text-white">shopping_cart</mat-icon>
                   <span class="text-white">Purchase</span>
                 </span>
                 <span *ngIf="isPurchasing">
@@ -83,7 +85,7 @@ import { NavBarComponent } from '../shared/nav-bar.component';
                 </li>
                 <li class="flex items-center">
                   <mat-icon class="text-green-500 mr-2">check_circle</mat-icon>
-                  Download and edit images
+                  Download images
                 </li>
               </ul>
             </div>
@@ -96,6 +98,7 @@ import { NavBarComponent } from '../shared/nav-bar.component';
 })
 export class UpgradeComponent implements OnInit {
   profile: any = null;
+  userEmail: string = '';
   isLoading: boolean = true;
   isPurchasing: boolean = false;
   creditPackages: CreditPackage[] = [];
@@ -107,9 +110,10 @@ export class UpgradeComponent implements OnInit {
   ) {}
   
   ngOnInit() {
-    this.loadUserProfile();
     this.creditPackages = this.stripeService.creditPackages;
-    this.isLoading = false;
+    this.loadUserProfile().then(() => {
+      this.isLoading = false;
+    });
   }
   
   formatPrice(price: number): string {
@@ -123,6 +127,7 @@ export class UpgradeComponent implements OnInit {
       return;
     }
     
+    this.userEmail = user.email || '';
     this.profile = await this.supabaseService.getProfile();
   }
   

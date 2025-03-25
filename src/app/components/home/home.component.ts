@@ -20,16 +20,16 @@ import { NavBarComponent } from '../shared/nav-bar.component';
     NavBarComponent
   ],
   template: `
-    <div class="min-h-screen bg-gray-900 flex flex-col">
+    <div class="min-h-screen bg-gray-900 flex flex-col select-none">
       <!-- Top Navigation -->
       <app-nav-bar [userEmail]="userEmail" [profile]="profile" (signOut)="signOut()"></app-nav-bar>
       
       <!-- Main Content -->
-      <div class="flex-1 p-6 md:p-12">
+      <div class="flex-1 p-4 md:p-6">
         <div class="max-w-4xl mx-auto">
-          <h1 class="text-3xl md:text-4xl font-bold text-white mb-4">Hello, I'm Brandon</h1>
+          <h1 class="text-2xl md:text-3xl font-bold text-white mb-3">Hello, I'm Brandon</h1>
           
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-6">
             <div class="md:col-span-2">
               <mat-card class="bg-gray-800 p-6 h-full">
                 <h2 class="text-xl font-semibold text-purple-400 mb-4">Software & DevOps Engineer</h2>
@@ -84,6 +84,14 @@ import { NavBarComponent } from '../shared/nav-bar.component';
                     <mat-icon class="text-purple-300 mr-2">storage</mat-icon>
                     <span class="text-gray-200">Databases</span>
                   </div>
+                  <div class="bg-gray-700 p-2 rounded flex items-center">
+                    <mat-icon class="text-blue-500 mr-2">directions_boat</mat-icon>
+                    <span class="text-gray-200">Kubernetes</span>
+                  </div>
+                  <div class="bg-gray-700 p-2 rounded flex items-center">
+                    <mat-icon class="text-purple-500 mr-2">developer_mode</mat-icon>
+                    <span class="text-gray-200">.NET</span>
+                  </div>
                 </div>
               </mat-card>
             </div>
@@ -94,23 +102,23 @@ import { NavBarComponent } from '../shared/nav-bar.component';
               <h2 class="text-xl font-semibold text-purple-400 mb-4">What I Do</h2>
               <ul class="text-gray-300 space-y-3">
                 <li class="flex items-start">
-                  <mat-icon class="text-green-400 mr-2 mt-1">check_circle</mat-icon>
+                  <mat-icon class="text-green-400 mr-2 mt-1 flex-shrink-0">check_circle</mat-icon>
                   <span>Develop full-stack web applications with modern frameworks</span>
                 </li>
                 <li class="flex items-start">
-                  <mat-icon class="text-green-400 mr-2 mt-1">check_circle</mat-icon>
+                  <mat-icon class="text-green-400 mr-2 mt-1 flex-shrink-0">check_circle</mat-icon>
                   <span>Design and implement CI/CD pipelines for automated deployment</span>
                 </li>
                 <li class="flex items-start">
-                  <mat-icon class="text-green-400 mr-2 mt-1">check_circle</mat-icon>
+                  <mat-icon class="text-green-400 mr-2 mt-1 flex-shrink-0">check_circle</mat-icon>
                   <span>Configure and manage cloud infrastructure with IaC</span>
                 </li>
                 <li class="flex items-start">
-                  <mat-icon class="text-green-400 mr-2 mt-1">check_circle</mat-icon>
+                  <mat-icon class="text-green-400 mr-2 mt-1 flex-shrink-0">check_circle</mat-icon>
                   <span>Containerize applications for consistent deployment</span>
                 </li>
                 <li class="flex items-start">
-                  <mat-icon class="text-green-400 mr-2 mt-1">check_circle</mat-icon>
+                  <mat-icon class="text-green-400 mr-2 mt-1 flex-shrink-0">check_circle</mat-icon>
                   <span>Implement monitoring and logging solutions</span>
                 </li>
               </ul>
@@ -127,7 +135,7 @@ import { NavBarComponent } from '../shared/nav-bar.component';
                   <h3 class="text-white font-medium">DevOps Pipeline Toolkit</h3>
                   <p class="text-gray-400 text-sm">Custom CI/CD toolkit for streamlining development workflows and deployments.</p>
                 </div>
-                <div class="border-l-4 border-green-500 pl-4">
+                <div class="border-l-4 border-green-500 pl-4 select-none">
                   <h3 class="text-white font-medium">Cloud Migration Framework</h3>
                   <p class="text-gray-400 text-sm">Framework for migrating legacy applications to modern cloud infrastructure.</p>
                 </div>
@@ -138,7 +146,14 @@ import { NavBarComponent } from '../shared/nav-bar.component';
       </div>
     </div>
   `,
-  styles: []
+  styles: [`
+    :host {
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+    }
+  `]
 })
 export class HomeComponent implements OnInit {
   userEmail: string = '';

@@ -20,9 +20,9 @@ export class StripeService {
   
   // Credit packages
   creditPackages: CreditPackage[] = [
-    { id: 'basic', name: 'Basic', credits: 10, price: 4.99 },
-    { id: 'standard', name: 'Standard', credits: 50, price: 19.99 },
-    { id: 'premium', name: 'Premium', credits: 120, price: 39.99 }
+    { id: 'basic', name: 'Basic', credits: 10, price: 0.50 },
+    { id: 'standard', name: 'Standard', credits: 50, price: 2.00 },
+    { id: 'premium', name: 'Premium', credits: 120, price: 4.00 }
   ];
   
   constructor(
