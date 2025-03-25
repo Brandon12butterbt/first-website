@@ -5,11 +5,11 @@ import { SupabaseService } from '../../services/supabase.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { NavBarComponent } from '../shared/nav-bar.component';
 
 @Component({
   selector: 'app-upgrade',
@@ -19,34 +19,15 @@ import { RouterModule } from '@angular/router';
     MatButtonModule,
     MatIconModule,
     MatCardModule,
-    MatToolbarModule,
     MatDividerModule,
     MatProgressSpinnerModule,
-    RouterModule
+    RouterModule,
+    NavBarComponent
   ],
   template: `
     <div class="min-h-screen bg-gray-900 flex flex-col">
       <!-- Top Navigation -->
-      <mat-toolbar class="bg-gray-800 border-b border-gray-700">
-        <div class="container mx-auto flex items-center justify-center">
-          <a routerLink="/dashboard" class="text-xl font-bold text-purple-400 mr-6">AFluxGen</a>
-          
-          <button mat-button routerLink="/dashboard" class="text-white hover:bg-gray-700 mx-2">
-            <mat-icon>dashboard</mat-icon>
-            <span class="ml-1">Dashboard</span>
-          </button>
-          
-          <div *ngIf="profile" class="px-2 py-0.5 bg-gray-700 rounded-full flex items-center mx-2 text-sm">
-            <mat-icon class="text-yellow-400 mr-1" style="font-size: 16px; height: 16px; width: 16px; line-height: 16px;">stars</mat-icon>
-            <span class="text-white">{{ profile.credits }} credits</span>
-          </div>
-          
-          <button mat-button routerLink="/generate" class="text-white hover:bg-gray-700 mx-2">
-            <mat-icon>add_photo_alternate</mat-icon>
-            <span class="ml-1">Generate</span>
-          </button>
-        </div>
-      </mat-toolbar>
+      <app-nav-bar [userEmail]="profile?.email || ''" [profile]="profile" (signOut)="signOut()"></app-nav-bar>
       
       <!-- Main Content -->
       <div class="flex-1 p-6">
@@ -156,5 +137,10 @@ export class UpgradeComponent implements OnInit {
     } finally {
       this.isPurchasing = false;
     }
+  }
+  
+  async signOut() {
+    await this.supabaseService.signOut();
+    this.router.navigate(['/login']);
   }
 } 

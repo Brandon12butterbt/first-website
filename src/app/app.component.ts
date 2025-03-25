@@ -20,7 +20,7 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     this.supabaseClientService.waitForSession().subscribe(session => {
       if (session && window.location.pathname === '/login') {
-        this.router.navigate(['/generate']);
+        this.router.navigate(['/home']);
       }
       
       const isAuthPage = ['/login', '/signup', '/reset-password'].includes(window.location.pathname);

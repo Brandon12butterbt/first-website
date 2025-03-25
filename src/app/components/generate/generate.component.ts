@@ -8,11 +8,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CommonModule } from '@angular/common';
-import { MatMenuModule } from '@angular/material/menu';
 import { firstValueFrom } from 'rxjs';
+import { NavBarComponent } from '../shared/nav-bar.component';
 
 @Component({
   selector: 'app-generate',
@@ -25,49 +24,14 @@ import { firstValueFrom } from 'rxjs';
     MatFormFieldModule,
     MatCardModule,
     MatIconModule,
-    MatToolbarModule,
     MatProgressSpinnerModule,
     RouterModule,
-    MatMenuModule
+    NavBarComponent
   ],
   template: `
     <div class="min-h-screen bg-gray-900 flex flex-col">
       <!-- Top Navigation -->
-      <mat-toolbar class="bg-gray-800 border-b border-gray-700">
-        <div class="container mx-auto flex items-center justify-center">
-          <a routerLink="/dashboard" class="text-xl font-bold text-purple-400 mr-6">AFluxGen</a>
-          
-          <button mat-button [routerLink]="['/dashboard']" class="text-white hover:bg-gray-700 mx-2">
-            <mat-icon class="text-white">dashboard</mat-icon>
-            <span class="ml-1">Dashboard</span>
-          </button>
-
-          <div *ngIf="profile" class="px-2 py-0.5 bg-gray-700 rounded-full flex items-center mx-2 text-sm">
-            <mat-icon class="text-white mr-1" style="font-size: 16px; height: 16px; width: 16px; line-height: 16px;">stars</mat-icon>
-            <span class="text-white">{{ profile.credits }} credits</span>
-          </div>
-          
-          <button mat-button [matMenuTriggerFor]="userMenu" class="text-white hover:bg-gray-700 mx-2">
-            <mat-icon class="text-white">account_circle</mat-icon>
-            <span class="ml-1">{{ userEmail }}</span>
-          </button>
-          
-          <mat-menu #userMenu="matMenu">
-            <button mat-menu-item routerLink="/settings">
-              <mat-icon>settings</mat-icon>
-              <span>Settings</span>
-            </button>
-            <button mat-menu-item routerLink="/upgrade">
-              <mat-icon>upgrade</mat-icon>
-              <span>Upgrade</span>
-            </button>
-            <button mat-menu-item (click)="signOut()">
-              <mat-icon>exit_to_app</mat-icon>
-              <span>Sign out</span>
-            </button>
-          </mat-menu>
-        </div>
-      </mat-toolbar>
+      <app-nav-bar [userEmail]="userEmail" [profile]="profile" (signOut)="signOut()"></app-nav-bar>
       
       <!-- Main Content -->
       <div class="flex-1 p-6">

@@ -4,67 +4,29 @@ import { SupabaseService } from '../../services/supabase.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatBadgeModule } from '@angular/material/badge';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { NavBarComponent } from '../shared/nav-bar.component';
 
 @Component({
-  selector: 'app-dashboard',
+  selector: 'app-gallery',
   standalone: true,
   imports: [
     CommonModule,
     MatButtonModule,
     MatIconModule,
     MatCardModule,
-    MatToolbarModule,
-    MatMenuModule,
-    MatBadgeModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
-    RouterModule
+    RouterModule,
+    NavBarComponent
   ],
   template: `
     <div class="min-h-screen bg-gray-900 flex flex-col">
       <!-- Top Navigation -->
-      <mat-toolbar class="bg-gray-800 border-b border-gray-700">
-        <div class="container mx-auto flex items-center justify-center">
-          <span class="text-xl font-bold text-purple-400 mr-6">AFluxGen</span>
-          
-          <button mat-button routerLink="/generate" class="text-white hover:bg-gray-700 mx-2">
-            <mat-icon>add_photo_alternate</mat-icon>
-            <span class="ml-1">Generate</span>
-          </button>
-          
-          <div *ngIf="profile" class="px-2 py-0.5 bg-gray-700 rounded-full flex items-center mx-2 text-sm">
-            <mat-icon class="text-yellow-400 mr-1" style="font-size: 16px; height: 16px; width: 16px; line-height: 16px;">stars</mat-icon>
-            <span class="text-white">{{ profile.credits }} credits</span>
-          </div>
-          
-          <button mat-button [matMenuTriggerFor]="userMenu" class="text-white hover:bg-gray-700 mx-2">
-            <mat-icon>account_circle</mat-icon>
-            <span class="ml-1">{{ userEmail }}</span>
-          </button>
-          
-          <mat-menu #userMenu="matMenu">
-            <button mat-menu-item routerLink="/settings">
-              <mat-icon>settings</mat-icon>
-              <span>Settings</span>
-            </button>
-            <button mat-menu-item routerLink="/upgrade">
-              <mat-icon>upgrade</mat-icon>
-              <span>Upgrade</span>
-            </button>
-            <button mat-menu-item (click)="signOut()">
-              <mat-icon>exit_to_app</mat-icon>
-              <span>Sign out</span>
-            </button>
-          </mat-menu>
-        </div>
-      </mat-toolbar>
+      <app-nav-bar [userEmail]="userEmail" [profile]="profile" (signOut)="signOut()"></app-nav-bar>
       
       <!-- Payment success notification -->
       <div *ngIf="showSuccessNotification" class="bg-green-700 text-white p-4 text-center flex justify-center items-center">
@@ -77,11 +39,12 @@ import { RouterModule } from '@angular/router';
       
       <!-- Main Content -->
       <div class="flex-1 p-6">
-        <h1 class="text-2xl font-bold text-white mb-6">Your Generated Images</h1>
         
-        <div *ngIf="isLoading" class="text-center py-12">
-          <mat-spinner></mat-spinner>
-          <p class="mt-4 text-gray-400">Loading your images...</p>
+        <div *ngIf="isLoading" class="flex items-center justify-center h-full">
+          <div class="text-center">
+            <mat-spinner class="mx-auto"></mat-spinner>
+            <p class="mt-4 text-gray-400">Loading your images...</p>
+          </div>
         </div>
         
         <div *ngIf="!isLoading && images.length === 0" class="bg-gray-800 rounded-lg p-8 text-center">
@@ -115,7 +78,7 @@ import { RouterModule } from '@angular/router';
   `,
   styles: []
 })
-export class DashboardComponent implements OnInit {
+export class GalleryComponent implements OnInit {
   userEmail: string = '';
   profile: any = null;
   images: any[] = [];

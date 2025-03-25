@@ -61,8 +61,8 @@ export class StripeService {
       // Add credits directly to the user's account for testing
       await this.handlePaymentSuccess(creditPackage.id);
       
-      // Redirect back to dashboard
-      this.router.navigate(['/dashboard'], { 
+      // Redirect back to gallery
+      this.router.navigate(['/gallery'], { 
         queryParams: { 
           payment: 'success',
           package: creditPackage.name,
