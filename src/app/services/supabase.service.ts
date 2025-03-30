@@ -17,7 +17,20 @@ export class SupabaseService {
   currentUser$ = this.currentUserSubject.asObservable();
   
   get currentUser(): User | null {
-    return this.currentUserSubject.value;
+    console.log('Current user: ', this.currentUserSubject.value);
+    if (this.currentUserSubject.value) {
+      return this.currentUserSubject.value;
+    }
+  
+    const storedUser = sessionStorage.getItem('currentUser');
+    console.log('Stored user: ', storedUser);
+    if (storedUser) {
+      const user: User = JSON.parse(storedUser);
+      this.currentUserSubject.next(user);
+      return user;
+    }
+  
+    return null;
   }
   
   constructor(private supabaseClientService: SupabaseClientService) {
@@ -27,6 +40,8 @@ export class SupabaseService {
     this.supabaseClientService.session$.subscribe(session => {
       if (session) {
         this.currentUserSubject.next(session.user);
+        sessionStorage.setItem('currentUser', JSON.stringify(session.user));
+        console.log('Session changed in constructor: ', session.user);
       } else {
         this.currentUserSubject.next(null);
       }
@@ -43,6 +58,8 @@ export class SupabaseService {
       }
 
       this.currentUserSubject.next(session.user);
+      console.log('Session changed in initializeUserState: ', session.user);
+      sessionStorage.setItem('currentUser', JSON.stringify(session.user));
       
       // Reset retry count on success
       this.retryCount = 0;
@@ -89,6 +106,8 @@ export class SupabaseService {
       // Create a profile for the new user
       if (data.user) {
         await this.createProfile(data.user.id, email);
+        this.currentUserSubject.next(data.user);
+        sessionStorage.setItem('currentUser', JSON.stringify(data.user));
       }
       
       return { success: true };
@@ -109,11 +128,16 @@ export class SupabaseService {
       
       // Check if profile exists and create one if it doesn't
       if (data.user) {
+
         const { data: profile, error: profileError } = await this.supabase
           .from('profiles')
           .select('*')
           .eq('id', data.user.id)
           .single();
+
+        this.currentUserSubject.next(data.user);
+        console.log('Session changed in signIn: ', data.user);
+        sessionStorage.setItem('currentUser', JSON.stringify(data.user));
           
         if (profileError || !profile) {
           // Profile doesn't exist, create one

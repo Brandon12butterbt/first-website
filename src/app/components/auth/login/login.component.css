@@ -1,0 +1,28 @@
+::ng-deep .mat-form-field {
+    width: 100%;
+}
+
+::ng-deep .mat-form-field-flex {
+    background-color: rgba(30, 34, 45, 0.6) !important;
+}
+
+::ng-deep .mat-form-field-underline {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+::ng-deep .mat-form-field.mat-focused .mat-form-field-ripple {
+    background-color: #9e66e4 !important;
+}
+
+::ng-deep .mat-form-field-label, 
+::ng-deep .mat-form-field-required-marker {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+::ng-deep .mat-input-element {
+    color: white !important;
+}
+
+::ng-deep .mat-form-field-invalid .mat-form-field-ripple {
+    background-color: #f44336 !important;
+}

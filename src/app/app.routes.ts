@@ -6,7 +6,10 @@ import { HomeComponent } from './components/home/home.component';
 import { GalleryComponent } from './components/gallery/gallery.component';
 import { GenerateComponent } from './components/generate/generate.component';
 import { UpgradeComponent } from './components/upgrade/upgrade.component';
+import { PaymentSuccessComponent } from './components/payment-success/payment-success.component';
 import { AuthGuard } from './guards/auth.guard';
+import { PaymentGuard } from './guards/payment.guard';
+
 
 export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -15,7 +18,7 @@ export const routes: Routes = [
   { path: 'reset-password', component: ResetPasswordComponent },
   { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
   { path: 'gallery', component: GalleryComponent, canActivate: [AuthGuard] },
-  { path: 'dashboard', redirectTo: '/gallery', pathMatch: 'full' },
   { path: 'generate', component: GenerateComponent, canActivate: [AuthGuard] },
-  { path: 'upgrade', component: UpgradeComponent, canActivate: [AuthGuard] }
+  { path: 'upgrade', component: UpgradeComponent, canActivate: [AuthGuard] },
+  { path: 'payment-success', component: PaymentSuccessComponent, canActivate: [PaymentGuard] }
 ];

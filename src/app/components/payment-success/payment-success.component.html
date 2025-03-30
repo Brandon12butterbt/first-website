@@ -1,0 +1,20 @@
+<div class="min-h-screen bg-gray-900 flex flex-col">
+  <app-nav-bar [userEmail]="userEmail" [profile]="profile" (signOut)="signOut()"></app-nav-bar>
+
+  <div *ngIf="isLoading" class="flex justify-center py-12">
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <div *ngIf="!isLoading" class="flex-1 p-6 mx-auto text-center">
+    <mat-icon class="text-green-500 mr-2">check_circle</mat-icon>
+
+    <h1 class="text-3xl font-bold text-white mb-2">Payment Successful!</h1>
+
+    <p class="text-gray-300">Your payment was processed successfully.</p>
+    <p class="text-gray-300">More tokens have been added to your account.</p>
+
+    <button mat-raised-button color="primary" routerLink="/home" class="mt-6">
+      Go to Home
+    </button>
+  </div>
+</div>
