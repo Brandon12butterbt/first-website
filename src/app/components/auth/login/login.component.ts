@@ -55,7 +55,7 @@ export class LoginComponent {
         );
         
         if (success) {
-          this.router.navigate(['/home']);
+          this.router.navigate(['/']);
         } else {
           this.errorMessage = error || 'An error occurred during login';
         }

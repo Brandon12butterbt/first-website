@@ -12,11 +12,10 @@ import { PaymentGuard } from './guards/payment.guard';
 
 
 export const routes: Routes = [
-  { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'signup', component: SignupComponent },
   { path: 'reset-password', component: ResetPasswordComponent },
-  { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
+  { path: '', component: HomeComponent, canActivate: [AuthGuard] },
   { path: 'gallery', component: GalleryComponent, canActivate: [AuthGuard] },
   { path: 'generate', component: GenerateComponent, canActivate: [AuthGuard] },
   { path: 'upgrade', component: UpgradeComponent, canActivate: [AuthGuard] },

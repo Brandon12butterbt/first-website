@@ -13,12 +13,10 @@ export class PaymentGuard implements CanActivate {
 
   canActivate(): boolean {
     if (this.paymentService.wasApiCallMade()) {
-      console.log('PaymentGuard activated');
       this.paymentService.setApiCallMade(false);
       return true;
     }
-    console.log('PaymentGuard deactivated');
-    this.router.navigate(['/home']);
+    this.router.navigate(['/']);
     return false;
   }
 } 

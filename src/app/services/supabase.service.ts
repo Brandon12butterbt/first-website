@@ -4,6 +4,7 @@ import { environment } from '../../environments/environment';
 import { BehaviorSubject, Observable, from } from 'rxjs';
 import { map, catchError, retry } from 'rxjs/operators';
 import { SupabaseClientService } from './supabase-client.service';
+import { getCreditPackageById } from '../components/shared/credit-packages';
 
 @Injectable({
   providedIn: 'root'
@@ -17,13 +18,11 @@ export class SupabaseService {
   currentUser$ = this.currentUserSubject.asObservable();
   
   get currentUser(): User | null {
-    console.log('Current user: ', this.currentUserSubject.value);
     if (this.currentUserSubject.value) {
       return this.currentUserSubject.value;
     }
   
     const storedUser = sessionStorage.getItem('currentUser');
-    console.log('Stored user: ', storedUser);
     if (storedUser) {
       const user: User = JSON.parse(storedUser);
       this.currentUserSubject.next(user);
@@ -41,7 +40,6 @@ export class SupabaseService {
       if (session) {
         this.currentUserSubject.next(session.user);
         sessionStorage.setItem('currentUser', JSON.stringify(session.user));
-        console.log('Session changed in constructor: ', session.user);
       } else {
         this.currentUserSubject.next(null);
       }
@@ -58,7 +56,6 @@ export class SupabaseService {
       }
 
       this.currentUserSubject.next(session.user);
-      console.log('Session changed in initializeUserState: ', session.user);
       sessionStorage.setItem('currentUser', JSON.stringify(session.user));
       
       // Reset retry count on success
@@ -136,7 +133,6 @@ export class SupabaseService {
           .single();
 
         this.currentUserSubject.next(data.user);
-        console.log('Session changed in signIn: ', data.user);
         sessionStorage.setItem('currentUser', JSON.stringify(data.user));
           
         if (profileError || !profile) {
@@ -229,6 +225,34 @@ export class SupabaseService {
       if (error) throw error;
     } catch (error) {
       console.error('Error updating credits:', error);
+      throw error;
+    }
+  }
+
+  async savePurchase(tokenTracker: any): Promise<void> {
+    try {
+      if (!this.currentUser?.id) {
+        console.warn('No user ID available');
+        return;
+      }
+
+      const creditPackage = getCreditPackageById(tokenTracker.package_type);
+      
+      const { error } = await this.supabase
+        .from('token_purchases')
+        .insert([
+          {
+            user_id: this.currentUser.id,
+            stripe_payment_intent_id: tokenTracker.package_type,
+            status: 'succeeded',
+            amount: creditPackage?.credits,
+            price: creditPackage?.price
+          }
+        ]);
+      
+      if (error) throw error;
+    } catch (error) {
+      console.error('Error saving purchase:', error);
       throw error;
     }
   }
@@ -332,4 +356,70 @@ export class SupabaseService {
       return false;
     }
   }
+
+  async saveTokenTracker(uuid: string, category: string): Promise<void> {
+    try {
+      const { error } = await this.supabase
+        .from('token_tracker')
+        .insert([
+          {
+            user_id: this.currentUser?.id,
+            package_type: category,
+            unique_id: uuid
+          }
+        ]);
+      
+      if (error) throw error;
+    } catch (error) {
+      console.error('Error saving token tracker:', error);
+      throw error;
+    }
+  }
+
+  async getTokenTracker(): Promise<any[]> {
+    try {
+      // Wait for user state to be initialized
+      if (!this.currentUser?.id) {
+        // Wait up to 5 seconds for user state to be ready
+        let attempts = 0;
+        while (!this.currentUser?.id && attempts < 5) {
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          attempts++;
+        }
+        
+        if (!this.currentUser?.id) {
+          console.warn('User state not initialized after waiting, returning empty array');
+          return [];
+        }
+      }
+
+      const { data, error } = await this.supabase
+        .from('token_tracker')
+        .select('*')
+        .eq('user_id', this.currentUser.id)
+        .single();
+      
+      if (error) throw error;
+      return data || [];
+    } catch (error) {
+      console.error('Error getting token tracker:', error);
+      return [];
+    }
+  }
+
+  async deleteTokenTracker(): Promise<boolean> {
+    try {
+      const { error } = await this.supabase
+        .from('token_tracker')
+        .delete()
+        .eq('user_id', this.currentUser?.id);
+      
+      if (error) throw error;
+      return true;
+    } catch (error) {
+      console.error('Error deleting token tracker:', error);
+      return false;
+    }
+  }
+
 } 

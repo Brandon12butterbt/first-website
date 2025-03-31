@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { StripeService, CreditPackage } from '../../services/stripe.service';
+import { StripeService } from '../../services/stripe.service';
 import { SupabaseService } from '../../services/supabase.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -9,9 +9,11 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { NavBarComponent } from '../shared/nav-bar.component';
+import { NavBarComponent } from '../shared/nav-bar/nav-bar.component';
 import { environment } from '../../../environments/environment';
 import { PaymentService } from '../../services/payment.service';
+import { v4 as uuidv4 } from 'uuid';
+import { CreditPackage } from '../shared/credit-packages';
 
 @Component({
   selector: 'app-upgrade',
@@ -76,8 +78,17 @@ export class UpgradeComponent implements OnInit {
     // } finally {
     //   this.isPurchasing = false;
     // }
+    const uuid: string = uuidv4();
+    await this.supabaseService.saveTokenTracker(uuid, packageId);
+    sessionStorage.setItem('token', uuid);
     this.paymentService.setApiCallMade(true);
-    window.location.href = environment.stripe.baseUrl;
+    if (packageId === 'basic') {
+      window.location.href = environment.stripe.basicTokenUrl;
+    } else if (packageId === 'standard') {
+      window.location.href = environment.stripe.standardTokenUrl;
+    } else if (packageId === 'premium') {
+      window.location.href = environment.stripe.premiumTokenUrl;
+    }
   }
   
   async signOut() {

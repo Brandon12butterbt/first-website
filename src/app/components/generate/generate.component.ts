@@ -11,7 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CommonModule } from '@angular/common';
 import { firstValueFrom } from 'rxjs';
-import { NavBarComponent } from '../shared/nav-bar.component';
+import { NavBarComponent } from '../shared/nav-bar/nav-bar.component';
 
 @Component({
   selector: 'app-generate',
@@ -117,9 +117,19 @@ export class GenerateComponent implements OnInit, OnDestroy {
     
     try {
       // Call the API and get the image blob
-      const imageBlob = await firstValueFrom(
-        this.fluxService.generateImage(prompt)
-      );
+      const imageBlob = await firstValueFrom(this.fluxService.generateImage(prompt));
+
+      if (imageBlob.error === 'rate_limited') {
+        this.errorMessage = imageBlob.message;
+        this.lastUpdateTime = new Date().toLocaleTimeString() + ' (error)';
+        return;
+      }
+    
+      if (imageBlob.error === 'api_error') {
+        console.error('API request failed:', imageBlob.message);
+        alert('There was a problem generating the image. Please try again.');
+        return;
+      }
       
       console.log('Image blob received in component, size:', imageBlob.size);
       this.lastUpdateTime = new Date().toLocaleTimeString() + ' (success)';

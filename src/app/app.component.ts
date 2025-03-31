@@ -27,7 +27,7 @@ export class AppComponent implements OnInit {
 
     this.supabaseClientService.waitForSession().subscribe(session => {
       if (session && window.location.pathname === '/login') {
-        this.router.navigate(['/home']);
+        this.router.navigate(['/']);
       }
       
       const isAuthPage = ['/login', '/signup', '/reset-password'].includes(window.location.pathname);

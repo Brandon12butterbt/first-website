@@ -33,6 +33,17 @@ export class FluxService {
   }
   
   generateImage(prompt: string): Observable<any> {
+    const now = Date.now();
+    const lastRequestTime = localStorage.getItem('lastImageRequest');
+
+    if (lastRequestTime && now - parseInt(lastRequestTime) < 120000) {
+      console.warn('Rate limit hit: You can only generate one image per minute.');
+      return of({ error: 'rate_limited', message: 'Rate limit hit: You can only generate one image every two minutes.' });
+    }
+
+    // Store the current timestamp
+    localStorage.setItem('lastImageRequest', now.toString());
+
     const headers = new HttpHeaders({
       Authorization: `Bearer ${this.apiToken}`,
       'Content-Type': 'application/json',

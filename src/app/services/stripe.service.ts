@@ -4,13 +4,7 @@ import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { SupabaseService } from './supabase.service';
 import { Router } from '@angular/router';
-
-export interface CreditPackage {
-  id: string;
-  name: string;
-  credits: number;
-  price: number;
-}
+import { CREDIT_PACKAGES, CreditPackage, getCreditPackageById } from '../components/shared/credit-packages';
 
 @Injectable({
   providedIn: 'root'
@@ -19,11 +13,7 @@ export class StripeService {
   private stripe: Promise<Stripe | null>;
   
   // Credit packages
-  creditPackages: CreditPackage[] = [
-    { id: 'basic', name: 'Basic', credits: 10, price: 0.50 },
-    { id: 'standard', name: 'Standard', credits: 50, price: 2.00 },
-    { id: 'premium', name: 'Premium', credits: 120, price: 4.00 }
-  ];
+  creditPackages: CreditPackage[] = CREDIT_PACKAGES;
   
   constructor(
     private http: HttpClient,
@@ -40,7 +30,7 @@ export class StripeService {
     }
     
     // Get the credit package
-    const creditPackage = this.creditPackages.find(p => p.id === packageId);
+    const creditPackage = getCreditPackageById(packageId);
     if (!creditPackage) {
       throw new Error('Invalid package');
     }
@@ -77,18 +67,13 @@ export class StripeService {
   }
   
   async handlePaymentSuccess(packageId: string): Promise<void> {
-    // In a real implementation, this would verify the session on the server
-    // and then credit the user's account
-    
-    // For demo purposes, we're just adding credits directly
     const profile = await this.supabaseService.getProfile();
     if (profile) {
-      const creditPackage = this.creditPackages.find(p => p.id === packageId);
+      const creditPackage = getCreditPackageById(packageId);
       
       if (creditPackage) {
         const newCredits = profile.credits + creditPackage.credits;
         await this.supabaseService.updateCredits(newCredits);
-        console.log(`Added ${creditPackage.credits} credits. New balance: ${newCredits}`);
       }
     }
   }

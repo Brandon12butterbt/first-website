@@ -6,7 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { NavBarComponent } from '../shared/nav-bar.component';
+import { NavBarComponent } from '../shared/nav-bar/nav-bar.component';
 
 @Component({
   selector: 'app-home',
