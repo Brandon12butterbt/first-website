@@ -3,6 +3,7 @@ import { Router, RouterOutlet } from '@angular/router';
 import { SupabaseClientService } from './services/supabase-client.service';
 import { SupabaseService } from './services/supabase.service';
 import { PaymentService } from './services/payment.service';
+import { environment } from '../environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -22,6 +23,8 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    console.log('Variable url app: ' + environment.supabase.url);
+    console.log('Variable key app: ' + environment.supabase.anonKey);
     const apiCallMade = JSON.parse(sessionStorage.getItem('apiCallMade') || 'false');
     this.paymentService.setApiCallMade(apiCallMade);
 
