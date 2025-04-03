@@ -56,6 +56,10 @@ export class SupabaseClientService {
         }
       );
 
+      console.log('Variable url: ' + environment.supabase.url);
+      console.log('Variable key: ' + environment.supabase.anonKey);
+      console.log('Supabase client initialized', SupabaseClientService.instance);
+
       this.initializeSession();
     }
   }
