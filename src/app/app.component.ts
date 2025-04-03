@@ -23,8 +23,6 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    console.log('Variable url app: ' + environment.supabase.url);
-    console.log('Variable key app: ' + environment.supabase.anonKey);
     const apiCallMade = JSON.parse(sessionStorage.getItem('apiCallMade') || 'false');
     this.paymentService.setApiCallMade(apiCallMade);
 

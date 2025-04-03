@@ -14,8 +14,6 @@ export class SupabaseClientService {
   session$ = this.sessionSubject.asObservable();
   
   constructor() {
-    console.log('Variable url: ' + environment.supabase.url);
-    console.log('Variable key: ' + environment.supabase.anonKey);
     if (!SupabaseClientService.instance) {
       SupabaseClientService.instance = createClient(
         environment.supabase.url,
