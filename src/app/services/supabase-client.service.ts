@@ -60,7 +60,7 @@ export class SupabaseClientService {
     }
   }
 
-  private async initializeSession() {
+  async initializeSession() {
     try {
       try {
         const hasToken = !!localStorage.getItem('sb-auth-token');
