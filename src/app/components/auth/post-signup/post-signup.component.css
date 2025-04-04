@@ -1,0 +1,13 @@
+::ng-deep .mat-icon {
+    height: 36px;
+    width: 36px;
+    font-size: 36px;
+}
+
+.card-style {
+    max-width: 28vw !important;
+}
+
+.button-style {
+    max-width: 20vh !important;
+}

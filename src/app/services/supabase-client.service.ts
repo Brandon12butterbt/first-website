@@ -15,6 +15,7 @@ export class SupabaseClientService {
   
   constructor() {
     if (!SupabaseClientService.instance) {
+      console.log('Creating Supabase client instance...');
       SupabaseClientService.instance = createClient(
         environment.supabase.url,
         environment.supabase.anonKey,

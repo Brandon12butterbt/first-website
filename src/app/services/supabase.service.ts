@@ -93,29 +93,12 @@ export class SupabaseService {
   
   async signUp(email: string, password: string): Promise<{ success: boolean; error?: string }> {
     try {
-      const { data, error } = await this.supabase.auth.signUp({
+      let { data, error } = await this.supabase.auth.signUp({
         email,
         password
       });
       
       if (error) throw error;
-      
-      // Create a profile for the new user
-      if (data.user) {
-        // Wait for session to initialize
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        // Use session to ensure auth context
-        this.supabaseClientService.initializeSession();
-        const session = this.supabaseClientService.currentSession;
-        if (!session) {
-          await this.initializeUserState();
-        }
-
-        await this.createProfile(data.user.id, email);
-        this.currentUserSubject.next(data.user);
-        sessionStorage.setItem('currentUser', JSON.stringify(data.user));
-      }
       
       return { success: true };
     } catch (error: any) {

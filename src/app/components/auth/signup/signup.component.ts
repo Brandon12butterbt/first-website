@@ -67,8 +67,7 @@ export class SignupComponent {
         );
         
         if (success) {
-          this.successMessage = 'Account created successfully! Please check your email to verify your account.';
-          this.errorMessage = '';
+          this.router.navigate(['/post-signup']);
         } else {
           this.errorMessage = error || 'An error occurred during signup';
         }
@@ -79,4 +78,4 @@ export class SignupComponent {
       }
     }
   }
-} 
+}

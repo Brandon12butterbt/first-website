@@ -66,6 +66,15 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+-- Create function for profile insert
+CREATE OR REPLACE FUNCTION public.create_user_profile()
+RETURNS void
+BEGIN
+  INSERT INTO public.profiles (id, email, credits, images_generated, created_at)
+  values (auth.uid(), auth.email(), 5, 0, timezone('utc'::text, now()))
+END;
+$$ LANGUAGE plpgsql;
+
 -- Create trigger for token_purchases updated_at
 CREATE TRIGGER update_token_purchases_updated_at
   BEFORE UPDATE ON public.token_purchases
