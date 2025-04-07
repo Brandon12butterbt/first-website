@@ -4,6 +4,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { catchError, tap, finalize } from 'rxjs/operators';
 
+import { ConfigService } from './config.service';
+
 // Define interfaces for the Cloudflare API response
 interface CloudflareApiResponse {
   result: {
@@ -27,9 +29,9 @@ export class FluxService {
   private apiUrl: string;
   private apiToken: string;
   
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, public config: ConfigService) {
     this.apiUrl = 'https://fragrant-term-2137.brandontbutterworth.workers.dev';
-    this.apiToken = environment.flux.apiKey;
+    this.apiToken = this.config.fluxApiKey;
   }
   
   generateImage(prompt: string): Observable<any> {

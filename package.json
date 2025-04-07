@@ -9,7 +9,7 @@
     "basic": "ng serve --watch --ssl false",
     "minimal": "ng serve --port 4201 --ssl false --configuration development",
     "build": "ng build",
-    "build:ci": "sed -i 's|%%SUPABASE_URL%%|'\"$SUPABASE_URL\"'|g' src/environments/environment.ts && sed -i 's|%%SUPABASE_ANON_KEY%%|'\"$SUPABASE_ANON_KEY\"'|g' src/environments/environment.ts && sed -i 's|%%STRIPE_PUB_KEY%%|'\"$STRIPE_PUB_KEY\"'|g' src/environments/environment.ts && sed -i 's|%%STRIPE_PRICE_ID%%|'\"$STRIPE_PRICE_ID\"'|g' src/environments/environment.ts && sed -i 's|%%STRIPE_BASIC_URL%%|'\"$STRIPE_BASIC_URL\"'|g' src/environments/environment.ts && sed -i 's|%%STRIPE_STANDARD_URL%%|'\"$STRIPE_STANDARD_URL\"'|g' src/environments/environment.ts && sed -i 's|%%STRIPE_PREMIUM_URL%%|'\"$STRIPE_PREMIUM_URL\"'|g' src/environments/environment.ts && sed -i 's|%%FLUX_API_KEY%%|'\"$FLUX_API_KEY\"'|g' src/environments/environment.ts && sed -i 's|%%FLUX_ACCOUNT_ID%%|'\"$FLUX_ACCOUNT_ID\"'|g' src/environments/environment.ts && cat src/environments/environment.ts && ng build --configuration=production --output-path=/var/www/afluxgen",
+    "build:ci": "ng build --configuration=production --output-path=/var/www/afluxgen",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:image-generator": "node dist/image-generator/server/server.mjs"

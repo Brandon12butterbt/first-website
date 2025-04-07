@@ -3,4 +3,23 @@
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
-} 
+}
+
+.use-case-style {
+  max-height: 35vh;
+  height: 35vh;
+}
+
+.how-it-works-style {
+  max-height: 39vh;
+  height: 39vh;
+}
+
+.how-it-works-style li {
+  margin-bottom: 2.5vh !important;
+}
+
+.image-style {
+  max-height: 30vh;
+  height: 30vh;
+}

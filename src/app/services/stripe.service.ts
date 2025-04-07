@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { SupabaseService } from './supabase.service';
 import { Router } from '@angular/router';
 import { CREDIT_PACKAGES, CreditPackage, getCreditPackageById } from '../components/shared/credit-packages';
+import { ConfigService } from './config.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,9 +19,10 @@ export class StripeService {
   constructor(
     private http: HttpClient,
     private supabaseService: SupabaseService,
-    private router: Router
+    private router: Router,
+    public config: ConfigService
   ) {
-    this.stripe = loadStripe(environment.stripe.publishableKey);
+    this.stripe = loadStripe(this.config.stripePubKey);
   }
   
   async redirectToCheckout(packageId: string): Promise<void> {

@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { createClient, SupabaseClient, Session } from '@supabase/supabase-js';
-import { environment } from '../../environments/environment';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
+
+import { ConfigService } from './config.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,12 +14,11 @@ export class SupabaseClientService {
   private sessionInitialized = false;
   session$ = this.sessionSubject.asObservable();
   
-  constructor() {
+  constructor(public config: ConfigService) {
     if (!SupabaseClientService.instance) {
-      console.log('Creating Supabase client instance...');
       SupabaseClientService.instance = createClient(
-        environment.supabase.url,
-        environment.supabase.anonKey,
+        config.supabaseUrl,
+        config.supabaseAnonKey,
         {
           auth: {
             persistSession: true,

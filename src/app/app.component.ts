@@ -3,7 +3,6 @@ import { Router, RouterOutlet } from '@angular/router';
 import { SupabaseClientService } from './services/supabase-client.service';
 import { SupabaseService } from './services/supabase.service';
 import { PaymentService } from './services/payment.service';
-import { environment } from '../environments/environment';
 
 @Component({
   selector: 'app-root',

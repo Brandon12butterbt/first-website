@@ -10,10 +10,10 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { NavBarComponent } from '../shared/nav-bar/nav-bar.component';
-import { environment } from '../../../environments/environment';
 import { PaymentService } from '../../services/payment.service';
 import { v4 as uuidv4 } from 'uuid';
 import { CreditPackage } from '../shared/credit-packages';
+import { ConfigService } from '../../services/config.service';
 
 @Component({
   selector: 'app-upgrade',
@@ -42,7 +42,8 @@ export class UpgradeComponent implements OnInit {
     private stripeService: StripeService,
     private supabaseService: SupabaseService,
     private router: Router,
-    private paymentService: PaymentService
+    private paymentService: PaymentService,
+    public config: ConfigService
   ) {}
   
   ngOnInit() {
@@ -83,11 +84,11 @@ export class UpgradeComponent implements OnInit {
     sessionStorage.setItem('token', uuid);
     this.paymentService.setApiCallMade(true);
     if (packageId === 'basic') {
-      window.location.href = environment.stripe.basicTokenUrl;
+      window.location.href = this.config.stripeBasicUrl;
     } else if (packageId === 'standard') {
-      window.location.href = environment.stripe.standardTokenUrl;
+      window.location.href = this.config.stripeStandardUrl;
     } else if (packageId === 'premium') {
-      window.location.href = environment.stripe.premiumTokenUrl;
+      window.location.href = this.config.stripePremiumUrl;
     }
   }
   

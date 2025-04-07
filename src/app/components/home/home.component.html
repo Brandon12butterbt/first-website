@@ -5,70 +5,48 @@
   <!-- Main Content -->
   <div class="flex-1 p-4 md:p-6">
     <div class="max-w-4xl mx-auto">
-      <h1 class="text-2xl md:text-3xl font-bold text-white mb-3">Hello, I'm Brandon Butterworth</h1>
+      <h1 class="text-2xl md:text-3xl font-bold text-white mb-3">AI-Powered Image Generation</h1>
       
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-6">
         <div class="md:col-span-2">
           <mat-card class="bg-gray-800 p-6 h-full">
-            <h2 class="text-xl font-semibold text-purple-400 mb-4">Software & DevOps Engineer</h2>
+            <h2 class="text-xl font-semibold text-purple-400 mb-4">Platform</h2>
             <p class="text-gray-300 mb-4">
-              I'm passionate about creating innovative software solutions and optimizing development workflows.
-              With extensive experience in both software development and DevOps practices, I bridge the gap between
-              development and operations to deliver high-quality, scalable applications.
+              Create stunning, unique artwork with our state-of-the-art AI image generation service. 
+              Turn your descriptions into beautiful visual masterpieces in seconds.
             </p>
             <p class="text-gray-300 mb-4">
-              My expertise spans across cloud infrastructure, CI/CD pipelines, containerization, and 
-              modern application development. I enjoy tackling complex problems and finding elegant solutions
-              that improve efficiency and reliability.
+              Whether you need illustrations, concept art, or creative visuals, our AI platform helps you
+              bring your imagination to life with just a few simple prompts.
             </p>
             <div class="mt-6">
               <button mat-raised-button color="primary" routerLink="/generate" class="bg-purple-600 hover:bg-purple-700 mr-4">
                 <mat-icon class="text-white">add_photo_alternate</mat-icon>
-                <span class="text-white">Generate AI Art</span>
+                <span class="text-white">Start Creating</span>
               </button>
               <button mat-raised-button color="accent" routerLink="/gallery" class="bg-purple-600 hover:bg-purple-700">
                 <mat-icon class="text-white">dashboard</mat-icon>
-                <span class="text-white">View Gallery</span>
+                <span class="text-white">View Examples</span>
               </button>
             </div>
           </mat-card>
         </div>
         
         <div>
-          <mat-card class="bg-gray-800 p-6 h-full">
-            <h2 class="text-xl font-semibold text-purple-400 mb-4">Tech Stack</h2>
-            <div class="grid grid-cols-2 gap-2">
-              <div class="bg-gray-700 p-2 rounded flex items-center">
-                <mat-icon class="text-blue-400 mr-2">code</mat-icon>
-                <span class="text-gray-200">Angular</span>
+          <mat-card class="bg-gray-800 p-6 use-case-style">
+            <h2 class="text-xl font-semibold text-purple-400 mb-4">Use Cases</h2>
+            <div class="space-y-4">
+              <div class="border-l-4 border-purple-500 pl-4">
+                <h3 class="text-white font-medium">Digital Art</h3>
+                <p class="text-gray-400 text-sm">Create unique artwork for personal or commercial use</p>
               </div>
-              <div class="bg-gray-700 p-2 rounded flex items-center">
-                <mat-icon class="text-green-400 mr-2">dns</mat-icon>
-                <span class="text-gray-200">Node.js</span>
+              <div class="border-l-4 border-purple-500 pl-4">
+                <h3 class="text-white font-medium">Content Creation</h3>
+                <p class="text-gray-400 text-sm">Generate visuals for social media and marketing</p>
               </div>
-              <div class="bg-gray-700 p-2 rounded flex items-center">
-                <mat-icon class="text-yellow-400 mr-2">cloud</mat-icon>
-                <span class="text-gray-200">AWS</span>
-              </div>
-              <div class="bg-gray-700 p-2 rounded flex items-center">
-                <mat-icon class="text-blue-300 mr-2">integration_instructions</mat-icon>
-                <span class="text-gray-200">Docker</span>
-              </div>
-              <div class="bg-gray-700 p-2 rounded flex items-center">
-                <mat-icon class="text-red-400 mr-2">trending_up</mat-icon>
-                <span class="text-gray-200">CI/CD</span>
-              </div>
-              <div class="bg-gray-700 p-2 rounded flex items-center">
-                <mat-icon class="text-purple-300 mr-2">storage</mat-icon>
-                <span class="text-gray-200">Databases</span>
-              </div>
-              <div class="bg-gray-700 p-2 rounded flex items-center">
-                <mat-icon class="text-blue-500 mr-2">directions_boat</mat-icon>
-                <span class="text-gray-200">Kubernetes</span>
-              </div>
-              <div class="bg-gray-700 p-2 rounded flex items-center">
-                <mat-icon class="text-purple-500 mr-2">developer_mode</mat-icon>
-                <span class="text-gray-200">.NET</span>
+              <div class="border-l-4 border-purple-500 pl-4">
+                <h3 class="text-white font-medium">Concept Design</h3>
+                <p class="text-gray-400 text-sm">Visualize ideas quickly for projects and presentations</p>
               </div>
             </div>
           </mat-card>
@@ -76,42 +54,37 @@
       </div>
       
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <mat-card class="bg-gray-800 p-6">
-          <h2 class="text-xl font-semibold text-purple-400 mb-4">What I Do</h2>
+        <mat-card class="bg-gray-800 p-6 how-it-works-style">
+          <h2 class="text-xl font-semibold text-purple-400 mb-4">How It Works</h2>
           <ul class="text-gray-300 space-y-3">
             <li class="flex items-start">
-              <mat-icon class="text-green-400 mr-2 mt-1 flex-shrink-0">check_circle</mat-icon>
-              <span>Develop full-stack web applications with modern frameworks</span>
+              <mat-icon class="text-green-400 mr-2 mt-1 flex-shrink-0">looks_one</mat-icon>
+              <span>Enter your description or prompt</span>
             </li>
             <li class="flex items-start">
-              <mat-icon class="text-green-400 mr-2 mt-1 flex-shrink-0">check_circle</mat-icon>
-              <span>Design and implement CI/CD pipelines for automated deployment</span>
+              <mat-icon class="text-green-400 mr-2 mt-1 flex-shrink-0">looks_two</mat-icon>
+              <span>Our AI processes your request</span>
             </li>
             <li class="flex items-start">
-              <mat-icon class="text-green-400 mr-2 mt-1 flex-shrink-0">check_circle</mat-icon>
-              <span>Configure and manage cloud infrastructure with IaC</span>
+              <mat-icon class="text-green-400 mr-2 mt-1 flex-shrink-0">looks_3</mat-icon>
+              <span>Save your generated artwork to your gallery</span>
             </li>
             <li class="flex items-start">
-              <mat-icon class="text-green-400 mr-2 mt-1 flex-shrink-0">check_circle</mat-icon>
-              <span>Containerize applications for consistent deployment</span>
+              <mat-icon class="text-green-400 mr-2 mt-1 flex-shrink-0">looks_4</mat-icon>
+              <span>Download your generated artwork</span>
             </li>
             <li class="flex items-start">
-              <mat-icon class="text-green-400 mr-2 mt-1 flex-shrink-0">check_circle</mat-icon>
-              <span>Implement monitoring and logging solutions</span>
+              <mat-icon class="text-green-400 mr-2 mt-1 flex-shrink-0">looks_5</mat-icon>
+              <span>Share or use your creation</span>
             </li>
           </ul>
         </mat-card>
         
-        <mat-card class="bg-gray-800 p-6">
-          <h2 class="text-xl font-semibold text-purple-400 mb-4">My Projects</h2>
-          <div class="space-y-4">
-            <div class="border-l-4 border-purple-500 pl-4">
-              <h3 class="text-white font-medium">AFluxGen AI</h3>
-              <p class="text-gray-400 text-sm">My first "personal" website! AI-powered image generation platform featuring a modern UI and deployed on AWS.</p>
-            </div>
-          </div>
+        <mat-card class="bg-gray-800 p-6 h-full">
+          <img src="assets/images/flux_generated_image.png" alt="AI Generated Art Example" class="w-full rounded-lg shadow-lg mb-4 image-style">
+          <p class="text-gray-400 text-sm text-center">AFluxGen AI-generated artwork</p>
         </mat-card>
       </div>
     </div>
   </div>
-</div> 
+</div>
