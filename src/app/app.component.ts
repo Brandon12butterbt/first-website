@@ -32,16 +32,16 @@ export class AppComponent implements OnInit {
       
       const isAuthPage = ['/login', '/signup', '/reset-password'].includes(window.location.pathname);
       if (!session && !isAuthPage) {
-        this.router.navigate(['/login']);
+        this.router.navigate(['/']);
       }
       this.checkSession();
     });
   }
 
   async checkSession() {
-    const user = this.supabaseService.currentUser; // Check if user is logged in
+    const user = this.supabaseService.currentUser;
     if (!user) {
-      this.router.navigate(['/login']); // Redirect to login if no user
+      this.router.navigate(['/']);
     }
   }
 }

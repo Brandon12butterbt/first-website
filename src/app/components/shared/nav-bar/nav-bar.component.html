@@ -2,35 +2,57 @@
     <div class="container mx-auto flex items-center justify-center">
       <a routerLink="/" class="text-xl font-bold text-purple-400 mr-6 select-none cursor-pointer">AFluxGen</a>
       
-      <button mat-button routerLink="/gallery" class="text-white hover:bg-gray-700 mx-2">
+      <button *ngIf="profile" mat-button routerLink="/gallery" class="text-white hover:bg-gray-700 mx-2">
         <mat-icon>dashboard</mat-icon>
         <span class="ml-1">Gallery</span>
       </button>
       
-      <button mat-button routerLink="/generate" class="text-white hover:bg-gray-700 mx-2">
+      <button *ngIf="profile" mat-button routerLink="/generate" class="text-white hover:bg-gray-700 mx-2">
         <mat-icon>add_photo_alternate</mat-icon>
         <span class="ml-1">Generate</span>
       </button>
       
-      <div class="px-2 py-0.5 bg-gray-700 rounded-full flex items-center mx-2 text-sm">
+      <div *ngIf="profile" class="px-2 py-0.5 bg-gray-700 rounded-full flex items-center mx-2 text-sm">
         <mat-icon class="text-yellow-400 mr-1" style="font-size: 16px; height: 16px; width: 16px; line-height: 16px;">stars</mat-icon>
         <span class="text-white select-none">{{ profile?.credits || 0 }} credits</span>
       </div>
       
-      <button mat-button [matMenuTriggerFor]="userMenu" class="text-white hover:bg-gray-700 mx-2">
-        <mat-icon>account_circle</mat-icon>
-        <span class="ml-1">{{ userEmail }}</span>
-      </button>
-      
-      <mat-menu #userMenu="matMenu">
-        <button mat-menu-item routerLink="/upgrade">
-          <mat-icon>upgrade</mat-icon>
-          <span>Upgrade</span>
+      <!-- Logged in menu -->
+      <div *ngIf="profile">
+        <button mat-button [matMenuTriggerFor]="userMenu" class="text-white hover:bg-gray-700 mx-2">
+          <mat-icon>account_circle</mat-icon>
+          <span class="ml-1">{{ userEmail }}</span>
         </button>
-        <button mat-menu-item (click)="signOutClicked()">
-          <mat-icon>exit_to_app</mat-icon>
-          <span>Sign out</span>
+        
+        <mat-menu #userMenu="matMenu">
+          <button mat-menu-item routerLink="/upgrade">
+            <mat-icon>upgrade</mat-icon>
+            <span>Upgrade</span>
+          </button>
+          <button mat-menu-item (click)="signOutClicked()">
+            <mat-icon>exit_to_app</mat-icon>
+            <span>Sign out</span>
+          </button>
+        </mat-menu>
+      </div>
+
+      <!-- Logged out menu -->
+      <div *ngIf="!profile">
+        <button mat-button [matMenuTriggerFor]="noUserMenu" class="text-white hover:bg-gray-700 mx-2">
+          <mat-icon>account_circle</mat-icon>
+          <span class="ml-1">Account</span>
         </button>
-      </mat-menu>
+        
+        <mat-menu #noUserMenu="matMenu">
+          <button mat-menu-item routerLink="/login">
+            <mat-icon>login</mat-icon>
+            <span>Login</span>
+          </button>
+          <button mat-menu-item routerLink="/signup">
+            <mat-icon>add_circle_icon</mat-icon>
+            <span>Sign Up</span>
+          </button>
+        </mat-menu>
+      </div>
     </div>
 </mat-toolbar>

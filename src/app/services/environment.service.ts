@@ -6,6 +6,7 @@ export class EnvironmentService {
   constructor(private http: HttpClient) {}
 
   getEnvVars() {
-    return this.http.get<any>('http://localhost:3000/env');
+    // return this.http.get<any>('http://localhost:3000/env');
+    return this.http.get<any>('/api/env');
   }
 }

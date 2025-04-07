@@ -38,7 +38,6 @@ export class HomeComponent implements OnInit {
   async loadUserData() {
     const user = this.supabaseService.currentUser;
     if (!user) {
-      this.router.navigate(['/login']);
       return;
     }
     
@@ -48,6 +47,7 @@ export class HomeComponent implements OnInit {
   
   async signOut() {
     await this.supabaseService.signOut();
-    this.router.navigate(['/login']);
+    this.profile = null;
+    this.router.navigate(['/']);
   }
 } 

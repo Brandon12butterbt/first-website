@@ -16,7 +16,7 @@ export const routes: Routes = [
   { path: 'signup', component: SignupComponent },
   { path: 'post-signup', component: PostSignupComponent },
   { path: 'reset-password', component: ResetPasswordComponent },
-  { path: '', component: HomeComponent, canActivate: [AuthGuard] },
+  { path: '', component: HomeComponent },
   { path: 'gallery', component: GalleryComponent, canActivate: [AuthGuard] },
   { path: 'generate', component: GenerateComponent, canActivate: [AuthGuard] },
   { path: 'upgrade', component: UpgradeComponent, canActivate: [AuthGuard] },
