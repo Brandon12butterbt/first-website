@@ -14,10 +14,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+      # Cache npm modules to speed up builds
+      - name: Cache node modules
+        uses: actions/cache@v3
         with:
-          node-version: '18.20.6' # You can change this to match your actual version
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
       - name: Install dependencies
         run: npm install
