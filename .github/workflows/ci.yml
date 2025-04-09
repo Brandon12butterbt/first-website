@@ -18,7 +18,7 @@ jobs:
         run: npm install
 
       - name: Run build script
-        run: ng build --configuration=production
+        run: npx ng build --configuration=production
 
       - name: Create private key file from repo secret
         run: echo ${{ secrets.EC2_SSH_KEY }} > ./deploy_key.pem
