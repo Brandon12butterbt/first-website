@@ -29,10 +29,7 @@ jobs:
       #     icacls $tempPath /inheritance:r /grant:r "*$($sid.Value):F"
       - name: Create private key file
         run: |
-          $privateKey = @'
-          ${{ secrets.EC2_SSH_KEY }}
-          '@
-          
+          $privateKey = "${{ secrets.EC2_SSH_KEY }}"
           $keyPath = "$env:RUNNER_WORKSPACE\temp_key.pem"
           $privateKey | Out-File -FilePath $keyPath -Encoding ascii -Force
           
