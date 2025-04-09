@@ -20,8 +20,11 @@ jobs:
 
       - name: Grant permission to key file
         run: |
-          if (Test-Path ./deploy_key.pem) {
-            Remove-Item ./deploy_key.pem -Force
+          $keyPath = "$pwd\deploy_key.pem"
+          if (Test-Path $keyPath) {
+              takeown /F $keyPath
+              icacls $keyPath /grant "$env:USERNAME`:F" /T /C
+              Remove-Item $keyPath -Force
           }
           
           $tempPath = Join-Path $env:RUNNER_TEMP "deploy_key.pem"
