@@ -36,10 +36,11 @@ jobs:
           $keyPath = "$env:RUNNER_WORKSPACE\temp_key.pem"
           $privateKey | Out-File -FilePath $keyPath -Encoding ascii -Force
           
-          # Secure it
+          # Secure the file
           $acl = Get-Acl $keyPath
           $acl.SetAccessRuleProtection($True, $False)
-          $accessRule = New-Object System.Security.AccessControl.FileSystemAccessRule($env:USERNAME, "FullControl", "Allow")
+          $user = (whoami)
+          $accessRule = New-Object System.Security.AccessControl.FileSystemAccessRule($user, "FullControl", "Allow")
           $acl.SetAccessRule($accessRule)
           Set-Acl $keyPath $acl
 
