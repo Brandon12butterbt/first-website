@@ -20,6 +20,7 @@ jobs:
 
       - name: Grant permission to key file
         run: |
+          $tempPath = Join-Path $env:RUNNER_TEMP "deploy_key.pem"
           if (Test-Path ./deploy_key.pem)
           {
             takeown /F ./deploy_key.pem
