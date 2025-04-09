@@ -20,14 +20,10 @@ jobs:
 
       - name: Grant permission to key file
         run: |
-          $keyPath = "$pwd\deploy_key.pem"
-          if (Test-Path $keyPath) {
-              takeown /F $keyPath
-              icacls $keyPath /grant "$env:USERNAME`:F" /T /C
-              Remove-Item $keyPath -Force
+          if (Test-Path ./deploy_key.pem)
+          {
+            takeown /F ./deploy_key.pem
           }
-          
-          $tempPath = Join-Path $env:RUNNER_TEMP "deploy_key.pem"
           $sid = [System.Security.Principal.WindowsIdentity]::GetCurrent().User
           icacls $tempPath /inheritance:r /grant:r "*$($sid.Value):F"
           Move-Item -Path $tempPath -Destination ./deploy_key.pem -Force
