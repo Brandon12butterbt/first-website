@@ -11,22 +11,6 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      # t122
-      # - name: Copy angular build file to EC2 host machine
-      #   run: scp -i "$env:RUNNER_WORKSPACE/ansible.pem" -o StrictHostKeyChecking=no -r ./dist/* ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ec2-user
-      # - name: Create private key file
-      #   run: |
-      #     $tempPath = Join-Path $env:RUNNER_TEMP "deploy_key.pem"
-      #     @'
-      #     ${{ secrets.EC2_SSH_KEY }}
-      #     '@ > $tempPath
-      #     cat $tempPath
-
-      # - name: Grant permission to key file
-      #   run: |
-      #     $tempPath = Join-Path $env:RUNNER_TEMP "deploy_key.pem"
-      #     $sid = [System.Security.Principal.WindowsIdentity]::GetCurrent().User
-      #     icacls $tempPath /inheritance:r /grant:r "*$($sid.Value):F"
       - name: Write SSH key
         run: |
           # Hardcode the BEGIN/END lines and inject the secret content in between
