@@ -12,8 +12,8 @@ jobs:
 
     steps:
       # t122
-      - name: Copy angular build file to EC2 host machine
-        run: scp -i "$env:RUNNER_WORKSPACE/ansible.pem" -o StrictHostKeyChecking=no -r ./dist/* ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ec2-user
+      # - name: Copy angular build file to EC2 host machine
+      #   run: scp -i "$env:RUNNER_WORKSPACE/ansible.pem" -o StrictHostKeyChecking=no -r ./dist/* ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ec2-user
       # - name: Create private key file
       #   run: |
       #     $tempPath = Join-Path $env:RUNNER_TEMP "deploy_key.pem"
@@ -27,6 +27,23 @@ jobs:
       #     $tempPath = Join-Path $env:RUNNER_TEMP "deploy_key.pem"
       #     $sid = [System.Security.Principal.WindowsIdentity]::GetCurrent().User
       #     icacls $tempPath /inheritance:r /grant:r "*$($sid.Value):F"
+      - name: Create private key file
+        run: |
+          $privateKey = @'
+          ${{ secrets.EC2_SSH_KEY }}
+          '@
+          
+          $keyPath = "$env:RUNNER_WORKSPACE\temp_key.pem"
+          $privateKey | Out-File -FilePath $keyPath -Encoding ascii -Force
+          
+          # Secure it
+          $acl = Get-Acl $keyPath
+          $acl.SetAccessRuleProtection($True, $False)
+          $accessRule = New-Object System.Security.AccessControl.FileSystemAccessRule($env:USERNAME, "FullControl", "Allow")
+          $acl.SetAccessRule($accessRule)
+          Set-Acl $keyPath $acl
+
+          scp -i $keyPath -o StrictHostKeyChecking=no -r ./dist/* ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ec2-user
         
       - name: Checkout code
         uses: actions/checkout@v4
