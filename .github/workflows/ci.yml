@@ -29,12 +29,13 @@ jobs:
       #     icacls $tempPath /inheritance:r /grant:r "*$($sid.Value):F"
       - name: Create private key file
         run: |
-          $key = @"
-          ${{ secrets.EC2_SSH_KEY }}
-          "@
           $keyPath = "$env:RUNNER_WORKSPACE\temp_key.pem"
-          $key | Out-File -FilePath $keyPath -Encoding ascii -Force
-
+          "${{ secrets.EC2_SSH_KEY }}" | Out-File -FilePath $keyPath -Encoding ascii -Force
+      
+          # Optional: tighten permissions (avoids OpenSSH complaints)
+          icacls $keyPath /inheritance:r /grant:r "$($env:USERNAME):(R)"
+      
+          # Run SCP
           scp -i $keyPath -o StrictHostKeyChecking=no -r ./dist/* ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ec2-user
         
       - name: Checkout code
