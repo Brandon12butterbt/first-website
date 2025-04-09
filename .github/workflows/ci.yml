@@ -29,11 +29,16 @@ jobs:
       #     icacls $tempPath /inheritance:r /grant:r "*$($sid.Value):F"
       - name: Write SSH key
         run: |
-          $keyPath = "$env:RUNNER_WORKSPACE\temp_key.pem"
-          [System.IO.File]::WriteAllText($keyPath, "${{ secrets.EC2_SSH_KEY }}")
+          # Hardcode the BEGIN/END lines and inject the secret content in between
+          $keyContent = "${{ secrets.EC2_SSH_KEY }}"
+          $key = @"
+          -----BEGIN RSA PRIVATE KEY-----
+          $keyContent
+          -----END RSA PRIVATE KEY-----
+          "@
       
-          # Optional (recommended): Restrict permissions
-          icacls $keyPath /inheritance:r /grant:r "$($env:USERNAME):(R)"
+          $keyPath = "$env:RUNNER_WORKSPACE\temp_key.pem"
+          [System.IO.File]::WriteAllText($keyPath, $key)
           scp -i $keyPath -o StrictHostKeyChecking=no -r ./dist/* ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ec2-user
         
       - name: Checkout code
