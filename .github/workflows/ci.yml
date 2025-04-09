@@ -12,10 +12,7 @@ jobs:
 
     steps:
       - name: Create private key file
-        run: |
-          Add-Content -Path ./deploy_key.pem -Value "${{ secrets.EC2_SSH_KEY }}" -Encoding ASCII
-          icacls ./deploy_key.pem /inheritance:r
-          icacls ./deploy_key.pem /grant:r "$env:USERNAME`:R"
+        run: ${{ secrets.EC2_SSH_KEY }} | Out-File -FilePath ./deploy_key.pem -Encoding ASCII
 
       - name: Grant permission to key file
         run: chmod 600 ./deploy_key.pem
