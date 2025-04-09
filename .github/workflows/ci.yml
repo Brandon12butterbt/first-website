@@ -11,6 +11,14 @@ jobs:
     runs-on: self-hosted
 
     steps:
+      - name: Test network
+        run: Test-NetConnection -ComputerName ${{ secrets.EC2_HOST }} -Port 22
+        
+      - name: Copy angular build file to EC2 host machine
+        run: |
+          $keyPath = "$env:RUNNER_WORKSPACE\temp_key.pem"
+          scp -i $keyPath -o StrictHostKeyChecking=no -r ./dist/* ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ec2-user
+          
       - name: Write SSH key
         run: |
           # Hardcode the BEGIN/END lines and inject the secret content in between
@@ -21,7 +29,7 @@ jobs:
           -----END RSA PRIVATE KEY-----
           "@
       
-          $keyPath = "$env:RUNNER_WORKSPACE\temp_key1.pem"
+          $keyPath = "$env:RUNNER_WORKSPACE\temp_key.pem"
           [System.IO.File]::WriteAllText($keyPath, $key)
 
       - name: Copy angular build file to EC2 host machine
