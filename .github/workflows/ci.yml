@@ -19,7 +19,9 @@ jobs:
           '@ > $tempPath
 
       - name: Grant permission to key file
-        run: chmod 600 ./deploy_key.pem
+        run: |
+          $tempPath = Join-Path $env:RUNNER_TEMP "deploy_key.pem"
+          chmod 600 $tempPath
         
       - name: Checkout code
         uses: actions/checkout@v4
