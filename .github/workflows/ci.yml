@@ -11,7 +11,7 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      # t1223
+      # t122
       - name: Copy angular build file to EC2 host machine
         run: scp -i "$env:RUNNER_WORKSPACE/ansible.pem" -o StrictHostKeyChecking=no -r ./dist/* ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ec2-user
       # - name: Create private key file
