@@ -12,8 +12,8 @@ jobs:
 
     steps:
       - name: Create private key file
-        shell: bash
-        run: echo "${{ secrets.EC2_SSH_KEY }}" > ./deploy_key.pem
+        shell: pwsh 
+        run: ${{ secrets.EC2_SSH_KEY }} | Out-File -FilePath ./deploy_key.pem -Encoding ASCII
 
       - name: Grant permission to key file
         run: chmod 600 ./deploy_key.pem
