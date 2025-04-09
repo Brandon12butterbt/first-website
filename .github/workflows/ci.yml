@@ -12,7 +12,10 @@ jobs:
 
     steps:
       - name: Create private key file
-        run: ${{ secrets.EC2_SSH_KEY }} | Out-File -FilePath ./deploy_key.pem -Encoding ASCII
+        run: |
+          @'
+          ${{ secrets.EC2_SSH_KEY }}
+          '@ > ./deploy_key.pem
 
       - name: Grant permission to key file
         run: chmod 600 ./deploy_key.pem
