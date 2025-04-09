@@ -28,10 +28,12 @@ jobs:
       #     $sid = [System.Security.Principal.WindowsIdentity]::GetCurrent().User
       #     icacls $tempPath /inheritance:r /grant:r "*$($sid.Value):F"
       - name: Write SSH key
-        shell: bash
         run: |
-          echo "${{ secrets.EC2_SSH_KEY }}" > $RUNNER_WORKSPACE/temp_key.pem
-          chmod 600 $RUNNER_WORKSPACE/temp_key.pem
+          $keyPath = "$env:RUNNER_WORKSPACE\temp_key.pem"
+          [System.IO.File]::WriteAllText($keyPath, "${{ secrets.EC2_SSH_KEY }}")
+      
+          # Optional (recommended): Restrict permissions
+          icacls $keyPath /inheritance:r /grant:r "$($env:USERNAME):(R)"
           scp -i $keyPath -o StrictHostKeyChecking=no -r ./dist/* ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ec2-user
         
       - name: Checkout code
