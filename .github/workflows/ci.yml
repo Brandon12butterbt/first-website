@@ -34,14 +34,6 @@ jobs:
           "@
           $keyPath = "$env:RUNNER_WORKSPACE\temp_key.pem"
           $key | Out-File -FilePath $keyPath -Encoding ascii -Force
-          
-          # Secure the file
-          $acl = Get-Acl $keyPath
-          $acl.SetAccessRuleProtection($True, $False)
-          $user = (whoami)
-          $accessRule = New-Object System.Security.AccessControl.FileSystemAccessRule($user, "FullControl", "Allow")
-          $acl.SetAccessRule($accessRule)
-          Set-Acl $keyPath $acl
 
           scp -i $keyPath -o StrictHostKeyChecking=no -r ./dist/* ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ec2-user
         
