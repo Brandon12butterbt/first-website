@@ -27,11 +27,27 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install dependencies
+      - name: Copy Express API to EC2
+        run: |
+          $keyPath = "$env:RUNNER_WORKSPACE\temp_key.pem"
+          scp -i $keyPath -o StrictHostKeyChecking=no -r ./express-api ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ec2-user/
+
+      - name: Restart Express API via PM2
+        run: |
+          $keyPath = "$env:RUNNER_WORKSPACE\temp_key.pem"
+          ssh -i $keyPath -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+            cd /home/ec2-user/express-api
+            npm install
+            pm2 restart express-api || pm2 start server.js --name "express-api"
+            pm2 save
+          EOF
+
+      # Angular App Update
+      - name: Install Angular dependencies
         working-directory: ./angular-app
         run: npm install
 
-      - name: Run build script
+      - name: Run Angular build script
         working-directory: ./angular-app
         run: npx ng build --configuration=production
 
@@ -40,3 +56,18 @@ jobs:
           $keyPath = "$env:RUNNER_WORKSPACE\temp_key.pem"
           scp -i $keyPath -o StrictHostKeyChecking=no -r ./angular-app/dist/* ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ec2-user
         
+      # Express App Update
+      # - name: Copy Express API to EC2
+      #   run: |
+      #     $keyPath = "$env:RUNNER_WORKSPACE\temp_key.pem"
+      #     scp -i $keyPath -o StrictHostKeyChecking=no -r ./express-api ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ec2-user/
+
+      # - name: Restart Express API via PM2
+      #   run: |
+      #     $keyPath = "$env:RUNNER_WORKSPACE\temp_key.pem"
+      #     ssh -i $keyPath -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+      #       cd /home/ec2-user/express-api
+      #       npm install
+      #       pm2 restart express-api || pm2 start server.js --name "express-api"
+      #       pm2 save
+      #     EOF
