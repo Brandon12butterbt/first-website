@@ -35,12 +35,13 @@ jobs:
       - name: Restart Express API via PM2
         run: |
           $keyPath = "$env:RUNNER_WORKSPACE\temp_key.pem"
-          ssh -i $keyPath -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
-            cd /home/ec2-user/express-api
-            npm install
-            pm2 restart express-api || pm2 start server.js --name "express-api"
+          $remoteCommand = @"
+            cd /home/ec2-user/express-api &&
+            npm install &&
+            pm2 restart express-api || pm2 start server.js --name "express-api" &&
             pm2 save
-          EOF
+          "@
+          ssh -i $keyPath -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "$remoteCommand"
 
       # Angular App Update
       - name: Install Angular dependencies
