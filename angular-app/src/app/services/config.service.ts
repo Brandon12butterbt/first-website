@@ -44,4 +44,8 @@ export class ConfigService {
   get stripePremiumUrl(): string {
     return this.env.STRIPE_PREMIUM_URL;
   }
+
+  get turnWidgetSiteKey(): string {
+    return this.env.TURN_WIDGET_SITE_KEY;
+  }
 }

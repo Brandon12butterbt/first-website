@@ -8,7 +8,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
       <!-- Generation Form -->
       <mat-card class="bg-gray-800 p-6 min-h-[60vh]">
-        <h2 class="text-xl font-semibold text-white mb-4 select-none">Image Settings</h2>
+        <h2 class="text-xl font-semibold text-white mb-4 select-none flex justify-center">Image Settings</h2>
         
         <form [formGroup]="generateForm" (ngSubmit)="onSubmit()" class="space-y-4">
           <mat-form-field appearance="fill" class="w-full">
@@ -24,7 +24,15 @@
               Prompt is required
             </mat-error>
           </mat-form-field>
-          
+
+          <div *ngIf="turnWidgetSiteKey !== null" class="flex justify-center">
+            <ngx-turnstile 
+              [siteKey]="turnWidgetSiteKey" 
+              formControlName="turnstileToken"
+              theme="auto">
+            </ngx-turnstile>
+          </div>
+
           <div class="pt-8">
             <button 
               mat-raised-button 
@@ -62,7 +70,7 @@
       <!-- Preview Area -->
       <div class="flex flex-col">
         <mat-card class="bg-gray-800 p-6 h-full flex flex-col min-h-[60vh]">
-          <h2 class="text-xl font-semibold text-white mb-4 select-none">Image Preview</h2>
+          <h2 class="text-xl font-semibold text-white mb-4 select-none flex justify-center">Image Preview</h2>
           
           <div *ngIf="isGenerating" class="flex-1 flex items-center justify-center">
             <div class="text-center">

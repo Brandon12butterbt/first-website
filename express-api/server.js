@@ -11,7 +11,8 @@ app.use(cors({
     'https://afluxgen.com',
     'http://www.afluxgen.com',
     'https://www.afluxgen.com',
-    'http://localhost'
+    'http://localhost',
+    'http://localhost:4200'
   ]
   // origin: 'http://localhost:4200',
 }));
@@ -27,7 +28,8 @@ app.get('/env', (req, res) => {
     STRIPE_PRICE_ID: process.env.STRIPE_PRICE_ID,
     STRIPE_BASIC_URL: process.env.STRIPE_BASIC_URL,
     FLUX_ACCOUNT_ID: process.env.FLUX_ACCOUNT_ID,
-    STRIPE_PREMIUM_URL: process.env.STRIPE_PREMIUM_URL
+    STRIPE_PREMIUM_URL: process.env.STRIPE_PREMIUM_URL,
+    TURN_WIDGET_SITE_KEY: process.env.TURN_WIDGET_SITE_KEY
   });
 });
 

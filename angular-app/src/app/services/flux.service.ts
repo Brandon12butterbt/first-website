@@ -38,9 +38,9 @@ export class FluxService {
     const now = Date.now();
     const lastRequestTime = localStorage.getItem('lastImageRequest');
 
-    if (lastRequestTime && now - parseInt(lastRequestTime) < 120000) {
+    if (lastRequestTime && now - parseInt(lastRequestTime) < 60000) {
       console.warn('Rate limit hit: You can only generate one image per minute.');
-      return of({ error: 'rate_limited', message: 'Rate limit hit: You can only generate one image every two minutes.' });
+      return of({ error: 'rate_limited', message: 'Rate limit hit: You can only generate one image per minute.' });
     }
 
     // Store the current timestamp

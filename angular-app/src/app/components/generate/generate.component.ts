@@ -12,6 +12,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CommonModule } from '@angular/common';
 import { firstValueFrom } from 'rxjs';
 import { NavBarComponent } from '../shared/nav-bar/nav-bar.component';
+import { NgxTurnstileModule, NgxTurnstileFormsModule } from 'ngx-turnstile';
+import { ConfigService } from '../../services/config.service';
 
 @Component({
   selector: 'app-generate',
@@ -26,7 +28,9 @@ import { NavBarComponent } from '../shared/nav-bar/nav-bar.component';
     MatIconModule,
     MatProgressSpinnerModule,
     RouterModule,
-    NavBarComponent
+    NavBarComponent,
+    NgxTurnstileModule,
+    NgxTurnstileFormsModule
   ],
   templateUrl: './generate.component.html',
   styleUrls: ['./generate.component.css']
@@ -40,6 +44,7 @@ export class GenerateComponent implements OnInit, OnDestroy {
   userEmail: string = '';
   lastUpdateTime: string = 'Not started';
   imageUrl: string | null = null;
+  turnWidgetSiteKey: string = '';
   
   // Add a property to track save status
   saveMessage: string = '';
@@ -54,10 +59,13 @@ export class GenerateComponent implements OnInit, OnDestroy {
     private fluxService: FluxService,
     private supabaseService: SupabaseService,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    public config: ConfigService
   ) {
+    this.turnWidgetSiteKey = this.config.turnWidgetSiteKey;
     this.generateForm = this.fb.group({
-      prompt: ['', [Validators.required]]
+      prompt: ['', [Validators.required]],
+      turnstileToken: [null, Validators.required]
     });
   }
   
@@ -97,7 +105,8 @@ export class GenerateComponent implements OnInit, OnDestroy {
     this.errorMessage = '';
     this.lastUpdateTime = new Date().toLocaleTimeString();
     
-    const { prompt } = this.generateForm.value;
+    const { prompt, turnstileToken } = this.generateForm.value;
+    console.log('Submitting with Turnstile token:', turnstileToken);
     
     console.log('Starting image generation...');
     
@@ -262,5 +271,9 @@ export class GenerateComponent implements OnInit, OnDestroy {
     if (this.generatedImage && this.generatedImage.startsWith('blob:')) {
       URL.revokeObjectURL(this.generatedImage);
     }
+  }
+
+  sendCaptchaResponse(captchaResponse: any) {
+    console.log(`Resolved captcha with response: ${captchaResponse}`);
   }
 } 
