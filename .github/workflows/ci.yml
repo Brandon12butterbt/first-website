@@ -27,6 +27,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # Express Api Updates
       - name: Copy Express API to EC2
         run: |
           $keyPath = "$env:RUNNER_WORKSPACE\temp_key.pem"
@@ -43,7 +44,7 @@ jobs:
           "@
           ssh -i $keyPath -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "$remoteCommand"
 
-      # Angular App Update
+      # Angular App Updates
       - name: Install Angular dependencies
         working-directory: ./angular-app
         run: npm install
@@ -56,19 +57,3 @@ jobs:
         run: |
           $keyPath = "$env:RUNNER_WORKSPACE\temp_key.pem"
           scp -i $keyPath -o StrictHostKeyChecking=no -r ./angular-app/dist/* ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ec2-user
-        
-      # Express App Update
-      # - name: Copy Express API to EC2
-      #   run: |
-      #     $keyPath = "$env:RUNNER_WORKSPACE\temp_key.pem"
-      #     scp -i $keyPath -o StrictHostKeyChecking=no -r ./express-api ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ec2-user/
-
-      # - name: Restart Express API via PM2
-      #   run: |
-      #     $keyPath = "$env:RUNNER_WORKSPACE\temp_key.pem"
-      #     ssh -i $keyPath -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
-      #       cd /home/ec2-user/express-api
-      #       npm install
-      #       pm2 restart express-api || pm2 start server.js --name "express-api"
-      #       pm2 save
-      #     EOF
