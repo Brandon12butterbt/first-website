@@ -42,6 +42,7 @@ jobs:
             pm2 restart express-api || pm2 start server.js --name "express-api" &&
             pm2 save
           "@
+          $remoteCommand = [System.Text.RegularExpressions.Regex]::Replace($remoteCommand, "`r", "")
           ssh -i $keyPath -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "$remoteCommand"
 
       # Angular App Updates
