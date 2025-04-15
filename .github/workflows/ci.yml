@@ -39,7 +39,8 @@ jobs:
           $remoteCommand = @"
             cd /home/ec2-user/express-api &&
             npm install &&
-            pm2 restart express-api || pm2 start server.js --name "express-api" &&
+            pm2 delete express-api || echo 'Not running' &&
+            pm2 start server.js --name 'express-api' &&
             pm2 save
           "@
           $remoteCommand = [System.Text.RegularExpressions.Regex]::Replace($remoteCommand, "`r", "")
