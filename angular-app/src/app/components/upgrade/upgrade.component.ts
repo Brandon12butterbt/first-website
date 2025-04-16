@@ -69,16 +69,6 @@ export class UpgradeComponent implements OnInit {
   }
   
   async purchaseCredits(packageId: string) {
-    // this.isPurchasing = true;
-    
-    // try {
-    //   await this.stripeService.redirectToCheckout(packageId);
-    // } catch (error: any) {
-    //   console.error('Error redirecting to checkout:', error);
-    //   alert('Error processing payment: ' + error.message);
-    // } finally {
-    //   this.isPurchasing = false;
-    // }
     const uuid: string = uuidv4();
     await this.supabaseService.saveTokenTracker(uuid, packageId);
     sessionStorage.setItem('token', uuid);
@@ -94,6 +84,6 @@ export class UpgradeComponent implements OnInit {
   
   async signOut() {
     await this.supabaseService.signOut();
-    this.router.navigate(['/login']);
+    this.router.navigate(['/']);
   }
 } 

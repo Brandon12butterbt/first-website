@@ -262,7 +262,7 @@ export class GenerateComponent implements OnInit, OnDestroy {
 
   async signOut() {
     await this.supabaseService.signOut();
-    this.router.navigate(['/login']);
+    this.router.navigate(['/']);
   }
 
   // Add this to clean up blob URLs when no longer needed
