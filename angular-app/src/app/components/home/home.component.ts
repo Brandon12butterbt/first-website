@@ -6,7 +6,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { NavBarComponent } from '../shared/nav-bar/nav-bar.component';
 
 @Component({
   selector: 'app-home',
@@ -16,8 +15,7 @@ import { NavBarComponent } from '../shared/nav-bar/nav-bar.component';
     MatButtonModule,
     MatIconModule,
     MatCardModule,
-    RouterModule,
-    NavBarComponent
+    RouterModule
   ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
@@ -32,22 +30,20 @@ export class HomeComponent implements OnInit {
   ) {}
   
   ngOnInit() {
+    console.log("Home page init called");
     this.loadUserData();
   }
   
   async loadUserData() {
     const user = this.supabaseService.currentUser;
+    console.log('user', user);
+    this.userEmail = user?.email || '';
+    this.profile = user;
     if (!user) {
-      return;
+      console.log('user null, pulling data');
+      this.profile = await this.supabaseService.getProfile();
+      this.userEmail = this.profile.email;
+      console.log('profile', this.profile);
     }
-    
-    this.userEmail = user.email || '';
-    this.profile = await this.supabaseService.getProfile();
-  }
-  
-  async signOut() {
-    await this.supabaseService.signOut();
-    this.profile = null;
-    this.router.navigate(['/']);
   }
 } 

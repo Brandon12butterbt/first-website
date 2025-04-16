@@ -1,6 +1,4 @@
-<div class="min-h-screen bg-gray-900 flex flex-col">
-  <!-- Top Navigation -->
-  <app-nav-bar [userEmail]="userEmail" [profile]="profile" (signOut)="signOut()"></app-nav-bar>
+<div class="h-[calc(100vh-60px)] bg-gray-900 flex flex-col">
   
   <!-- Payment success notification -->
   <div *ngIf="showSuccessNotification" class="bg-green-700 text-white p-4 text-center flex justify-center items-center">

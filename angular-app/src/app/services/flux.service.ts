@@ -5,6 +5,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, tap, finalize } from 'rxjs/operators';
 
 import { ConfigService } from './config.service';
+import { CountdownService } from './image-countdown.service';
 
 // Define interfaces for the Cloudflare API response
 interface CloudflareApiResponse {
@@ -29,7 +30,7 @@ export class FluxService {
   private apiUrl: string;
   private apiToken: string;
   
-  constructor(private http: HttpClient, public config: ConfigService) {
+  constructor(private http: HttpClient, public config: ConfigService, private countdownService: CountdownService) {
     this.apiUrl = 'https://fragrant-term-2137.brandontbutterworth.workers.dev';
     this.apiToken = this.config.fluxApiKey;
   }
@@ -45,6 +46,7 @@ export class FluxService {
 
     // Store the current timestamp
     localStorage.setItem('lastImageRequest', now.toString());
+    this.countdownService.startCountdown();
 
     const headers = new HttpHeaders({
       Authorization: `Bearer ${this.apiToken}`,
@@ -52,9 +54,6 @@ export class FluxService {
     });
 
     const body = { prompt };
-
-    console.log('Making API request to:', this.apiUrl);
-    console.log('With prompt:', prompt);
     
     return this.http.post(this.apiUrl, body, {
       headers,
@@ -70,7 +69,7 @@ export class FluxService {
         );
         return of(fallbackBlob);
       }),
-      finalize(() => console.log('Image generation request complete'))
+      finalize(() => {})
     );
   }
   

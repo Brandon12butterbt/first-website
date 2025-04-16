@@ -1,11 +1,11 @@
-<div class="min-h-screen bg-gray-900 flex flex-col">
+<div class="h-[calc(100vh-60px)] bg-gray-900 flex flex-col">
   <!-- Top Navigation -->
-  <app-nav-bar [userEmail]="userEmail" [profile]="profile" (signOut)="signOut()"></app-nav-bar>
+  <!-- <app-nav-bar [userEmail]="userEmail" [profile]="profile" (signOut)="signOut()"></app-nav-bar> -->
   
   <!-- Main Content -->
   <div class="flex-1 p-6">
-    
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+  
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 grid-style">
       <!-- Generation Form -->
       <mat-card class="bg-gray-800 p-6 min-h-[60vh]">
         <h2 class="text-xl font-semibold text-white mb-4 select-none flex justify-center">Image Settings</h2>
@@ -25,20 +25,21 @@
             </mat-error>
           </mat-form-field>
 
-          <div *ngIf="turnWidgetSiteKey !== null" class="flex justify-center">
+          <div *ngIf="turnWidgetSiteKey !== null && !isTurnstileVerified" class="flex justify-center">
             <ngx-turnstile 
               [siteKey]="turnWidgetSiteKey" 
               formControlName="turnstileToken"
-              theme="auto">
+              theme="auto"
+              (resolved)="onTurnstileSuccess($event)">
             </ngx-turnstile>
           </div>
 
-          <div class="pt-8">
+          <div *ngIf="!isGenerating && hasCredits" class="pt-2 flex justify-center">
             <button 
               mat-raised-button 
               color="primary" 
               type="submit" 
-              class="w-full bg-purple-600 hover:bg-purple-700 py-2"
+              class="bg-purple-600 hover:bg-purple-700 py-2"
               [disabled]="isGenerating || !generateForm.valid || !hasCredits">
               <span *ngIf="isGenerating">
                 <mat-spinner diameter="24" class="inline-block mr-2"></mat-spinner>
@@ -64,6 +65,10 @@
           <div *ngIf="errorMessage" class="text-red-500 mt-2 text-center">
             {{ errorMessage }}
           </div>
+
+          <div class="pt-2 flex justify-center">
+            <app-image-countdown-timer></app-image-countdown-timer>
+          </div>
         </form>
       </mat-card>
       
@@ -74,7 +79,7 @@
           
           <div *ngIf="isGenerating" class="flex-1 flex items-center justify-center">
             <div class="text-center">
-              <mat-spinner diameter="64" class="mx-auto mb-4"></mat-spinner>
+              <mat-spinner diameter="64" class="mx-auto mb-4 text-white"></mat-spinner>
               <p class="text-gray-300">Creating your masterpiece...</p>
               <p class="text-gray-400 text-sm mt-2">This may take up to 30 seconds</p>
             </div>
@@ -88,11 +93,11 @@
           </div>
           
           <div *ngIf="!isGenerating && generatedImage" class="flex-1 flex flex-col">
-            <div class="relative flex-1">
+            <div class="relative flex-1 image-container-style">
               <img [src]="generatedImage" alt="Generated image" class="w-full h-full object-contain rounded-lg">
             </div>
             
-            <div class="flex justify-between mt-4">
+            <div class="flex justify-center mt-4 gap-16">
               <button mat-raised-button color="primary" (click)="downloadImage()" class="bg-purple-600 hover:bg-purple-700">
                 <mat-icon class="text-white">download</mat-icon>
                 <span class="text-white">Download</span>
@@ -100,7 +105,7 @@
               
               <button mat-raised-button color="accent" (click)="saveImage()" class="bg-purple-600 hover:bg-purple-700"
                 [disabled]="isSaving">
-                <mat-spinner *ngIf="isSaving" diameter="20" class="inline-block mr-2"></mat-spinner>
+                <mat-spinner *ngIf="isSaving" diameter="20" class="inline-block mr-2 text-white"></mat-spinner>
                 <mat-icon *ngIf="!isSaving" class="text-white">save</mat-icon>
                 <span class="text-white">{{ isSaving ? 'Saving...' : 'Save to Gallery' }}</span>
               </button>

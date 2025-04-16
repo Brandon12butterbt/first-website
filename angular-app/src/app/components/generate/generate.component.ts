@@ -11,9 +11,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CommonModule } from '@angular/common';
 import { firstValueFrom } from 'rxjs';
-import { NavBarComponent } from '../shared/nav-bar/nav-bar.component';
 import { NgxTurnstileModule, NgxTurnstileFormsModule } from 'ngx-turnstile';
 import { ConfigService } from '../../services/config.service';
+import { ImageCountdownComponent } from '../shared/image-countdown/image-countdown.component';
 
 @Component({
   selector: 'app-generate',
@@ -28,9 +28,9 @@ import { ConfigService } from '../../services/config.service';
     MatIconModule,
     MatProgressSpinnerModule,
     RouterModule,
-    NavBarComponent,
     NgxTurnstileModule,
-    NgxTurnstileFormsModule
+    NgxTurnstileFormsModule,
+    ImageCountdownComponent
   ],
   templateUrl: './generate.component.html',
   styleUrls: ['./generate.component.css']
@@ -45,6 +45,7 @@ export class GenerateComponent implements OnInit, OnDestroy {
   lastUpdateTime: string = 'Not started';
   imageUrl: string | null = null;
   turnWidgetSiteKey: string = '';
+  isTurnstileVerified = false;
   
   // Add a property to track save status
   saveMessage: string = '';
@@ -106,9 +107,6 @@ export class GenerateComponent implements OnInit, OnDestroy {
     this.lastUpdateTime = new Date().toLocaleTimeString();
     
     const { prompt, turnstileToken } = this.generateForm.value;
-    console.log('Submitting with Turnstile token:', turnstileToken);
-    
-    console.log('Starting image generation...');
     
     // Set a safety timeout to ensure the spinner stops even if something goes wrong
     setTimeout(() => {
@@ -140,12 +138,10 @@ export class GenerateComponent implements OnInit, OnDestroy {
         return;
       }
       
-      console.log('Image blob received in component, size:', imageBlob.size);
       this.lastUpdateTime = new Date().toLocaleTimeString() + ' (success)';
       
       // Create a URL for the blob (temporary, for display only)
       this.generatedImage = URL.createObjectURL(imageBlob);
-      console.log('Image URL created:', this.generatedImage);
       
       // Decrement user's credits
       await this.supabaseService.incrementImagesGenerated();
@@ -157,14 +153,12 @@ export class GenerateComponent implements OnInit, OnDestroy {
       this.generatedImage = null;
       this.lastUpdateTime = new Date().toLocaleTimeString() + ' (error)';
     } finally {
-      console.log('Generation process completed');
       this.isGenerating = false;
       this.lastUpdateTime = new Date().toLocaleTimeString() + ' (complete)';
       
       // Force Angular to detect changes
       try {
         this.cdr.detectChanges();
-        console.log('Change detection triggered');
       } catch (e) {
         console.warn('Error during change detection:', e);
       }
@@ -260,14 +254,7 @@ export class GenerateComponent implements OnInit, OnDestroy {
     }
   }
 
-  async signOut() {
-    await this.supabaseService.signOut();
-    this.router.navigate(['/']);
-  }
-
-  // Add this to clean up blob URLs when no longer needed
   ngOnDestroy() {
-    // Revoke any blob URLs to prevent memory leaks
     if (this.generatedImage && this.generatedImage.startsWith('blob:')) {
       URL.revokeObjectURL(this.generatedImage);
     }
@@ -275,5 +262,9 @@ export class GenerateComponent implements OnInit, OnDestroy {
 
   sendCaptchaResponse(captchaResponse: any) {
     console.log(`Resolved captcha with response: ${captchaResponse}`);
+  }
+
+  onTurnstileSuccess(token: any) {
+    setTimeout(() => { this.isTurnstileVerified = true; }, 3000);
   }
 } 

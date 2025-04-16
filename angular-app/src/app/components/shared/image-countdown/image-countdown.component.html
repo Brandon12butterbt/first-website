@@ -1,0 +1,4 @@
+<div class="countdown">
+    <p *ngIf="countdownText === 'Ready'">Image Generation Status: {{ countdownText }}</p>
+    <p *ngIf="countdownText !== 'Ready'">Next Available Image Generation: {{ countdownText }}</p>
+</div>

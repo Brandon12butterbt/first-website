@@ -5,7 +5,6 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { NavBarComponent } from '../shared/nav-bar/nav-bar.component';
 import { SupabaseService } from '../../services/supabase.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
@@ -19,8 +18,7 @@ import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
     MatCardModule,
     MatButtonModule,
     MatIconModule,
-    MatProgressSpinnerModule,
-    NavBarComponent
+    MatProgressSpinnerModule
   ],
   templateUrl: './gallery.component.html',
   styleUrls: ['./gallery.component.css']
@@ -68,7 +66,6 @@ export class GalleryComponent implements OnInit {
     if (paymentSuccess === 'true') {
       this.showSuccessNotification = true;
       this.successMessage = 'Payment successful! Your credits have been added to your account.';
-      // Remove the query parameter
       window.history.replaceState({}, '', '/gallery');
     }
   }
@@ -118,10 +115,5 @@ export class GalleryComponent implements OnInit {
         panelClass: ['bg-red-700', 'text-white']
       });
     }
-  }
-
-  async signOut() {
-    await this.supabaseService.signOut();
-    this.router.navigate(['/']);
   }
 } 

@@ -55,7 +55,7 @@ export class LoginComponent {
         );
         
         if (success) {
-          this.router.navigate(['/']);
+          this.router.navigate(['/'], { onSameUrlNavigation: 'reload' });
         } else {
           this.errorMessage = error || 'An error occurred during login';
         }

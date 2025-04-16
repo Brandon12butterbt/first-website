@@ -9,7 +9,6 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { NavBarComponent } from '../shared/nav-bar/nav-bar.component';
 import { PaymentService } from '../../services/payment.service';
 import { v4 as uuidv4 } from 'uuid';
 import { CreditPackage } from '../shared/credit-packages';
@@ -25,8 +24,7 @@ import { ConfigService } from '../../services/config.service';
     MatCardModule,
     MatDividerModule,
     MatProgressSpinnerModule,
-    RouterModule,
-    NavBarComponent
+    RouterModule
   ],
   templateUrl: './upgrade.component.html',
   styleUrls: ['./upgrade.component.css']
@@ -80,10 +78,5 @@ export class UpgradeComponent implements OnInit {
     } else if (packageId === 'premium') {
       window.location.href = this.config.stripePremiumUrl;
     }
-  }
-  
-  async signOut() {
-    await this.supabaseService.signOut();
-    this.router.navigate(['/']);
   }
 } 

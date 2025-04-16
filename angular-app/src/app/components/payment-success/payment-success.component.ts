@@ -8,7 +8,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { Router, RouterModule } from '@angular/router';
 import { SupabaseService } from '../../services/supabase.service';
-import { NavBarComponent } from '../shared/nav-bar/nav-bar.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { StripeService } from '../../services/stripe.service';
 
@@ -23,8 +22,7 @@ import { StripeService } from '../../services/stripe.service';
     MatCardModule,
     MatIconModule,
     MatProgressSpinnerModule,
-    RouterModule,
-    NavBarComponent
+    RouterModule
   ],
   templateUrl: './payment-success.component.html',
   styleUrls: ['./payment-success.component.css']
@@ -92,10 +90,5 @@ export class PaymentSuccessComponent {
     } else {
       return user;
     }
-  }
-
-  async signOut() {
-    await this.supabaseService.signOut();
-    this.router.navigate(['/']);
   }
 }

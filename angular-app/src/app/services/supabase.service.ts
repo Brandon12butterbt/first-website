@@ -415,4 +415,8 @@ export class SupabaseService {
     }
   }
 
+  authChanges(callback: (event: any, session: any) => void) {
+    this.supabase.auth.onAuthStateChange(callback);
+  }
+
 } 

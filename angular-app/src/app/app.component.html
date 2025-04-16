@@ -1,1 +1,4 @@
-<router-outlet />
+<app-nav-bar [userEmail]="userEmail" [profile]="profile" (signOut)="signOut()"></app-nav-bar>
+<div class="content">
+  <router-outlet></router-outlet>
+</div>
