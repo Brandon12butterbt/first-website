@@ -9,6 +9,8 @@ import { SupabaseService } from '../../services/supabase.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 
+import { SupabaseAuthService } from '../../services/supabase-auth.service';
+
 @Component({
   selector: 'app-gallery',
   standalone: true,
@@ -31,12 +33,16 @@ export class GalleryComponent implements OnInit {
   showSuccessNotification = false;
   successMessage = '';
 
-  constructor(private supabaseService: SupabaseService, private router: Router, private snackBar: MatSnackBar) {}
+  constructor(private supabaseService: SupabaseService, private router: Router, private snackBar: MatSnackBar, private supabaseAuthService: SupabaseAuthService) {}
 
   async ngOnInit() {
-    await this.loadUserData();
-    await this.loadImages();
-    this.checkPaymentSuccess();
+    // await this.loadUserData();
+    // await this.loadImages();
+    if (this.supabaseAuthService.session) {
+      console.log('in here lol');
+      await this.getFluxProfile(this.supabaseAuthService.session);
+      await this.getGeneratedImages();
+    }
   }
 
   private async loadUserData() {
@@ -57,16 +63,6 @@ export class GalleryComponent implements OnInit {
       console.error('Error loading images:', error);
     } finally {
       this.isLoading = false;
-    }
-  }
-
-  private checkPaymentSuccess() {
-    const params = new URLSearchParams(window.location.search);
-    const paymentSuccess = params.get('payment_success');
-    if (paymentSuccess === 'true') {
-      this.showSuccessNotification = true;
-      this.successMessage = 'Payment successful! Your credits have been added to your account.';
-      window.history.replaceState({}, '', '/gallery');
     }
   }
 
@@ -106,6 +102,81 @@ export class GalleryComponent implements OnInit {
           panelClass: ['bg-red-700', 'text-white']
         });
       }
+    } catch (error) {
+      console.error('Error deleting image:', error);
+      this.snackBar.open('Error deleting image', 'Close', {
+        duration: 3000,
+        horizontalPosition: 'center',
+        verticalPosition: 'bottom',
+        panelClass: ['bg-red-700', 'text-white']
+      });
+    }
+  }
+
+  async getFluxProfile(session: any) {
+    try {
+      const { user } = session;
+      const { data: profile, error, status } = await this.supabaseAuthService.fluxProfile(user.id);
+      if (error && status !== 406) {
+        throw error;
+      }
+      if (profile) {
+        this.profile = profile;
+        console.log('Profile from app comp: ', this.profile);
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        alert(error.message);
+      }
+    } finally {
+      console.log('fin');
+    }
+  }
+
+  async getGeneratedImages() {
+    try {
+      // Wait for user state to be initialized
+      if (!this.profile) {
+        // Wait up to 5 seconds for user state to be ready
+        let attempts = 0;
+        while (!this.profile.id && attempts < 5) {
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          attempts++;
+        }
+        
+        if (!this.profile.id) {
+          console.warn('User state not initialized after waiting, returning empty array');
+          return [];
+        }
+      }
+
+      const { data } = await this.supabaseAuthService.fluxImages(this.profile.id);
+
+      this.images = data || [];
+    } catch (error) {
+      console.error('Error getting generated images:', error);
+      return [];
+    } finally {
+      this.isLoading = false;
+      return;
+    }
+  }
+
+  async deleteFluxImage(imageId: string) {
+    try {
+      console.log('deleteing with profile id: ', this.profile.id);
+      console.log('delete image id: ', imageId);
+      await this.supabaseAuthService.deleteFluxImage(this.profile.id, imageId);
+
+      this.snackBar.open('Image deleted successfully', 'Close', {
+        duration: 3000,
+        horizontalPosition: 'center',
+        verticalPosition: 'bottom',
+        panelClass: ['bg-gray-800', 'text-white']
+      });
+
+      // Refresh the image list
+      this.getGeneratedImages();
     } catch (error) {
       console.error('Error deleting image:', error);
       this.snackBar.open('Error deleting image', 'Close', {

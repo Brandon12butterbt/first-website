@@ -12,8 +12,11 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CommonModule } from '@angular/common';
 import { firstValueFrom } from 'rxjs';
 import { NgxTurnstileModule, NgxTurnstileFormsModule } from 'ngx-turnstile';
+
 import { ConfigService } from '../../services/config.service';
 import { ImageCountdownComponent } from '../shared/image-countdown/image-countdown.component';
+import { SupabaseAuthService } from '../../services/supabase-auth.service';
+import { CountdownService } from '../../services/image-countdown.service';
 
 @Component({
   selector: 'app-generate',
@@ -46,6 +49,7 @@ export class GenerateComponent implements OnInit, OnDestroy {
   imageUrl: string | null = null;
   turnWidgetSiteKey: string = '';
   isTurnstileVerified = false;
+  countdownText = 'Ready';
   
   // Add a property to track save status
   saveMessage: string = '';
@@ -61,7 +65,9 @@ export class GenerateComponent implements OnInit, OnDestroy {
     private supabaseService: SupabaseService,
     private router: Router,
     private cdr: ChangeDetectorRef,
-    public config: ConfigService
+    public config: ConfigService,
+    private supabaseAuthService: SupabaseAuthService,
+    private countdownService: CountdownService
   ) {
     this.turnWidgetSiteKey = this.config.turnWidgetSiteKey;
     this.generateForm = this.fb.group({
@@ -70,8 +76,18 @@ export class GenerateComponent implements OnInit, OnDestroy {
     });
   }
   
-  ngOnInit() {
-    this.loadUserProfile();
+  async ngOnInit() {
+    // this.loadUserProfile();
+    this.countdownService.countdown$.subscribe(text => {
+      this.countdownText = text;
+    });
+    
+    this.countdownService.startCountdown();
+    
+    if (this.supabaseAuthService.session) {
+      console.log('in here lol');
+      await this.getFluxProfile(this.supabaseAuthService.session);
+    }
   }
   
   async loadUserProfile() {
@@ -96,6 +112,25 @@ export class GenerateComponent implements OnInit, OnDestroy {
       console.error('Error loading user profile:', error);
       // If profile loading fails, use a default profile with credits
       this.profile = { credits: 5, images_generated: 0 };
+    }
+  }
+
+  async getFluxProfile(session: any) {
+    try {
+      const { user } = session;
+      const { data: profile, error, status } = await this.supabaseAuthService.fluxProfile(user.id);
+      if (error && status !== 406) {
+        throw error;
+      }
+      if (profile) {
+        this.profile = profile;
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        alert(error.message);
+      }
+    } finally {
+      console.log('fin');
     }
   }
   
@@ -144,8 +179,8 @@ export class GenerateComponent implements OnInit, OnDestroy {
       this.generatedImage = URL.createObjectURL(imageBlob);
       
       // Decrement user's credits
-      await this.supabaseService.incrementImagesGenerated();
-      await this.loadUserProfile();
+      await this.supabaseAuthService.imageGeneratedUpdateProfile(this.profile.id, this.profile.images_generated, this.profile.credits);
+      await this.getFluxProfile(this.supabaseAuthService.session);
       
     } catch (error) {
       console.error('Error in component when generating image:', error);
@@ -220,7 +255,7 @@ export class GenerateComponent implements OnInit, OnDestroy {
         const dataUrl = await dataUrlPromise;
         
         // Now save the data URL to Supabase
-        await this.supabaseService.saveGeneratedImage(dataUrl, prompt);
+        await this.supabaseAuthService.saveGeneratedImage(this.profile.id, dataUrl, prompt);
         
         // Show success notification
         this.saveMessage = 'Image saved to your gallery!';
@@ -258,10 +293,6 @@ export class GenerateComponent implements OnInit, OnDestroy {
     if (this.generatedImage && this.generatedImage.startsWith('blob:')) {
       URL.revokeObjectURL(this.generatedImage);
     }
-  }
-
-  sendCaptchaResponse(captchaResponse: any) {
-    console.log(`Resolved captcha with response: ${captchaResponse}`);
   }
 
   onTurnstileSuccess(token: any) {

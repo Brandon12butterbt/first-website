@@ -7,6 +7,8 @@ import { MatCardModule } from '@angular/material/card';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
+import { SupabaseAuthService } from '../../services/supabase-auth.service';
+
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -23,27 +25,64 @@ import { RouterModule } from '@angular/router';
 export class HomeComponent implements OnInit {
   userEmail: string = '';
   profile: any = null;
+  loading = false;
+  session: any = null;
   
   constructor(
     private supabaseService: SupabaseService,
-    private router: Router
+    private router: Router,
+    private supabaseAuthService: SupabaseAuthService
   ) {}
-  
-  ngOnInit() {
-    console.log("Home page init called");
-    this.loadUserData();
+
+  async ngOnInit(): Promise<void> {
+    this.session = this.supabaseAuthService.session;
+
+    this.supabaseAuthService.authChanges((event, session) => {
+      if (session) {
+        this.getProfile(session).then(() => {
+          const { email } = this.profile;
+          this.session = session;
+        });
+      }
+    });
   }
-  
-  async loadUserData() {
-    const user = this.supabaseService.currentUser;
-    console.log('user', user);
-    this.userEmail = user?.email || '';
-    this.profile = user;
-    if (!user) {
-      console.log('user null, pulling data');
-      this.profile = await this.supabaseService.getProfile();
-      this.userEmail = this.profile.email;
-      console.log('profile', this.profile);
+
+  async getProfile(session: any) {
+    try {
+      this.loading = true;
+      const { user } = session;
+      const { data: profile, error, status } = await this.supabaseAuthService.profile(user);
+      if (error && status !== 406) {
+        throw error;
+      }
+      if (profile) {
+        this.profile = profile;
+        console.log('Profile: ', this.profile);
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        alert(error.message);
+      }
+    } finally {
+      this.loading = false;
     }
   }
+  
+  // ngOnInit() {
+  //   console.log("Home page init called");
+  //   this.loadUserData();
+  // }
+  
+  // async loadUserData() {
+  //   const user = this.supabaseService.currentUser;
+  //   console.log('user', user);
+  //   this.userEmail = user?.email || '';
+  //   this.profile = user;
+  //   if (!user) {
+  //     console.log('user null, pulling data');
+  //     this.profile = await this.supabaseService.getProfile();
+  //     this.userEmail = this.profile.email;
+  //     console.log('profile', this.profile);
+  //   }
+  // }
 } 

@@ -6,6 +6,7 @@ import { PaymentService } from './services/payment.service';
 
 import { NavBarComponent } from './components/shared/nav-bar/nav-bar.component';
 import { AuthService } from './services/auth-service';
+import { SupabaseAuthService } from './services/supabase-auth.service';
 
 @Component({
   selector: 'app-root',
@@ -20,40 +21,60 @@ export class AppComponent implements OnInit {
   profile: any = null;
   userEmail: string = '';
 
+  session: any = null;
+
   constructor(
     private supabaseClientService: SupabaseClientService,
     private router: Router,
     private supabaseService: SupabaseService,
     private paymentService: PaymentService,
-    private authService: AuthService
-  ) {}
+    private authService: AuthService,
+    private supabaseAuthService: SupabaseAuthService
+  ) {
+    this.session = this.supabaseAuthService.session;
+  }
 
-  ngOnInit() {
+  async ngOnInit() {
+    const session = await this.supabaseAuthService.ensureSessionLoaded();
+    if (session) {
+      console.log('testing session on refresh ', this.session);
+      this.session = session;
+      this.getFluxProfile(session).then(() => {
+        this.userEmail = this.profile.email;
+      });
+    }
 
-    this.authService.authState$.subscribe(state => {
-      if (state) {
-        this.userEmail = state.email;
-        this.profile = state.profile;
-      } else {
-        this.userEmail = '';
-        this.profile = null;
-      }
+    this.supabaseAuthService.authChanges((event, session) => {
+      this.session = session;
+      this.getFluxProfile(session).then(() => {
+        this.userEmail = this.profile.email;
+      });
     });
 
-    const apiCallMade = JSON.parse(sessionStorage.getItem('apiCallMade') || 'false');
-    this.paymentService.setApiCallMade(apiCallMade);
+    // this.authService.authState$.subscribe(state => {
+    //   if (state) {
+    //     this.userEmail = state.email;
+    //     this.profile = state.profile;
+    //   } else {
+    //     this.userEmail = '';
+    //     this.profile = null;
+    //   }
+    // });
+
+    // const apiCallMade = JSON.parse(sessionStorage.getItem('apiCallMade') || 'false');
+    // this.paymentService.setApiCallMade(apiCallMade);
 
 
-    this.supabaseClientService.waitForSession().subscribe(session => {
-      if (session && window.location.pathname === '/login') {
-        this.router.navigate(['/']);
-      }
+    // this.supabaseClientService.waitForSession().subscribe(session => {
+    //   if (session && window.location.pathname === '/login') {
+    //     this.router.navigate(['/']);
+    //   }
       
-      const isAuthPage = ['/login', '/signup', '/reset-password'].includes(window.location.pathname);
-      if (!session && !isAuthPage) {
-        this.router.navigate(['/']);
-      }
-    });
+    //   const isAuthPage = ['/login', '/signup', '/reset-password'].includes(window.location.pathname);
+    //   if (!session && !isAuthPage) {
+    //     this.router.navigate(['/']);
+    //   }
+    // });
   }
 
   async checkSession() {
@@ -73,8 +94,28 @@ export class AppComponent implements OnInit {
     this.profile = await this.supabaseService.getProfile();
   }
 
+  async getFluxProfile(session: any) {
+    try {
+      const { user } = session;
+      const { data: profile, error, status } = await this.supabaseAuthService.fluxProfile(user.id);
+      if (error && status !== 406) {
+        throw error;
+      }
+      if (profile) {
+        this.profile = profile;
+        console.log('Profile from app comp: ', this.profile);
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        alert(error.message);
+      }
+    } finally {
+      console.log('fin');
+    }
+  }
+
   async signOut() {
-    await this.supabaseService.signOut();
+    await this.supabaseAuthService.signOut();
     this.userEmail = '';
     this.profile = null;
     this.router.navigate(['/']);

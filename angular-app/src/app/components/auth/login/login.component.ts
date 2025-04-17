@@ -10,6 +10,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
+import { SupabaseAuthService } from '../../../services/supabase-auth.service';
+
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -35,7 +37,8 @@ export class LoginComponent {
   constructor(
     private fb: FormBuilder,
     private supabaseService: SupabaseService,
-    private router: Router
+    private router: Router,
+    private supabaseAuthService: SupabaseAuthService
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -49,16 +52,23 @@ export class LoginComponent {
       this.errorMessage = '';
       
       try {
-        const { success, error } = await this.supabaseService.signIn(
-          this.loginForm.get('email')?.value,
-          this.loginForm.get('password')?.value
-        );
-        
-        if (success) {
-          this.router.navigate(['/'], { onSameUrlNavigation: 'reload' });
+        // const { success, error } = await this.supabaseService.signIn(
+        //   this.loginForm.get('email')?.value,
+        //   this.loginForm.get('password')?.value
+        // );
+        const { error } = await this.supabaseAuthService.signIn(this.loginForm.get('email')?.value, this.loginForm.get('password')?.value);
+
+        if (error) {
+          throw error;
         } else {
-          this.errorMessage = error || 'An error occurred during login';
+          this.router.navigate(['/']);
         }
+        
+        // if (success) {
+        //   this.router.navigate(['/'], { onSameUrlNavigation: 'reload' });
+        // } else {
+        //   this.errorMessage = error || 'An error occurred during login';
+        // }
       } catch (err: any) {
         this.errorMessage = err.message || 'An error occurred during login';
       } finally {

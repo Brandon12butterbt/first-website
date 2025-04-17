@@ -34,7 +34,7 @@
             </ngx-turnstile>
           </div>
 
-          <div *ngIf="!isGenerating && hasCredits" class="pt-2 flex justify-center">
+          <div *ngIf="!isGenerating && hasCredits && countdownText === 'Ready'" class="pt-2 flex justify-center">
             <button 
               mat-raised-button 
               color="primary" 
