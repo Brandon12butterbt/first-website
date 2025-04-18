@@ -35,16 +35,14 @@ export class HomeComponent implements OnInit {
   ) {}
 
   async ngOnInit(): Promise<void> {
-    this.session = this.supabaseAuthService.session;
-
-    this.supabaseAuthService.authChanges((event, session) => {
-      if (session) {
-        this.getProfile(session).then(() => {
-          const { email } = this.profile;
-          this.session = session;
-        });
-      }
-    });
+    const session = await this.supabaseAuthService.ensureSessionLoaded();
+    if (session) {
+      console.log('home page ', this.session);
+      this.session = session;
+      this.getProfile(session).then(() => {
+        this.userEmail = this.profile.email;
+      });
+    }
   }
 
   async getProfile(session: any) {
@@ -61,10 +59,8 @@ export class HomeComponent implements OnInit {
       }
     } catch (error) {
       if (error instanceof Error) {
-        alert(error.message);
+        //Normal Home Page View
       }
-    } finally {
-      this.loading = false;
     }
   }
   

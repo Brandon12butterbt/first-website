@@ -76,8 +76,12 @@ export class UpgradeComponent implements OnInit {
   
   async purchaseCredits(packageId: string) {
     const uuid: string = uuidv4();
-    await this.supabaseService.saveTokenTracker(uuid, packageId);
+    // await this.supabaseService.saveTokenTracker(uuid, packageId);
+    const result = await this.supabaseAuthService.saveTokenTracker(this.profile.id, packageId, uuid);
+    console.log("Result of saving token: ", result);
+    setTimeout(() => { }, 5000);
     sessionStorage.setItem('token', uuid);
+    console.log('sesssion stroage: ', uuid);
     this.paymentService.setApiCallMade(true);
     if (packageId === 'basic') {
       window.location.href = this.config.stripeBasicUrl;
@@ -105,6 +109,7 @@ export class UpgradeComponent implements OnInit {
       }
     } finally {
       console.log('fin');
+      this.isLoading = false;
     }
   }
 } 

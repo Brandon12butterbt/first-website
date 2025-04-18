@@ -11,6 +11,8 @@ import { SupabaseService } from '../../services/supabase.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { StripeService } from '../../services/stripe.service';
 
+import { SupabaseAuthService } from '../../services/supabase-auth.service';
+
 @Component({
   selector: 'app-payment-success',
   imports: [
@@ -36,19 +38,78 @@ export class PaymentSuccessComponent {
   constructor(
     private supabaseService: SupabaseService,
     private router: Router,
-    private stripeService: StripeService
+    private stripeService: StripeService,
+    private supabaseAuthService: SupabaseAuthService
   ) {}
 
-  ngOnInit() {
-    this.handleTokenTracker().then(() => {
-      this.isLoading = false;
-    });
+  async ngOnInit() {
+    const session = await this.supabaseAuthService.ensureSessionLoaded();
+    if (session) {
+      this.checkTokens(session).then(() => {
+        if (this.profile) {
+          this.userEmail = this.profile.email;
+        }
+      });
+    }
+    // this.handleTokenTracker().then(() => {
+    //   this.isLoading = false;
+    // });
+  }
+
+  async checkTokens(session: any) {
+    try {
+      const { user } = session;
+      const { data: profile, error, status } = await this.supabaseAuthService.fluxProfile(user.id);
+      if (error && status !== 406) {
+        throw error;
+      }
+      if (profile) {
+        this.profile = profile;
+        this.token = this.supabaseAuthService.getTokenTracker(this.profile.id);
+
+        if (!this.token) {
+          this.router.navigate(['/']);
+          return;
+        }
+    
+        const sessionToken = sessionStorage.getItem('token');
+    
+        if (sessionToken) {
+          if (sessionToken !== this.token.unique_id) {
+            // Session token does not match database token, redirect to home page
+            sessionStorage.setItem('token', '');
+            await this.supabaseService.deleteTokenTracker();
+            this.router.navigate(['/']);
+          }
+          
+          // Session token matches database token, proceed with payment success
+          await this.stripeService.handlePaymentSuccess(this.token.package_type);
+          sessionStorage.setItem('token', '');
+          await this.supabaseService.deleteTokenTracker();
+    
+          this.userEmail = user.email || '';
+          this.profile = await this.supabaseService.getProfile();
+    
+          await this.supabaseService.savePurchase(this.token);
+        } else {
+          // Session token not found, redirect to home page
+          await this.supabaseService.deleteTokenTracker();
+          this.router.navigate(['/']);
+        }
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        alert(error.message);
+      }
+    } finally {
+      console.log('fin');
+    }
   }
 
   async handleTokenTracker() {
     const user = this.checkUser();
 
-    this.token = await this.supabaseService.getTokenTracker();
+    this.token = this.supabaseService.getTokenTracker();
 
     if (!this.token) {
       this.router.navigate(['/']);

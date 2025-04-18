@@ -5,7 +5,6 @@ import { SupabaseService } from './services/supabase.service';
 import { PaymentService } from './services/payment.service';
 
 import { NavBarComponent } from './components/shared/nav-bar/nav-bar.component';
-import { AuthService } from './services/auth-service';
 import { SupabaseAuthService } from './services/supabase-auth.service';
 
 @Component({
@@ -28,7 +27,6 @@ export class AppComponent implements OnInit {
     private router: Router,
     private supabaseService: SupabaseService,
     private paymentService: PaymentService,
-    private authService: AuthService,
     private supabaseAuthService: SupabaseAuthService
   ) {
     this.session = this.supabaseAuthService.session;
@@ -47,7 +45,9 @@ export class AppComponent implements OnInit {
     this.supabaseAuthService.authChanges((event, session) => {
       this.session = session;
       this.getFluxProfile(session).then(() => {
-        this.userEmail = this.profile.email;
+        if (this.profile) {
+          this.userEmail = this.profile.email;
+        }
       });
     });
 
@@ -107,10 +107,8 @@ export class AppComponent implements OnInit {
       }
     } catch (error) {
       if (error instanceof Error) {
-        alert(error.message);
+        this.router.navigate(['/']);
       }
-    } finally {
-      console.log('fin');
     }
   }
 

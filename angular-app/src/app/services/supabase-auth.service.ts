@@ -109,6 +109,30 @@ export class SupabaseAuthService {
             ]);
   }
 
+  getTokenTracker(id: string) {
+    return this.supabase
+      .from('token_tracker')
+      .select('*')
+      .eq('user_id', id)
+      .single();
+  }
+
+  saveTokenTracker(id: string, category: string, uuid: string) {
+    console.log('inserting token with these values');
+    console.log('id: ', id);
+    console.log('category: ', category);
+    console.log('uuid: ', uuid);
+    return this.supabase
+      .from('token_tracker')
+      .insert([
+        {
+          user_id: id,
+          package_type: category,
+          unique_id: uuid
+        }
+      ]);
+  }
+
   async getSession(): Promise<AuthSession | null> {
     const { data } = await this.supabase.auth.getSession();
     return data.session;
