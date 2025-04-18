@@ -45,6 +45,7 @@ export class PaymentSuccessComponent {
   async ngOnInit() {
     const session = await this.supabaseAuthService.ensureSessionLoaded();
     if (session) {
+      console.log('Inside payment success session ', session);
       this.checkTokens(session).then(() => {
         if (this.profile) {
           this.userEmail = this.profile.email;
@@ -65,7 +66,10 @@ export class PaymentSuccessComponent {
       }
       if (profile) {
         this.profile = profile;
-        this.token = this.supabaseAuthService.getTokenTracker(this.profile.id);
+        console.log('Profile inside here ', this.profile);
+        this.token = await this.supabaseAuthService.getTokenTracker(this.profile.id);
+
+        console.log('Token inside here ', this.token);
 
         if (!this.token) {
           this.router.navigate(['/']);
