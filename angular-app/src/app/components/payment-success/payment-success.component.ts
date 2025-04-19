@@ -11,6 +11,7 @@ import { SupabaseService } from '../../services/supabase.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { StripeService } from '../../services/stripe.service';
 
+import { getCreditPackageById } from '../shared/credit-packages';
 import { SupabaseAuthService } from '../../services/supabase-auth.service';
 
 @Component({
@@ -82,19 +83,24 @@ export class PaymentSuccessComponent {
           if (sessionToken !== this.token.unique_id) {
             // Session token does not match database token, redirect to home page
             sessionStorage.setItem('token', '');
-            await this.supabaseService.deleteTokenTracker();
+            // await this.supabaseService.deleteTokenTracker();
+            await this.supabaseAuthService.deleteTokenTracker(this.profile.id);
             this.router.navigate(['/']);
           }
           
           // Session token matches database token, proceed with payment success
           await this.stripeService.handlePaymentSuccess(this.token.package_type);
           sessionStorage.setItem('token', '');
-          await this.supabaseService.deleteTokenTracker();
+          // await this.supabaseService.deleteTokenTracker();
+          await this.supabaseAuthService.deleteTokenTracker(this.profile.id);
     
           this.userEmail = user.email || '';
           this.profile = await this.supabaseService.getProfile();
-    
-          await this.supabaseService.savePurchase(this.token);
+
+
+          const creditPackage = getCreditPackageById(this.token.package_type);
+          // await this.supabaseService.savePurchase(this.token);
+          await this.supabaseAuthService.savePurchase(this.profile.id, this.token, creditPackage);
         } else {
           // Session token not found, redirect to home page
           await this.supabaseService.deleteTokenTracker();

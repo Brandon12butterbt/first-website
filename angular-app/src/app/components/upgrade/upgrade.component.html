@@ -7,11 +7,7 @@
       <p class="text-gray-400 mb-8">Choose a credit package to generate more amazing AI images</p>
     </div>
     
-    <div *ngIf="isLoading" class="flex justify-center py-12">
-      <mat-spinner></mat-spinner>
-    </div>
-    
-    <div *ngIf="!isLoading" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
       <mat-card *ngFor="let pack of creditPackages" class="bg-gray-800 overflow-hidden relative">
         <div class="absolute top-0 right-0 px-4 py-2 bg-gray-700 text-white rounded-bl-lg">
           {{ formatPrice(pack.price) }}

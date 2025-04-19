@@ -34,7 +34,6 @@ import { SupabaseAuthService } from '../../services/supabase-auth.service';
 export class UpgradeComponent implements OnInit {
   profile: any = null;
   userEmail: string = '';
-  isLoading: boolean = true;
   isPurchasing: boolean = false;
   creditPackages: CreditPackage[] = [];
   
@@ -47,15 +46,13 @@ export class UpgradeComponent implements OnInit {
     private supabaseAuthService: SupabaseAuthService
   ) {}
   
-  ngOnInit() {
+  async ngOnInit() {
     this.creditPackages = this.stripeService.creditPackages;
     // this.loadUserProfile().then(() => {
     //   this.isLoading = false;
     // });
     if (this.supabaseAuthService.session) {
-      this.getFluxProfile(this.supabaseAuthService.session).then(() => {
-        this.isLoading = false;
-      });
+      await this.getFluxProfile(this.supabaseAuthService.session);
     }
   }
   
@@ -101,7 +98,7 @@ export class UpgradeComponent implements OnInit {
       }
       if (profile) {
         this.profile = profile;
-        console.log('Profile from app comp: ', this.profile);
+        console.log('Profile from upgrade comp: ', this.profile);
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -109,7 +106,6 @@ export class UpgradeComponent implements OnInit {
       }
     } finally {
       console.log('fin');
-      this.isLoading = false;
     }
   }
 } 

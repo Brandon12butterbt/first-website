@@ -7,6 +7,8 @@ import { Router } from '@angular/router';
 import { CREDIT_PACKAGES, CreditPackage, getCreditPackageById } from '../components/shared/credit-packages';
 import { ConfigService } from './config.service';
 
+import { SupabaseAuthService } from './supabase-auth.service';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -20,7 +22,8 @@ export class StripeService {
     private http: HttpClient,
     private supabaseService: SupabaseService,
     private router: Router,
-    public config: ConfigService
+    public config: ConfigService,
+    private supabaseAuthService: SupabaseAuthService
   ) {
     this.stripe = loadStripe(this.config.stripePubKey);
   }
@@ -75,7 +78,8 @@ export class StripeService {
       
       if (creditPackage) {
         const newCredits = profile.credits + creditPackage.credits;
-        await this.supabaseService.updateCredits(newCredits);
+        // await this.supabaseService.updateCredits(newCredits);
+        await this.supabaseAuthService.updateCredits(profile.id, newCredits);
       }
     }
   }

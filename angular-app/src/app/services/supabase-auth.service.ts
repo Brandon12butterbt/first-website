@@ -118,10 +118,6 @@ export class SupabaseAuthService {
   }
 
   saveTokenTracker(id: string, category: string, uuid: string) {
-    console.log('inserting token with these values');
-    console.log('id: ', id);
-    console.log('category: ', category);
-    console.log('uuid: ', uuid);
     return this.supabase
       .from('token_tracker')
       .insert([
@@ -129,6 +125,34 @@ export class SupabaseAuthService {
           user_id: id,
           package_type: category,
           unique_id: uuid
+        }
+      ]);
+  }
+
+  deleteTokenTracker(id: string) {
+    return this.supabase
+      .from('token_tracker')
+      .delete()
+      .eq('user_id', id);
+  }
+
+  updateCredits(id: string, credits: number) {
+    return this.supabase
+      .from('profiles')
+      .update({ credits })
+      .eq('id', id);
+  }
+
+  savePurchase(id: string, tokenTracker: any, creditPackage: any) {
+    return this.supabase
+      .from('token_purchases')
+      .insert([
+        {
+          user_id: id,
+          stripe_payment_intent_id: tokenTracker.package_type,
+          status: 'succeeded',
+          amount: creditPackage?.credits,
+          price: creditPackage?.price
         }
       ]);
   }
