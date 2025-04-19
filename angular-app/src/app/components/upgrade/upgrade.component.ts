@@ -51,8 +51,12 @@ export class UpgradeComponent implements OnInit {
     // this.loadUserProfile().then(() => {
     //   this.isLoading = false;
     // });
-    if (this.supabaseAuthService.session) {
-      await this.getFluxProfile(this.supabaseAuthService.session);
+    // if (this.supabaseAuthService.session) {
+    //   await this.getFluxProfile(this.supabaseAuthService.session);
+    // }
+    const session = await this.supabaseAuthService.ensureSessionLoaded();
+    if (session) {
+      await this.getFluxProfile(session);
     }
   }
   

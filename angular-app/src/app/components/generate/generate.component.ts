@@ -50,6 +50,7 @@ export class GenerateComponent implements OnInit, OnDestroy {
   turnWidgetSiteKey: string = '';
   isTurnstileVerified = false;
   countdownText = 'Ready';
+  isLoading: boolean = true;
   
   // Add a property to track save status
   saveMessage: string = '';
@@ -83,10 +84,10 @@ export class GenerateComponent implements OnInit, OnDestroy {
     });
     
     this.countdownService.startCountdown();
-    
-    if (this.supabaseAuthService.session) {
-      console.log('in here lol');
-      await this.getFluxProfile(this.supabaseAuthService.session);
+
+    const session = await this.supabaseAuthService.ensureSessionLoaded();
+    if (session) {
+      await this.getFluxProfile(session);
     }
   }
   
@@ -127,10 +128,11 @@ export class GenerateComponent implements OnInit, OnDestroy {
       }
     } catch (error) {
       if (error instanceof Error) {
-        alert(error.message);
+        //Handle error
       }
     } finally {
       console.log('fin');
+      this.isLoading = false;
     }
   }
   

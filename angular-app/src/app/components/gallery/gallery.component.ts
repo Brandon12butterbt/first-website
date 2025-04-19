@@ -38,9 +38,10 @@ export class GalleryComponent implements OnInit {
   async ngOnInit() {
     // await this.loadUserData();
     // await this.loadImages();
-    if (this.supabaseAuthService.session) {
-      console.log('in here lol');
-      await this.getFluxProfile(this.supabaseAuthService.session);
+
+    const session = await this.supabaseAuthService.ensureSessionLoaded();
+    if (session) {
+      await this.getFluxProfile(session);
       await this.getGeneratedImages();
     }
   }

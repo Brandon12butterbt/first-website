@@ -28,59 +28,16 @@ export class StripeService {
     this.stripe = loadStripe(this.config.stripePubKey);
   }
   
-  async redirectToCheckout(packageId: string): Promise<void> {
-    const user = this.supabaseService.currentUser;
-    if (!user) {
-      throw new Error('User must be logged in');
-    }
-    
-    // Get the credit package
+  async handlePaymentSuccess(profile: any, packageId: string): Promise<number> {
     const creditPackage = getCreditPackageById(packageId);
-    if (!creditPackage) {
-      throw new Error('Invalid package');
-    }
     
-    try {
-      const stripe = await this.stripe;
-      if (!stripe) {
-        throw new Error('Stripe failed to load');
-      }
-      
-      // In a real implementation, we would create a checkout session on the server
-      // For demo purposes, we're going to simulate a successful payment
-      console.log(`Processing payment for ${creditPackage.name} package (${creditPackage.credits} credits)`);
-      
-      // Simulate processing delay
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Add credits directly to the user's account for testing
-      await this.handlePaymentSuccess(creditPackage.id);
-      
-      // Redirect back to gallery
-      this.router.navigate(['/gallery'], { 
-        queryParams: { 
-          payment: 'success',
-          package: creditPackage.name,
-          credits: creditPackage.credits
-        }
-      });
-      
-    } catch (error) {
-      console.error('Error processing payment:', error);
-      throw error;
+    if (creditPackage) {
+      const newCredits = profile.credits + creditPackage.credits;
+      // await this.supabaseService.updateCredits(newCredits);
+      await this.supabaseAuthService.updateCredits(profile.id, newCredits);
+      return newCredits;
     }
-  }
-  
-  async handlePaymentSuccess(packageId: string): Promise<void> {
-    const profile = await this.supabaseService.getProfile();
-    if (profile) {
-      const creditPackage = getCreditPackageById(packageId);
-      
-      if (creditPackage) {
-        const newCredits = profile.credits + creditPackage.credits;
-        // await this.supabaseService.updateCredits(newCredits);
-        await this.supabaseAuthService.updateCredits(profile.id, newCredits);
-      }
-    }
+
+    return 0;
   }
 } 

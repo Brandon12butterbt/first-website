@@ -102,8 +102,9 @@ export class AppComponent implements OnInit {
         throw error;
       }
       if (profile) {
+        console.log('updating profile from app.component.ts');
+        this.profile = null;
         this.profile = profile;
-        console.log('Profile from app comp: ', this.profile);
       }
     } catch (error) {
       if (error instanceof Error) {

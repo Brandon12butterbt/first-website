@@ -46,3 +46,8 @@
 .image-container-style {
   max-height: 60vh;
 }
+
+::ng-deep .white-spinner circle {
+  color: white !important;
+  stroke: white !important;
+}

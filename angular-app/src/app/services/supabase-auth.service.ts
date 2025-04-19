@@ -24,6 +24,7 @@ export class SupabaseAuthService {
   private supabase: SupabaseClient;
   _session: AuthSession | null = null;
   private _sessionTest: AuthSession | null = null;
+  private authStateCallback: ((event: AuthChangeEvent, session: Session | null) => void) | null = null;
 
   constructor(private config: ConfigService) {
     this.supabase = createClient(config.supabaseUrl, config.supabaseAnonKey)
@@ -60,7 +61,14 @@ export class SupabaseAuthService {
   }
 
   authChanges(callback: (event: AuthChangeEvent, session: Session | null) => void) {
+    this.authStateCallback = callback;
     return this.supabase.auth.onAuthStateChange(callback)
+  }
+
+  triggerAuthChange(event: AuthChangeEvent, session: Session | null) {
+    if (this.authStateCallback) {
+      this.authStateCallback(event, session);
+    }
   }
 
   signIn(email: string, password: string) {
@@ -144,12 +152,15 @@ export class SupabaseAuthService {
   }
 
   savePurchase(id: string, tokenTracker: any, creditPackage: any) {
+    console.log('id: ', id)
+    console.log('tokenTracker: ', tokenTracker.data.package_type)
+    console.log('credit package: ', creditPackage)
     return this.supabase
       .from('token_purchases')
       .insert([
         {
           user_id: id,
-          stripe_payment_intent_id: tokenTracker.package_type,
+          stripe_payment_intent_id: tokenTracker.data.package_type,
           status: 'succeeded',
           amount: creditPackage?.credits,
           price: creditPackage?.price
