@@ -59,7 +59,7 @@ export class FluxService {
       headers,
       responseType: 'blob'
     }).pipe(
-      tap(imageBlob => console.log('Image blob received, size:', imageBlob.size)),
+      tap(imageBlob => {}),
       catchError(error => {
         console.error('Error calling Cloudflare worker:', error);
         // Create a fallback image

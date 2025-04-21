@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
-import { SupabaseClientService } from './services/supabase-client.service';
-import { SupabaseService } from './services/supabase.service';
 import { PaymentService } from './services/payment.service';
 
 import { NavBarComponent } from './components/shared/nav-bar/nav-bar.component';
@@ -21,11 +19,10 @@ export class AppComponent implements OnInit {
   userEmail: string = '';
 
   session: any = null;
+  user: any = null;
 
   constructor(
-    private supabaseClientService: SupabaseClientService,
     private router: Router,
-    private supabaseService: SupabaseService,
     private paymentService: PaymentService,
     private supabaseAuthService: SupabaseAuthService
   ) {
@@ -35,7 +32,6 @@ export class AppComponent implements OnInit {
   async ngOnInit() {
     const session = await this.supabaseAuthService.ensureSessionLoaded();
     if (session) {
-      console.log('testing session on refresh ', this.session);
       this.session = session;
       this.getFluxProfile(session).then(() => {
         this.userEmail = this.profile.email;
@@ -50,64 +46,27 @@ export class AppComponent implements OnInit {
         }
       });
     });
-
-    // this.authService.authState$.subscribe(state => {
-    //   if (state) {
-    //     this.userEmail = state.email;
-    //     this.profile = state.profile;
-    //   } else {
-    //     this.userEmail = '';
-    //     this.profile = null;
-    //   }
-    // });
-
-    // const apiCallMade = JSON.parse(sessionStorage.getItem('apiCallMade') || 'false');
-    // this.paymentService.setApiCallMade(apiCallMade);
-
-
-    // this.supabaseClientService.waitForSession().subscribe(session => {
-    //   if (session && window.location.pathname === '/login') {
-    //     this.router.navigate(['/']);
-    //   }
-      
-    //   const isAuthPage = ['/login', '/signup', '/reset-password'].includes(window.location.pathname);
-    //   if (!session && !isAuthPage) {
-    //     this.router.navigate(['/']);
-    //   }
-    // });
-  }
-
-  async checkSession() {
-    const user = this.supabaseService.currentUser;
-    if (!user) {
-      this.router.navigate(['/']);
-    }
-  }
-
-  async loadUserData() {
-    const user = this.supabaseService.currentUser;
-    if (!user) {
-      return;
-    }
-    
-    this.userEmail = user.email || '';
-    this.profile = await this.supabaseService.getProfile();
   }
 
   async getFluxProfile(session: any) {
     try {
-      const { user } = session;
-      const { data: profile, error, status } = await this.supabaseAuthService.fluxProfile(user.id);
-      if (error && status !== 406) {
+      this.user = session;
+      const { data: profile, error, status } = await this.supabaseAuthService.fluxProfile(this.user.user.id);
+      if (error) {
         throw error;
       }
       if (profile) {
-        console.log('updating profile from app.component.ts');
         this.profile = null;
         this.profile = profile;
       }
-    } catch (error) {
-      if (error instanceof Error) {
+
+      return;
+    } catch (error: any) {
+      if (error) {
+        if (error.code === 'PGRST116' || error.message === 'JSON object requested, multiple (or no) rows returned') {
+          await this.supabaseAuthService.createFluxProfile(this.user.user.id, this.user.user.email);
+          await this.getFluxProfile(session);
+        }
         this.router.navigate(['/']);
       }
     }

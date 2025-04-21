@@ -2,7 +2,6 @@ import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { FluxService } from '../../services/flux.service';
-import { SupabaseService } from '../../services/supabase.service';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -63,7 +62,6 @@ export class GenerateComponent implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private fluxService: FluxService,
-    private supabaseService: SupabaseService,
     private router: Router,
     private cdr: ChangeDetectorRef,
     public config: ConfigService,
@@ -90,31 +88,6 @@ export class GenerateComponent implements OnInit, OnDestroy {
       await this.getFluxProfile(session);
     }
   }
-  
-  async loadUserProfile() {
-    try {
-      const user = this.supabaseService.currentUser;
-      if (!user) {
-        this.router.navigate(['/login']);
-        return;
-      }
-      
-      this.userEmail = user.email || '';
-      
-      // Get the user profile (this will create one if it doesn't exist)
-      this.profile = await this.supabaseService.getProfile();
-      
-      // For testing purposes, ensure we have credits to use
-      if (this.profile && this.profile.credits === 0) {
-        await this.supabaseService.updateCredits(5);
-        this.profile = await this.supabaseService.getProfile();
-      }
-    } catch (error) {
-      console.error('Error loading user profile:', error);
-      // If profile loading fails, use a default profile with credits
-      this.profile = { credits: 5, images_generated: 0 };
-    }
-  }
 
   async getFluxProfile(session: any) {
     try {
@@ -128,10 +101,9 @@ export class GenerateComponent implements OnInit, OnDestroy {
       }
     } catch (error) {
       if (error instanceof Error) {
-        //Handle error
+        console.log(error);
       }
     } finally {
-      console.log('fin');
       this.isLoading = false;
     }
   }
@@ -148,7 +120,6 @@ export class GenerateComponent implements OnInit, OnDestroy {
     // Set a safety timeout to ensure the spinner stops even if something goes wrong
     setTimeout(() => {
       if (this.isGenerating) {
-        console.log('Safety timeout triggered - forcing spinner to stop');
         this.isGenerating = false;
         this.lastUpdateTime = new Date().toLocaleTimeString() + ' (timeout)';
         

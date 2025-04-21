@@ -1,6 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { SupabaseService } from '../../services/supabase.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
@@ -29,15 +27,12 @@ export class HomeComponent implements OnInit {
   session: any = null;
   
   constructor(
-    private supabaseService: SupabaseService,
-    private router: Router,
     private supabaseAuthService: SupabaseAuthService
   ) {}
 
   async ngOnInit(): Promise<void> {
     const session = await this.supabaseAuthService.ensureSessionLoaded();
     if (session) {
-      console.log('home page ', this.session);
       this.session = session;
       this.getProfile(session).then(() => {
         this.userEmail = this.profile.email;
@@ -55,30 +50,11 @@ export class HomeComponent implements OnInit {
       }
       if (profile) {
         this.profile = profile;
-        console.log('Profile: ', this.profile);
       }
     } catch (error) {
       if (error instanceof Error) {
-        //Normal Home Page View
+        console.log(error);
       }
     }
   }
-  
-  // ngOnInit() {
-  //   console.log("Home page init called");
-  //   this.loadUserData();
-  // }
-  
-  // async loadUserData() {
-  //   const user = this.supabaseService.currentUser;
-  //   console.log('user', user);
-  //   this.userEmail = user?.email || '';
-  //   this.profile = user;
-  //   if (!user) {
-  //     console.log('user null, pulling data');
-  //     this.profile = await this.supabaseService.getProfile();
-  //     this.userEmail = this.profile.email;
-  //     console.log('profile', this.profile);
-  //   }
-  // }
 } 

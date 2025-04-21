@@ -5,7 +5,6 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { SupabaseService } from '../../services/supabase.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 
@@ -33,7 +32,7 @@ export class GalleryComponent implements OnInit {
   showSuccessNotification = false;
   successMessage = '';
 
-  constructor(private supabaseService: SupabaseService, private router: Router, private snackBar: MatSnackBar, private supabaseAuthService: SupabaseAuthService) {}
+  constructor(private router: Router, private snackBar: MatSnackBar, private supabaseAuthService: SupabaseAuthService) {}
 
   async ngOnInit() {
     // await this.loadUserData();
@@ -43,27 +42,6 @@ export class GalleryComponent implements OnInit {
     if (session) {
       await this.getFluxProfile(session);
       await this.getGeneratedImages();
-    }
-  }
-
-  private async loadUserData() {
-    const user = this.supabaseService.currentUser;
-    if (!user) {
-      this.router.navigate(['/login']);
-      return;
-    }
-    
-    this.userEmail = user.email || '';
-    this.profile = await this.supabaseService.getProfile();
-  }
-
-  private async loadImages() {
-    try {
-      this.images = await this.supabaseService.getGeneratedImages();
-    } catch (error) {
-      console.error('Error loading images:', error);
-    } finally {
-      this.isLoading = false;
     }
   }
 
@@ -83,37 +61,6 @@ export class GalleryComponent implements OnInit {
     }, 100);
   }
 
-  async deleteImage(imageId: string) {
-    try {
-      const success = await this.supabaseService.deleteGeneratedImage(imageId);
-      if (success) {
-        this.snackBar.open('Image deleted successfully', 'Close', {
-          duration: 3000,
-          horizontalPosition: 'center',
-          verticalPosition: 'bottom',
-          panelClass: ['bg-gray-800', 'text-white']
-        });
-        // Refresh the image list
-        this.loadImages();
-      } else {
-        this.snackBar.open('Failed to delete image', 'Close', {
-          duration: 3000,
-          horizontalPosition: 'center',
-          verticalPosition: 'bottom',
-          panelClass: ['bg-red-700', 'text-white']
-        });
-      }
-    } catch (error) {
-      console.error('Error deleting image:', error);
-      this.snackBar.open('Error deleting image', 'Close', {
-        duration: 3000,
-        horizontalPosition: 'center',
-        verticalPosition: 'bottom',
-        panelClass: ['bg-red-700', 'text-white']
-      });
-    }
-  }
-
   async getFluxProfile(session: any) {
     try {
       const { user } = session;
@@ -123,14 +70,13 @@ export class GalleryComponent implements OnInit {
       }
       if (profile) {
         this.profile = profile;
-        console.log('Profile from app comp: ', this.profile);
       }
     } catch (error) {
       if (error instanceof Error) {
-        alert(error.message);
+        console.log(error.message);
       }
     } finally {
-      console.log('fin');
+      return;
     }
   }
 
@@ -165,8 +111,6 @@ export class GalleryComponent implements OnInit {
 
   async deleteFluxImage(imageId: string) {
     try {
-      console.log('deleteing with profile id: ', this.profile.id);
-      console.log('delete image id: ', imageId);
       await this.supabaseAuthService.deleteFluxImage(this.profile.id, imageId);
 
       this.snackBar.open('Image deleted successfully', 'Close', {

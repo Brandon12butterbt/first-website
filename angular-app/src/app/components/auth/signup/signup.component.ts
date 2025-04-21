@@ -10,6 +10,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
+import { SupabaseAuthService } from '../../../services/supabase-auth.service';
+
 @Component({
   selector: 'app-signup',
   standalone: true,
@@ -37,7 +39,8 @@ export class SignupComponent {
   constructor(
     private fb: FormBuilder,
     private supabaseService: SupabaseService,
-    private router: Router
+    private router: Router,
+    private supabaseAuthService: SupabaseAuthService
   ) {
     this.signupForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -61,16 +64,20 @@ export class SignupComponent {
       this.errorMessage = '';
       
       try {
-        const { success, error } = await this.supabaseService.signUp(
-          this.signupForm.get('email')?.value,
-          this.signupForm.get('password')?.value
+        // const { success, error } = await this.supabaseService.signUp(
+        //   this.signupForm.get('email')?.value,
+        //   this.signupForm.get('password')?.value
+        // );
+        const success = await this.supabaseAuthService.signUp(
+          this.signupForm.get('email')?.value, this.signupForm.get('password')?.value
         );
         
         if (success) {
           this.router.navigate(['/post-signup']);
-        } else {
-          this.errorMessage = error || 'An error occurred during signup';
         }
+        // else {
+        //   this.errorMessage = error || 'An error occurred during signup';
+        // }
       } catch (err: any) {
         this.errorMessage = err.message || 'An error occurred during signup';
       } finally {

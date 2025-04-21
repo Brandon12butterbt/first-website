@@ -57,7 +57,20 @@ export class SupabaseAuthService {
       .from('profiles')
       .select('*')
       .eq('id', id)
-      .single()
+      .single();
+  }
+
+  createFluxProfile(id: string, email: string) {
+    return this.supabase
+      .from('profiles')
+      .insert([
+        {
+          id: id,
+          email: email,
+          credits: 5,
+          images_generated: 0
+        }
+      ]);
   }
 
   authChanges(callback: (event: AuthChangeEvent, session: Session | null) => void) {
@@ -78,6 +91,15 @@ export class SupabaseAuthService {
   signOut() {
     return this.supabase.auth.signOut()
   }
+
+  signUp(email: string, password: string) {
+    return this.supabase.auth.signUp({ email, password});
+  }
+
+  resetPassword(email: string) {
+    return this.supabase.auth.resetPasswordForEmail(email);
+  }
+
 
   fluxImages(id: string) {
     return this.supabase
@@ -152,9 +174,6 @@ export class SupabaseAuthService {
   }
 
   savePurchase(id: string, tokenTracker: any, creditPackage: any) {
-    console.log('id: ', id)
-    console.log('tokenTracker: ', tokenTracker.data.package_type)
-    console.log('credit package: ', creditPackage)
     return this.supabase
       .from('token_purchases')
       .insert([

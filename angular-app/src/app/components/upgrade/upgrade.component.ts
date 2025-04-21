@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { StripeService } from '../../services/stripe.service';
-import { SupabaseService } from '../../services/supabase.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
@@ -39,7 +38,6 @@ export class UpgradeComponent implements OnInit {
   
   constructor(
     private stripeService: StripeService,
-    private supabaseService: SupabaseService,
     private router: Router,
     private paymentService: PaymentService,
     public config: ConfigService,
@@ -48,12 +46,6 @@ export class UpgradeComponent implements OnInit {
   
   async ngOnInit() {
     this.creditPackages = this.stripeService.creditPackages;
-    // this.loadUserProfile().then(() => {
-    //   this.isLoading = false;
-    // });
-    // if (this.supabaseAuthService.session) {
-    //   await this.getFluxProfile(this.supabaseAuthService.session);
-    // }
     const session = await this.supabaseAuthService.ensureSessionLoaded();
     if (session) {
       await this.getFluxProfile(session);
@@ -64,26 +56,13 @@ export class UpgradeComponent implements OnInit {
     return `$${price.toFixed(2)}`;
   }
   
-  async loadUserProfile() {
-    const user = this.supabaseService.currentUser;
-    if (!user) {
-      this.router.navigate(['/login']);
-      return;
-    }
-    
-    this.userEmail = user.email || '';
-    this.profile = await this.supabaseService.getProfile();
-  }
   
   async purchaseCredits(packageId: string) {
     const uuid: string = uuidv4();
-    // await this.supabaseService.saveTokenTracker(uuid, packageId);
-    const result = await this.supabaseAuthService.saveTokenTracker(this.profile.id, packageId, uuid);
-    console.log("Result of saving token: ", result);
-    setTimeout(() => { }, 5000);
+    await this.supabaseAuthService.saveTokenTracker(this.profile.id, packageId, uuid);
     sessionStorage.setItem('token', uuid);
-    console.log('sesssion stroage: ', uuid);
     this.paymentService.setApiCallMade(true);
+
     if (packageId === 'basic') {
       window.location.href = this.config.stripeBasicUrl;
     } else if (packageId === 'standard') {
@@ -102,14 +81,13 @@ export class UpgradeComponent implements OnInit {
       }
       if (profile) {
         this.profile = profile;
-        console.log('Profile from upgrade comp: ', this.profile);
       }
     } catch (error) {
       if (error instanceof Error) {
-        alert(error.message);
+        console.log(error);
       }
     } finally {
-      console.log('fin');
+      return;
     }
   }
 } 

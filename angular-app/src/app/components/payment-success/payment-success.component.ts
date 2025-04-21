@@ -45,9 +45,7 @@ export class PaymentSuccessComponent {
   async ngOnInit() {
     const session = await this.supabaseAuthService.ensureSessionLoaded();
     if (session) {
-      console.log('Inside payment success session ', session);
       this.checkTokens(session).then(() => {
-        console.log('profile paysuc, ', this.profile)
         if (this.profile) {
           this.userEmail = this.profile.email;
         }
@@ -62,21 +60,15 @@ export class PaymentSuccessComponent {
     try {
       const { user } = session;
       const { data: profile, error, status } = await this.supabaseAuthService.fluxProfile(user.id);
-      console.log('data ', profile);
       if (error && status !== 406) {
-        console.log('throwing error 1');
         throw error;
       }
       if (profile) {
         this.profile = profile;
-        console.log('Profile inside here ', this.profile);
+
         this.token = await this.supabaseAuthService.getTokenTracker(this.profile.id);
-
-        console.log('Token inside here ', this.token);
-
         if (!this.token) {
-          // this.router.navigate(['/']);
-          console.log('return 1')
+          this.router.navigate(['/']);
           return;
         }
     
@@ -86,40 +78,30 @@ export class PaymentSuccessComponent {
           if (sessionToken !== this.token.data.unique_id) {
             // Session token does not match database token, redirect to home page
             sessionStorage.setItem('token', '');
-            // await this.supabaseService.deleteTokenTracker();
             await this.supabaseAuthService.deleteTokenTracker(this.profile.id);
-            console.log('routing home 1')
-            console.log('local storeage session token: ', sessionStorage)
-            console.log('actual token: ', this.token.data.unique_id)
-            // this.router.navigate(['/']);
+            this.router.navigate(['/']);
           }
           
           // Session token matches database token, proceed with payment success
-          console.log('2')
           this.newCredits = await this.stripeService.handlePaymentSuccess(this.profile, this.token.data.package_type);
           sessionStorage.setItem('token', '');
-          // await this.supabaseService.deleteTokenTracker();
           await this.supabaseAuthService.deleteTokenTracker(this.profile.id);
-          console.log('3')
     
           this.userEmail = this.profile.email || '';
 
           const creditPackage = getCreditPackageById(this.token.data.package_type);
-          // await this.supabaseService.savePurchase(this.token);
           await this.supabaseAuthService.savePurchase(this.profile.id, this.token, creditPackage);
         } else {
           // Session token not found, redirect to home page
           await this.supabaseAuthService.deleteTokenTracker(this.profile.id);
-          console.log('routing home 2')
-          // this.router.navigate(['/']);
+          this.router.navigate(['/']);
         }
       }
     } catch (error) {
       if (error instanceof Error) {
-        alert('This is a test: ' + error.message);
+        console.log(error);
       }
     } finally {
-      console.log('fin');
       // Used to trigger nav bar profile credits update
       this.supabaseAuthService.triggerAuthChange('SIGNED_IN', session);
       this.isLoading = false;
