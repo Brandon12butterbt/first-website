@@ -6,9 +6,9 @@ export interface CreditPackage {
 }
 
 export const CREDIT_PACKAGES: CreditPackage[] = [
-    { id: 'basic', name: 'Basic', credits: 10, price: 5.00 },
-    { id: 'standard', name: 'Standard', credits: 50, price: 20.00 },
-    { id: 'premium', name: 'Premium', credits: 120, price: 40.00 }
+    { id: 'basic', name: 'Basic', credits: 10, price: 1.00 },
+    { id: 'standard', name: 'Standard', credits: 50, price: 4.00 },
+    { id: 'premium', name: 'Premium', credits: 120, price: 8.00 }
 ];
 
 export function getCreditPackageById(packageId: string): CreditPackage | undefined {

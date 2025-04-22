@@ -89,7 +89,7 @@ export class SupabaseAuthService {
   }
 
   signOut() {
-    return this.supabase.auth.signOut()
+    return this.supabase.auth.signOut();
   }
 
   signUp(email: string, password: string) {

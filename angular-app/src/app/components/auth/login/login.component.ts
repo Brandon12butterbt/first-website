@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { SupabaseService } from '../../../services/supabase.service';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -36,7 +35,6 @@ export class LoginComponent {
   
   constructor(
     private fb: FormBuilder,
-    private supabaseService: SupabaseService,
     private router: Router,
     private supabaseAuthService: SupabaseAuthService
   ) {
@@ -52,10 +50,6 @@ export class LoginComponent {
       this.errorMessage = '';
       
       try {
-        // const { success, error } = await this.supabaseService.signIn(
-        //   this.loginForm.get('email')?.value,
-        //   this.loginForm.get('password')?.value
-        // );
         const { error } = await this.supabaseAuthService.signIn(this.loginForm.get('email')?.value, this.loginForm.get('password')?.value);
 
         if (error) {
@@ -64,11 +58,6 @@ export class LoginComponent {
           this.router.navigate(['/']);
         }
         
-        // if (success) {
-        //   this.router.navigate(['/'], { onSameUrlNavigation: 'reload' });
-        // } else {
-        //   this.errorMessage = error || 'An error occurred during login';
-        // }
       } catch (err: any) {
         this.errorMessage = err.message || 'An error occurred during login';
       } finally {

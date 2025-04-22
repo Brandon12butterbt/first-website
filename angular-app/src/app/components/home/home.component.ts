@@ -38,6 +38,19 @@ export class HomeComponent implements OnInit {
         this.userEmail = this.profile.email;
       });
     }
+
+    this.supabaseAuthService.authChanges((event, session) => {
+      this.session = session;
+      if (this.session) {
+        this.getProfile(session).then(() => {
+          if (this.profile) {
+            this.userEmail = this.profile.email;
+          }
+        });
+      } else {
+        this.profile = null;
+      }
+    });
   }
 
   async getProfile(session: any) {
