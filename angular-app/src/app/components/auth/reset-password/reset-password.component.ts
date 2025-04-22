@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { SupabaseService } from '../../../services/supabase.service';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -36,7 +35,6 @@ export class ResetPasswordComponent {
   
   constructor(
     private fb: FormBuilder,
-    private supabaseService: SupabaseService,
     private router: Router,
     private supabaseAuthService: SupabaseAuthService
   ) {
@@ -51,9 +49,6 @@ export class ResetPasswordComponent {
       this.errorMessage = '';
       
       try {
-        // const { success, error } = await this.supabaseService.resetPassword(
-        //   this.resetForm.get('email')?.value
-        // );
 
         const success = await this.supabaseAuthService.resetPassword(this.resetForm.get('email')?.value);
         
@@ -61,9 +56,6 @@ export class ResetPasswordComponent {
           this.successMessage = 'Password reset instructions have been sent to your email';
           this.errorMessage = '';
         }
-        // else {
-        //   this.errorMessage = error || 'An error occurred while resetting your password';
-        // }
       } catch (err: any) {
         this.errorMessage = err.message || 'An error occurred while resetting your password';
       } finally {

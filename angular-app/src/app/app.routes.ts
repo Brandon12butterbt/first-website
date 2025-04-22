@@ -10,15 +10,17 @@ import { UpgradeComponent } from './components/upgrade/upgrade.component';
 import { PaymentSuccessComponent } from './components/payment-success/payment-success.component';
 import { AuthGuard } from './guards/auth.guard';
 import { PaymentGuard } from './guards/payment.guard';
+import { UpdatePasswordComponent } from './components/auth/update-password/update-password.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'signup', component: SignupComponent },
   { path: 'post-signup', component: PostSignupComponent },
-  { path: 'reset-password', component: ResetPasswordComponent },
+  { path: 'reset-password', component: ResetPasswordComponent, canActivate: [AuthGuard] },
   { path: '', component: HomeComponent },
   { path: 'gallery', component: GalleryComponent, canActivate: [AuthGuard] },
   { path: 'generate', component: GenerateComponent, canActivate: [AuthGuard] },
   { path: 'upgrade', component: UpgradeComponent, canActivate: [AuthGuard] },
-  { path: 'payment-success', component: PaymentSuccessComponent, canActivate: [PaymentGuard] }
+  { path: 'payment-success', component: PaymentSuccessComponent, canActivate: [PaymentGuard] },
+  { path: 'update-password', component: UpdatePasswordComponent, canActivate: [AuthGuard] }
 ];

@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { SupabaseService } from '../../../services/supabase.service';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -38,7 +37,6 @@ export class SignupComponent {
   
   constructor(
     private fb: FormBuilder,
-    private supabaseService: SupabaseService,
     private router: Router,
     private supabaseAuthService: SupabaseAuthService
   ) {
@@ -64,10 +62,6 @@ export class SignupComponent {
       this.errorMessage = '';
       
       try {
-        // const { success, error } = await this.supabaseService.signUp(
-        //   this.signupForm.get('email')?.value,
-        //   this.signupForm.get('password')?.value
-        // );
         const success = await this.supabaseAuthService.signUp(
           this.signupForm.get('email')?.value, this.signupForm.get('password')?.value
         );
@@ -75,9 +69,6 @@ export class SignupComponent {
         if (success) {
           this.router.navigate(['/post-signup']);
         }
-        // else {
-        //   this.errorMessage = error || 'An error occurred during signup';
-        // }
       } catch (err: any) {
         this.errorMessage = err.message || 'An error occurred during signup';
       } finally {

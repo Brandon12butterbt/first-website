@@ -97,9 +97,12 @@ export class SupabaseAuthService {
   }
 
   resetPassword(email: string) {
-    return this.supabase.auth.resetPasswordForEmail(email);
+    return this.supabase.auth.resetPasswordForEmail(email, { redirectTo: 'https://afluxgen.com/update-password' });
   }
 
+  updatePassword(password: string) {
+    return this.supabase.auth.updateUser({ password: password });
+  }
 
   fluxImages(id: string) {
     return this.supabase
