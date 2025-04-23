@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
-import { PaymentService } from './services/payment.service';
 
 import { NavBarComponent } from './components/shared/nav-bar/nav-bar.component';
 import { SupabaseAuthService } from './services/supabase-auth.service';
@@ -23,7 +22,6 @@ export class AppComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private paymentService: PaymentService,
     private supabaseAuthService: SupabaseAuthService
   ) {
     this.session = this.supabaseAuthService.session;
