@@ -55,6 +55,7 @@ export class GenerateComponent implements OnInit, OnDestroy {
   saveMessage: string = '';
   isSaving: boolean = false;
   showSaveNotification: boolean = false;
+  session: any = null;
   get hasCredits(): boolean {
     return this.profile?.credits > 0;
   }
@@ -83,9 +84,9 @@ export class GenerateComponent implements OnInit, OnDestroy {
     
     this.countdownService.startCountdown();
 
-    const session = await this.supabaseAuthService.ensureSessionLoaded();
-    if (session) {
-      await this.getFluxProfile(session);
+    this.session = await this.supabaseAuthService.ensureSessionLoaded();
+    if (this.session) {
+      await this.getFluxProfile(this.session);
     }
   }
 
@@ -101,6 +102,7 @@ export class GenerateComponent implements OnInit, OnDestroy {
       }
     } catch (error) {
       if (error instanceof Error) {
+        this.session = null;
         console.log(error);
       }
     } finally {
@@ -130,9 +132,51 @@ export class GenerateComponent implements OnInit, OnDestroy {
       }
     }, 30000);
     
+    // try {
+    //   // Call the API and get the image blob
+    //   const imageBlob = await firstValueFrom(this.fluxService.generateImage(prompt));
+
+    //   if (imageBlob.error === 'rate_limited') {
+    //     this.errorMessage = imageBlob.message;
+    //     this.lastUpdateTime = new Date().toLocaleTimeString() + ' (error)';
+    //     return;
+    //   }
+    
+    //   if (imageBlob.error === 'api_error') {
+    //     console.error('API request failed:', imageBlob.message);
+    //     alert('There was a problem generating the image. Please try again.');
+    //     return;
+    //   }
+      
+    //   this.lastUpdateTime = new Date().toLocaleTimeString() + ' (success)';
+      
+    //   // Create a URL for the blob (temporary, for display only)
+    //   this.generatedImage = URL.createObjectURL(imageBlob);
+      
+    //   // Decrement user's credits
+    //   await this.supabaseAuthService.imageGeneratedUpdateProfile(this.profile.id, this.profile.images_generated, this.profile.credits);
+    //   await this.getFluxProfile(this.supabaseAuthService.session);
+      
+    // } catch (error) {
+    //   console.error('Error in component when generating image:', error);
+    //   this.errorMessage = 'Error generating image. Please try again.';
+    //   this.generatedImage = null;
+    //   this.lastUpdateTime = new Date().toLocaleTimeString() + ' (error)';
+    // } finally {
+    //   this.isGenerating = false;
+    //   this.lastUpdateTime = new Date().toLocaleTimeString() + ' (complete)';
+      
+    //   // Force Angular to detect changes
+    //   try {
+    //     this.cdr.detectChanges();
+    //   } catch (e) {
+    //     console.warn('Error during change detection:', e);
+    //   }
+    // }
+
     try {
       // Call the API and get the image blob
-      const imageBlob = await firstValueFrom(this.fluxService.generateImage(prompt));
+      const imageBlob = await firstValueFrom(this.fluxService.callGenerateImage(prompt));
 
       if (imageBlob.error === 'rate_limited') {
         this.errorMessage = imageBlob.message;
@@ -145,11 +189,15 @@ export class GenerateComponent implements OnInit, OnDestroy {
         alert('There was a problem generating the image. Please try again.');
         return;
       }
+      console.log('no errors in call');
       
       this.lastUpdateTime = new Date().toLocaleTimeString() + ' (success)';
       
+      console.log('image blob: ', imageBlob);
       // Create a URL for the blob (temporary, for display only)
       this.generatedImage = URL.createObjectURL(imageBlob);
+
+      console.log('generated image: ', this.generatedImage);
       
       // Decrement user's credits
       await this.supabaseAuthService.imageGeneratedUpdateProfile(this.profile.id, this.profile.images_generated, this.profile.credits);
@@ -170,7 +218,12 @@ export class GenerateComponent implements OnInit, OnDestroy {
       } catch (e) {
         console.warn('Error during change detection:', e);
       }
+
+      // Used to trigger nav bar profile credits update
+      this.supabaseAuthService.triggerAuthChange('SIGNED_IN', this.session);
     }
+
+    
   }
   
   downloadImage() {

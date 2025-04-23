@@ -11,6 +11,8 @@ import { PaymentSuccessComponent } from './components/payment-success/payment-su
 import { AuthGuard } from './guards/auth.guard';
 import { PaymentGuard } from './guards/payment.guard';
 import { UpdatePasswordComponent } from './components/auth/update-password/update-password.component';
+import { AccountDetailsComponent } from './components/account-details/account-details.component';
+import { OrderHistoryComponent } from './components/order-history/order-history.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -22,5 +24,7 @@ export const routes: Routes = [
   { path: 'generate', component: GenerateComponent, canActivate: [AuthGuard] },
   { path: 'upgrade', component: UpgradeComponent, canActivate: [AuthGuard] },
   { path: 'payment-success', component: PaymentSuccessComponent, canActivate: [PaymentGuard] },
-  { path: 'update-password', component: UpdatePasswordComponent, canActivate: [AuthGuard] }
+  { path: 'update-password', component: UpdatePasswordComponent, canActivate: [AuthGuard] },
+  { path: 'account-details', component: AccountDetailsComponent, canActivate: [AuthGuard] },
+  { path: 'order-history', component: OrderHistoryComponent, canActivate: [AuthGuard] }
 ];

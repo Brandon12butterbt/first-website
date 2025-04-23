@@ -72,6 +72,42 @@ export class FluxService {
       finalize(() => {})
     );
   }
+
+  callGenerateImage(prompt: string): Observable<any> {
+    const now = Date.now();
+    const lastRequestTime = localStorage.getItem('lastImageRequest');
+
+    if (lastRequestTime && now - parseInt(lastRequestTime) < 60000) {
+      console.warn('Rate limit hit: You can only generate one image per minute.');
+      return of({ error: 'rate_limited', message: 'Rate limit hit: You can only generate one image per minute.' });
+    }
+
+    // Store the current timestamp
+    localStorage.setItem('lastImageRequest', now.toString());
+    this.countdownService.startCountdown();
+
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.apiToken}`,
+      'Content-Type': 'application/json',
+    });
+
+    const body = { prompt };
+
+    console.log('body tester: ', body);
+
+    return this.http.post('http://localhost:3000/generate-image', body, {
+      responseType: 'blob'
+    }).pipe(
+      catchError(error => {
+        console.error('Error calling backend API:', error);
+        const fallbackBlob = new Blob(
+          ['R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'], 
+          { type: 'image/gif' }
+        );
+        return of(fallbackBlob);
+      })
+    );
+  }
   
   imageToImage(prompt: string, image: string): Observable<any> {
     // Cloudflare worker doesn't support image-to-image yet, so we'll just generate a new image

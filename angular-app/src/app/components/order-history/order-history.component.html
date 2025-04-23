@@ -1,0 +1,78 @@
+<div class="h-[calc(100vh-60px)] bg-gray-900 flex flex-col">
+  <div class="flex-1 p-6">
+    <div class="max-w-4xl mx-auto">
+      <div *ngIf="isLoading" class="flex items-center justify-center h-full">
+        <div class="text-center">
+          <mat-spinner class="mx-auto"></mat-spinner>
+          <p class="mt-4 text-gray-400">Loading purchase history...</p>
+        </div>
+      </div>
+
+      <div *ngIf="!isLoading">
+        <mat-card class="bg-gray-800 p-6">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-semibold text-purple-400">Purchase History</h2>
+            <button mat-raised-button color="primary" routerLink="/account-details" class="bg-purple-600 hover:bg-purple-700">
+              <mat-icon class="text-white">account_circle</mat-icon>
+              <span class="text-white">Account Details</span>
+            </button>
+          </div>
+
+          <div *ngIf="allPurchases.length === 0" class="text-center py-8">
+            <mat-icon class="text-gray-500 text-6xl mb-4">receipt_long</mat-icon>
+            <p class="text-gray-400">No purchase history found</p>
+            <button mat-raised-button color="primary" routerLink="/upgrade" class="bg-purple-600 hover:bg-purple-700 mt-4">
+              <mat-icon class="text-white">shopping_cart</mat-icon>
+              <span class="text-white">Buy Credits</span>
+            </button>
+          </div>
+
+          <div *ngIf="allPurchases.length > 0">
+            <div matSort (matSortChange)="sortData($event)" class="header-container text-gray-400 text-sm mb-4">
+              <div mat-sort-header="date" class="header-date">Date</div>
+              <div mat-sort-header="amount" class="header-credits">Credits</div>
+              <div mat-sort-header="price" class="header-price">Price</div>
+            </div>
+
+            <div class="space-y-4">
+              <div *ngFor="let purchase of displayedPurchases" class="border-l-4 border-purple-500 pl-4 py-3 bg-gray-700 rounded-r">
+                <div class="flex justify-between items-start w-full">
+                  <div class="w-1/3">
+                    <div class="text-gray-400 text-sm">
+                      {{ purchase.created_at | date:'medium' }}
+                    </div>
+                  </div>
+                  <div class="w-1/3 text-center">
+                    <div class="flex items-center justify-center">
+                      <mat-icon class="text-yellow-400 mr-2">stars</mat-icon>
+                      <span class="text-white font-medium">{{ purchase.amount }} Credits</span>
+                    </div>
+                  </div>
+                  <div class="w-1/3 text-right pr-4">
+                    <div class="text-green-400 font-medium">{{ formatPrice(purchase.price) }}</div>
+                    <div class="text-gray-400 text-sm mt-1">
+                      <span [ngClass]="{'text-green-400': purchase.status === 'succeeded',
+                                      'text-yellow-400': purchase.status === 'pending',
+                                      'text-red-400': purchase.status === 'failed'}">
+                        {{ purchase.status | titlecase }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <mat-paginator
+              [length]="totalItems"
+              [pageSize]="pageSize"
+              [pageIndex]="currentPage"
+              [pageSizeOptions]="[5, 10, 25]"
+              (page)="handlePageEvent($event)"
+              class="bg-gray-800 text-white mt-4 ::ng-deep .mat-mdc-paginator-icon, ::ng-deep .mat-mdc-select-value-text, ::ng-deep .mat-mdc-select-arrow { color: white !important; }">
+            </mat-paginator>
+          </div>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</div>

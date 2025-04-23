@@ -30,6 +30,15 @@
       </button>
       
       <mat-menu #userMenu="matMenu">
+        <button mat-menu-item routerLink="/account-details">
+          <mat-icon>person</mat-icon>
+          <span>Account Details</span>
+        </button>
+        <button mat-menu-item routerLink="/order-history">
+          <mat-icon>receipt_long</mat-icon>
+          <span>Purchase History</span>
+        </button>
+        <mat-divider></mat-divider>
         <button mat-menu-item (click)="signOutClicked()">
           <mat-icon>exit_to_app</mat-icon>
           <span>Sign out</span>

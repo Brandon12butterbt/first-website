@@ -190,6 +190,14 @@ export class SupabaseAuthService {
       ]);
   }
 
+  listPurchases(id: string) {
+    return this.supabase
+      .from('token_purchases')
+      .select('*')
+      .eq('user_id', id)
+      .order('created_at', { ascending: false });
+  }
+
   async getSession(): Promise<AuthSession | null> {
     const { data } = await this.supabase.auth.getSession();
     return data.session;

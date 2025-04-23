@@ -35,7 +35,9 @@ export class HomeComponent implements OnInit {
     if (session) {
       this.session = session;
       this.getProfile(session).then(() => {
-        this.userEmail = this.profile.email;
+        if (this.profile) {
+          this.userEmail = this.profile.email;
+        }
       });
     }
 
