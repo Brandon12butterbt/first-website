@@ -23,7 +23,6 @@ import { SupabaseAuthService } from '../../services/supabase-auth.service';
 export class HomeComponent implements OnInit {
   userEmail: string = '';
   profile: any = null;
-  loading = false;
   session: any = null;
   
   constructor(
@@ -32,6 +31,7 @@ export class HomeComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     const session = await this.supabaseAuthService.ensureSessionLoaded();
+
     if (session) {
       this.session = session;
       this.getProfile(session).then(() => {
@@ -57,9 +57,9 @@ export class HomeComponent implements OnInit {
 
   async getProfile(session: any) {
     try {
-      this.loading = true;
       const { user } = session;
       const { data: profile, error, status } = await this.supabaseAuthService.profile(user);
+
       if (error && status !== 406) {
         throw error;
       }
@@ -67,9 +67,7 @@ export class HomeComponent implements OnInit {
         this.profile = profile;
       }
     } catch (error) {
-      if (error instanceof Error) {
-        console.log(error);
-      }
+      console.log(error);
     }
   }
 } 

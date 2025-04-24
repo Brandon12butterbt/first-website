@@ -80,6 +80,8 @@ describe('AppComponent', () => {
         });
       });
     
+      //This tells the spy to pretend to succeed when createFluxProfile is called.
+      //Only Care if the function is called.
       supabaseService.createFluxProfile.and.resolveTo();
     
       await component.getFluxProfile({ user: testSession });

@@ -101,10 +101,8 @@ export class GenerateComponent implements OnInit, OnDestroy {
         this.profile = profile;
       }
     } catch (error) {
-      if (error instanceof Error) {
-        this.session = null;
-        console.log(error);
-      }
+      this.session = null;
+      console.log(error);
     } finally {
       this.isLoading = false;
     }
@@ -270,23 +268,21 @@ export class GenerateComponent implements OnInit, OnDestroy {
         // Convert blob URL to a data URL that can be stored persistently
         const response = await fetch(this.generatedImage);
         const blob = await response.blob();
-        
+
         // Convert blob to base64 data URL
         const reader = new FileReader();
         const dataUrlPromise = new Promise<string>((resolve) => {
           reader.onloadend = () => resolve(reader.result as string);
           reader.readAsDataURL(blob);
         });
-        
+
         const dataUrl = await dataUrlPromise;
         
         // Now save the data URL to Supabase
         await this.supabaseAuthService.saveGeneratedImage(this.profile.id, dataUrl, prompt);
-        
         // Show success notification
         this.saveMessage = 'Image saved to your gallery!';
         this.showSaveNotification = true;
-        
         // Ensure the change is detected
         this.cdr.detectChanges();
         

@@ -72,9 +72,7 @@ export class GalleryComponent implements OnInit {
         this.profile = profile;
       }
     } catch (error) {
-      if (error instanceof Error) {
-        console.log(error.message);
-      }
+      console.log(error);
     } finally {
       return;
     }
