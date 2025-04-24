@@ -77,7 +77,6 @@ export class GenerateComponent implements OnInit, OnDestroy {
   }
   
   async ngOnInit() {
-    // this.loadUserProfile();
     this.countdownService.countdown$.subscribe(text => {
       this.countdownText = text;
     });
@@ -129,48 +128,6 @@ export class GenerateComponent implements OnInit, OnDestroy {
         }
       }
     }, 30000);
-    
-    // try {
-    //   // Call the API and get the image blob
-    //   const imageBlob = await firstValueFrom(this.fluxService.generateImage(prompt));
-
-    //   if (imageBlob.error === 'rate_limited') {
-    //     this.errorMessage = imageBlob.message;
-    //     this.lastUpdateTime = new Date().toLocaleTimeString() + ' (error)';
-    //     return;
-    //   }
-    
-    //   if (imageBlob.error === 'api_error') {
-    //     console.error('API request failed:', imageBlob.message);
-    //     alert('There was a problem generating the image. Please try again.');
-    //     return;
-    //   }
-      
-    //   this.lastUpdateTime = new Date().toLocaleTimeString() + ' (success)';
-      
-    //   // Create a URL for the blob (temporary, for display only)
-    //   this.generatedImage = URL.createObjectURL(imageBlob);
-      
-    //   // Decrement user's credits
-    //   await this.supabaseAuthService.imageGeneratedUpdateProfile(this.profile.id, this.profile.images_generated, this.profile.credits);
-    //   await this.getFluxProfile(this.supabaseAuthService.session);
-      
-    // } catch (error) {
-    //   console.error('Error in component when generating image:', error);
-    //   this.errorMessage = 'Error generating image. Please try again.';
-    //   this.generatedImage = null;
-    //   this.lastUpdateTime = new Date().toLocaleTimeString() + ' (error)';
-    // } finally {
-    //   this.isGenerating = false;
-    //   this.lastUpdateTime = new Date().toLocaleTimeString() + ' (complete)';
-      
-    //   // Force Angular to detect changes
-    //   try {
-    //     this.cdr.detectChanges();
-    //   } catch (e) {
-    //     console.warn('Error during change detection:', e);
-    //   }
-    // }
 
     try {
       // Call the API and get the image blob

@@ -7,8 +7,27 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+
+  test:
     runs-on: self-hosted
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Angular dependencies
+        working-directory: ./angular-app
+        run: npm install
+
+      - name: Run Angular tests
+        working-directory: ./angular-app
+        run: |
+          npx ng test --watch=false --browsers=ChromeHeadless
+
+
+  build-and-deploy:
+    runs-on: self-hosted
+    needs: test
 
     steps:
       - name: Write SSH key
