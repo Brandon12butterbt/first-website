@@ -179,7 +179,7 @@ describe('GenerateComponent', () => {
 
             component.onSubmit();
             tick(100);
-            //   tick(30000);
+            tick(30000);
 
             expect(component.isGenerating).toBeFalse();
             expect(component.generatedImage).toBeNull();

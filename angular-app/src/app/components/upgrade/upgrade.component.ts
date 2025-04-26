@@ -14,6 +14,7 @@ import { CreditPackage } from '../shared/credit-packages';
 import { ConfigService } from '../../services/config.service';
 
 import { SupabaseAuthService } from '../../services/supabase-auth.service';
+import { NavigationService } from '../../services/navigation.service';
 
 @Component({
   selector: 'app-upgrade',
@@ -41,7 +42,8 @@ export class UpgradeComponent implements OnInit {
     private router: Router,
     private paymentService: PaymentService,
     public config: ConfigService,
-    private supabaseAuthService: SupabaseAuthService
+    private supabaseAuthService: SupabaseAuthService,
+    private navigationService: NavigationService
   ) {}
   
   async ngOnInit() {
@@ -64,11 +66,11 @@ export class UpgradeComponent implements OnInit {
     this.paymentService.setApiCallMade(true);
 
     if (packageId === 'basic') {
-      window.location.href = this.config.stripeBasicUrl;
+      this.navigationService.navigateTo(this.config.stripeBasicUrl);
     } else if (packageId === 'standard') {
-      window.location.href = this.config.stripeStandardUrl;
+      this.navigationService.navigateTo(this.config.stripeStandardUrl);
     } else if (packageId === 'premium') {
-      window.location.href = this.config.stripePremiumUrl;
+      this.navigationService.navigateTo(this.config.stripePremiumUrl);
     }
   }
 
@@ -83,9 +85,7 @@ export class UpgradeComponent implements OnInit {
         this.profile = profile;
       }
     } catch (error) {
-      if (error instanceof Error) {
-        console.log(error);
-      }
+      console.log(error);
     } finally {
       return;
     }
