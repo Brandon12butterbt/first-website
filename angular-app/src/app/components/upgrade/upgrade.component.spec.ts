@@ -230,7 +230,7 @@ describe('UpgradeComponent', () => {
           
             expect(supabaseService.saveTokenTracker).toHaveBeenCalled();
             expect(paymentService.setApiCallMade).toHaveBeenCalledWith(true);
-            expect(navigationService.navigateTo).toHaveBeenCalledWith(mockConfig.stripePremiumUrl);
+            expect(navigationService.navigateTo).toHaveBeenCalledWith(mockConfig.stripeBasicUrl);
         }));
 
         it('should handle standard package purchase', fakeAsync(() => {
