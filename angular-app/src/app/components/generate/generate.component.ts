@@ -166,13 +166,6 @@ export class GenerateComponent implements OnInit, OnDestroy {
     } finally {
       this.isGenerating = false;
       this.lastUpdateTime = new Date().toLocaleTimeString() + ' (complete)';
-      
-      // Force Angular to detect changes
-      try {
-        this.cdr.detectChanges();
-      } catch (e) {
-        console.warn('Error during change detection:', e);
-      }
 
       // Used to trigger nav bar profile credits update
       this.supabaseAuthService.triggerAuthChange('SIGNED_IN', this.session);

@@ -117,11 +117,11 @@ describe('LoginComponent', () => {
 
             supabaseService.signIn.and.resolveTo({
                 data: {
-                  user: { id: '123', email: 'test@test.com' } as any,
-                  session: {} as any,
+                    user: { id: '123', email: 'test@test.com' } as any,
+                    session: {} as any,
                 },
                 error: null
-              });
+            });
 
             const router = TestBed.inject(Router);
             spyOn(router, 'navigate');
@@ -138,26 +138,26 @@ describe('LoginComponent', () => {
             const mockProfile = { email: 'test@test.com', password: 'wrongpassword' };
 
             const authError = new AuthError('Invalid credentials', 201, 'Invalid credentials');
-          
+
             supabaseService.signIn.and.resolveTo({
-              data: {
-                user: null,
-                session: null
-              },
-              error: authError
+                data: {
+                    user: null,
+                    session: null
+                },
+                error: authError
             });
-          
+
             const router = TestBed.inject(Router);
             spyOn(router, 'navigate');
-          
+
             component.loginForm.setValue({ email: mockProfile.email, password: mockProfile.password });
             component.onSubmit();
             tick();
-          
+
             expect(supabaseService.signIn).toHaveBeenCalled();
             expect(router.navigate).not.toHaveBeenCalled();
             expect(component.errorMessage).toBe('Invalid credentials');
-          }));
+        }));
     });
 
 });

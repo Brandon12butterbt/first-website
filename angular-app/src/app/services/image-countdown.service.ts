@@ -25,10 +25,8 @@ export class CountdownService {
       return;
     }
 
-    // Update immediately
     this.updateCountdownDisplay(remainingTime);
 
-    // Set up interval for continuous updates
     const timer = interval(1000).subscribe(() => {
       remainingTime -= 1000;
       

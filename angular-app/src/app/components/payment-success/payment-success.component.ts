@@ -75,6 +75,7 @@ export class PaymentSuccessComponent {
         const sessionToken = sessionStorage.getItem('token');
     
         if (sessionToken) {
+          console.log('This token:', this.token);
           if (sessionToken !== this.token.data.unique_id) {
             // Session token does not match database token, redirect to home page
             sessionStorage.setItem('token', '');

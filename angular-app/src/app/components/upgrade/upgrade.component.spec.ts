@@ -49,7 +49,6 @@ describe('UpgradeComponent', () => {
             stripePremiumUrl: 'test-premium-url'
         });
 
-        // Setup default spy behaviors
         supabaseService.ensureSessionLoaded.and.resolveTo({
             access_token: 'test-token',
             refresh_token: 'test-refresh',
@@ -157,31 +156,6 @@ describe('UpgradeComponent', () => {
             expect(component.profile).toEqual(mockProfile);
         }));
 
-        // it('should handle error when profile fetch fails', fakeAsync(() => {
-        //   const error: PostgrestError = {
-        //     message: 'Profile fetch failed',
-        //     details: 'Test error details',
-        //     hint: 'Test hint',
-        //     code: 'TEST123',
-        //     name: 'PostgrestError'
-        //   };
-
-        //   supabaseService.fluxProfile.and.resolveTo({
-        //     data: null,
-        //     error,
-        //     status: 500,
-        //     statusText: 'Internal Server Error',
-        //     count: null
-        //   });
-
-        //   spyOn(console, 'error');
-
-        //   component.getFluxProfile(testSession);
-        //   tick();
-
-        //   expect(component.profile).toBeNull();
-        //   expect(console.error).toHaveBeenCalled();
-        // }));
         it('should handle error when profile fetch fails', fakeAsync(() => {
             const error: PostgrestError = {
                 message: 'Profile fetch failed',
