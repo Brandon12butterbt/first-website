@@ -39,7 +39,7 @@ jobs:
 
       - name: Run Express tests
         working-directory: ./express-api
-        run: npm test
+        run: npm test --forceExit
 
   build-and-deploy:
     runs-on: self-hosted
