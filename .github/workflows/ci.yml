@@ -8,7 +8,7 @@ on:
 
 jobs:
 
-  test:
+  angular-test:
     runs-on: self-hosted
 
     steps:
@@ -24,10 +24,26 @@ jobs:
         run: |
           npx ng test --watch=false --browsers=ChromeHeadless
 
+  
+  express-test:
+    runs-on: self-hosted
+    needs: angular-test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Express dependencies
+        working-directory: ./express-api
+        run: npm install
+
+      - name: Run Express tests
+        working-directory: ./express-api
+        run: npm test
 
   build-and-deploy:
     runs-on: self-hosted
-    needs: test
+    needs: [angular-test, express-test]
 
     steps:
       - name: Write SSH key

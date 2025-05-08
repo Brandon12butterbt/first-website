@@ -1,8 +1,5 @@
 const express = require('express');
 const cors = require('cors');
-// const fetch = require('node-fetch'); // npm install node-fetch
-const bodyParser = require('body-parser');
-
 const app = express();
 const PORT = 3000;
 
@@ -16,7 +13,6 @@ app.use(cors({
     'http://localhost',
     'http://localhost:4200'
   ]
-  // origin: 'http://localhost:4200',
 }));
 
 //all env variables
@@ -85,3 +81,5 @@ app.post('/generate-image', async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Env API running on http://localhost:${PORT}`);
 });
+
+module.exports = app;
