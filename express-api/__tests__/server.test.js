@@ -40,7 +40,7 @@ describe('POST /generate-image', () => {
 
   it('should return 400 if prompt is missing', async () => {
     const res = await request(app).post('/generate-image').send({});
-    expect(res.statusCode).toBe(300);
+    expect(res.statusCode).toBe(400);
     expect(res.body.error).toBe('Missing prompt in request body');
   });
 
