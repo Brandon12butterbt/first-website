@@ -143,19 +143,16 @@ export class GenerateComponent implements OnInit, OnDestroy {
         alert('There was a problem generating the image. Please try again.');
         return;
       }
-      console.log('no errors in call');
       
       this.lastUpdateTime = new Date().toLocaleTimeString() + ' (success)';
       
-      console.log('image blob: ', imageBlob);
       // Create a URL for the blob (temporary, for display only)
       this.generatedImage = URL.createObjectURL(imageBlob);
 
-      console.log('generated image: ', this.generatedImage);
       
       // Decrement user's credits
       await this.supabaseAuthService.imageGeneratedUpdateProfile(this.profile.id, this.profile.images_generated, this.profile.credits);
-      await this.getFluxProfile(this.supabaseAuthService.session);
+      await this.getFluxProfile(this.session);
       
     } catch (error) {
       console.error('Error in component when generating image:', error);
