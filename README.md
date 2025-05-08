@@ -1,6 +1,8 @@
 # AFluxGen Web App
 
-This is a personal full-stack web application project built using **Angular** for the frontend and **Node.js (Express)** for the backend API. It is hosted on an **AWS EC2 instance** with static files served through **Nginx** and protected and cached via **AWS CloudFront**. Domain resolution is managed through **Route 53**.
+This is a personal full-stack web application project built using **Angular** for the frontend and **Node.js (Express)** for the backend API.
+I've used what I have learned throughout my education and professional career to embark on this web application journey.
+I've had a blast working on this project, and cannot wait to start on the next adventure.
 
 ## 🚀 Deployment Overview
 
@@ -12,5 +14,5 @@ This is a personal full-stack web application project built using **Angular** fo
 
 ## 🗺 Architecture Diagram
 
-_See below for a visual representation of the deployment architecture._
+
 ![diagram](/readme-assets/diagram.excalidraw.png)
