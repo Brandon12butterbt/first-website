@@ -1,6 +1,16 @@
 const request = require('supertest');
 const app = require('../server');
 
+let server;
+
+beforeAll(() => {
+  server = app.listen(0);
+});
+
+afterAll((done) => {
+  server.close(done);
+});
+
 const createMockFetch = (status, headers, bodyBuffer) => {
   return jest.fn().mockResolvedValue({
     ok: status >= 200 && status < 300,

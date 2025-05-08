@@ -8,8 +8,24 @@ on:
 
 jobs:
 
+  express-test:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Express dependencies
+        working-directory: ./express-api
+        run: npm install
+
+      - name: Run Express tests
+        working-directory: ./express-api
+        run: npm test --forceExit
+
   angular-test:
     runs-on: self-hosted
+    needs: express-test
 
     steps:
       - name: Checkout code
@@ -23,23 +39,6 @@ jobs:
         working-directory: ./angular-app
         run: |
           npx ng test --watch=false --browsers=ChromeHeadless
-
-  
-  express-test:
-    runs-on: self-hosted
-    needs: angular-test
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Install Express dependencies
-        working-directory: ./express-api
-        run: npm install
-
-      - name: Run Express tests
-        working-directory: ./express-api
-        run: npm test --forceExit
 
   build-and-deploy:
     runs-on: self-hosted
