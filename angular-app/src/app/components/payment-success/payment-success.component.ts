@@ -51,9 +51,6 @@ export class PaymentSuccessComponent {
         }
       });
     }
-    // this.handleTokenTracker().then(() => {
-    //   this.isLoading = false;
-    // });
   }
 
   async checkTokens(session: any) {
@@ -109,40 +106,4 @@ export class PaymentSuccessComponent {
     }
   }
 
-  // async handleTokenTracker() {
-  //   const user = this.checkUser();
-
-  //   this.token = this.supabaseService.getTokenTracker();
-
-  //   if (!this.token) {
-  //     this.router.navigate(['/']);
-  //     return;
-  //   }
-
-  //   const sessionToken = sessionStorage.getItem('token');
-
-  //   if (sessionToken) {
-  //     if (sessionToken !== this.token.unique_id) {
-  //       // Session token does not match database token, redirect to home page
-  //       sessionStorage.setItem('token', '');
-  //       await this.supabaseService.deleteTokenTracker();
-  //       this.router.navigate(['/']);
-  //     }
-      
-  //     // Session token matches database token, proceed with payment success
-  //     await this.stripeService.handlePaymentSuccess(this.token.package_type);
-  //     sessionStorage.setItem('token', '');
-  //     await this.supabaseService.deleteTokenTracker();
-
-  //     this.userEmail = user.email || '';
-  //     this.profile = await this.supabaseService.getProfile();
-
-  //     await this.supabaseService.savePurchase(this.token);
-  //   } else {
-  //     // Session token not found, redirect to home page
-  //     await this.supabaseService.deleteTokenTracker();
-  //     this.router.navigate(['/']);
-  //   }
-
-  // }
 }

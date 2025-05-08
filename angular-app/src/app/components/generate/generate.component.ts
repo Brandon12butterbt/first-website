@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { FluxService } from '../../services/flux.service';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -63,7 +63,6 @@ export class GenerateComponent implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private fluxService: FluxService,
-    private router: Router,
     private cdr: ChangeDetectorRef,
     public config: ConfigService,
     private supabaseAuthService: SupabaseAuthService,

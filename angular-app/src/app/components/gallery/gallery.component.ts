@@ -5,8 +5,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { Router, ActivatedRoute } from '@angular/router';
-import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { SupabaseAuthService } from '../../services/supabase-auth.service';
 
@@ -35,9 +35,6 @@ export class GalleryComponent implements OnInit {
   constructor(private router: Router, private snackBar: MatSnackBar, private supabaseAuthService: SupabaseAuthService) {}
 
   async ngOnInit() {
-    // await this.loadUserData();
-    // await this.loadImages();
-
     const session = await this.supabaseAuthService.ensureSessionLoaded();
     if (session) {
       await this.getFluxProfile(session);

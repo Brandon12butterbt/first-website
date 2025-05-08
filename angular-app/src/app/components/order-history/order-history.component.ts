@@ -41,7 +41,6 @@ export class OrderHistoryComponent implements OnInit {
   isLoading = true;
   session: any = null;
 
-  // Pagination settings
   pageSize = 5;
   currentPage = 0;
   totalItems = 0;
