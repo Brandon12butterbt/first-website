@@ -83,6 +83,7 @@ export class UpgradeComponent implements OnInit {
       }
       if (profile) {
         this.profile = profile;
+        await this.supabaseAuthService.deleteTokenTracker(this.profile.id);
       }
     } catch (error) {
       console.log(error);
