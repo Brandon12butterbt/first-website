@@ -9,10 +9,12 @@ import { MatDividerModule } from '@angular/material/divider';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { By } from '@angular/platform-browser';
 import { MatMenuTrigger } from '@angular/material/menu';
+import { DebugElement } from '@angular/core';
 
 describe('NavBarComponent', () => {
     let component: NavBarComponent;
     let fixture: ComponentFixture<NavBarComponent>;
+    let debugElement: DebugElement;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
@@ -30,115 +32,167 @@ describe('NavBarComponent', () => {
 
         fixture = TestBed.createComponent(NavBarComponent);
         component = fixture.componentInstance;
+        debugElement = fixture.debugElement;
         fixture.detectChanges();
     });
 
     it('should create', () => {
         expect(component).toBeTruthy();
-    });
-
-    describe('UI Elements', () => {
-        it('should show application name/logo', () => {
-            const logoElement = fixture.debugElement.query(By.css('.text-purple-400'));
-            expect(logoElement.nativeElement.textContent).toContain('AFluxGen');
+      });
+    
+      it('should display logo with correct text', () => {
+        const logo = debugElement.query(By.css('a[routerLink="/"]'));
+        expect(logo.nativeElement.textContent).toContain('AFluxGen');
+      });
+    
+      describe('when user is not authenticated', () => {
+        beforeEach(() => {
+          component.profile = null;
+          fixture.detectChanges();
         });
-
-        it('should show navigation links when user is logged in', () => {
-            component.profile = { id: '123', email: 'test@test.com', credits: 50 };
-            fixture.detectChanges();
-
-            const galleryButton = fixture.debugElement.query(By.css('button[routerLink="/gallery"]'));
-            const generateButton = fixture.debugElement.query(By.css('button[routerLink="/generate"]'));
-            const creditsButton = fixture.debugElement.query(By.css('button[routerLink="/upgrade"]'));
-
-            expect(galleryButton).toBeTruthy();
-            expect(generateButton).toBeTruthy();
-            expect(creditsButton).toBeTruthy();
+    
+        it('should show home link for guests', () => {
+          const homeLink = debugElement.query(By.css('a[routerLink="/"]'));
+          expect(homeLink).toBeTruthy();
         });
-
-        it('should hide navigation links when user is not logged in', () => {
-            component.profile = null;
-            fixture.detectChanges();
-
-            const galleryButton = fixture.debugElement.query(By.css('button[routerLink="/gallery"]'));
-            const generateButton = fixture.debugElement.query(By.css('button[routerLink="/generate"]'));
-            const creditsButton = fixture.debugElement.query(By.css('button[routerLink="/upgrade"]'));
-
-            expect(galleryButton).toBeNull();
-            expect(generateButton).toBeNull();
-            expect(creditsButton).toBeNull();
+    
+        it('should show login and signup links', () => {
+          const loginLink = debugElement.query(By.css('a[routerLink="/login"]'));
+          const signupLink = debugElement.query(By.css('a[routerLink="/signup"]'));
+          expect(loginLink).toBeTruthy();
+          expect(signupLink).toBeTruthy();
         });
-
-        it('should display user credits when logged in', () => {
-            component.profile = { credits: 100 };
-            fixture.detectChanges();
-
-            const creditsElement = fixture.debugElement.query(By.css('.bg-gray-700'));
-            expect(creditsElement.nativeElement.textContent).toContain('100 credits');
+    
+        it('should not show gallery, generate or upgrade links', () => {
+          const galleryLink = debugElement.query(By.css('a[routerLink="/gallery"]'));
+          const generateLink = debugElement.query(By.css('a[routerLink="/generate"]'));
+          const upgradeLink = debugElement.query(By.css('a[routerLink="/upgrade"]'));
+          expect(galleryLink).toBeFalsy();
+          expect(generateLink).toBeFalsy();
+          expect(upgradeLink).toBeFalsy();
         });
-    });
-
-    describe('User Interactions', () => {
+    
+        it('should not show credits badge', () => {
+          const creditsBadge = debugElement.query(By.css('.bg-gray-800'));
+          expect(creditsBadge).toBeFalsy();
+        });
+      });
+    
+      describe('when user is authenticated', () => {
+        beforeEach(() => {
+          component.profile = { credits: 100 };
+          component.userEmail = 'test@example.com';
+          fixture.detectChanges();
+        });
+    
+        it('should show gallery, generate and upgrade links', () => {
+          const galleryLink = debugElement.query(By.css('a[routerLink="/gallery"]'));
+          const generateLink = debugElement.query(By.css('a[routerLink="/generate"]'));
+          const upgradeLink = debugElement.query(By.css('a[routerLink="/upgrade"]'));
+          expect(galleryLink).toBeTruthy();
+          expect(generateLink).toBeTruthy();
+          expect(upgradeLink).toBeTruthy();
+        });
+    
+        it('should show credits badge with correct value', () => {
+          const creditsBadge = debugElement.query(By.css('.bg-gray-800'));
+          expect(creditsBadge.nativeElement.textContent).toContain('100 credits');
+        });
+    
+        it('should show user email in dropdown button', () => {
+          const dropdownButton = debugElement.query(By.css('button'));
+          expect(dropdownButton.nativeElement.textContent).toContain('test@example.com');
+        });
+    
+        it('should toggle user dropdown when clicked', () => {
+          const dropdownButton = debugElement.query(By.css('button'));
+          expect(component.isUserDropdownOpen).toBeFalse();
+          
+          dropdownButton.triggerEventHandler('click', { stopPropagation: () => {} });
+          fixture.detectChanges();
+          
+          expect(component.isUserDropdownOpen).toBeTrue();
+          
+          dropdownButton.triggerEventHandler('click', { stopPropagation: () => {} });
+          fixture.detectChanges();
+          
+          expect(component.isUserDropdownOpen).toBeFalse();
+        });
+    
+        it('should show dropdown menu when toggled', () => {
+          component.isUserDropdownOpen = true;
+          fixture.detectChanges();
+          
+          const dropdownMenu = debugElement.query(By.css('.absolute.right-0'));
+          expect(dropdownMenu).toBeTruthy();
+        });
+    
         it('should emit signOut event when sign out is clicked', () => {
-            spyOn(component.signOut, 'emit');
-            component.signOutClicked();
-            expect(component.signOut.emit).toHaveBeenCalled();
+          spyOn(component.signOut, 'emit');
+          component.isUserDropdownOpen = true;
+          fixture.detectChanges();
+          
+          const signOutButton = debugElement.query(By.css('button[class*="w-full"]'));
+          signOutButton.triggerEventHandler('click', null);
+          
+          expect(component.signOut.emit).toHaveBeenCalled();
         });
-
-        it('should show logged-in menu options when user is authenticated', fakeAsync(() => {
-            component.profile = { id: '123', email: 'test@test.com' };
-            fixture.detectChanges();
+    
+        it('should close dropdown when mouse leaves', fakeAsync(() => {
+          component.isUserDropdownOpen = true;
+          fixture.detectChanges();
           
-            const menuTriggerDebugEl = fixture.debugElement.query(By.directive(MatMenuTrigger));
-            const menuTrigger = menuTriggerDebugEl.injector.get(MatMenuTrigger);
-            menuTrigger.openMenu();
-            fixture.detectChanges();
-            tick();
+          const dropdownMenu = debugElement.query(By.css('.absolute.right-0'));
+          dropdownMenu.triggerEventHandler('mouseleave', null);
+          tick();
           
-            const overlayContainer = document.querySelector('.cdk-overlay-container');
-          
-            const accountDetailsButton = overlayContainer?.querySelector('button[routerLink="/account-details"]');
-            const purchaseHistoryButton = overlayContainer?.querySelector('button[routerLink="/order-history"]');
-            const signOutButton = Array.from(overlayContainer?.querySelectorAll('button') || [])
-              .find(btn => btn.textContent?.includes('Sign out'));
-          
-            expect(accountDetailsButton).toBeTruthy();
-            expect(purchaseHistoryButton).toBeTruthy();
-            expect(signOutButton).toBeTruthy();
-
-            const loginButton = overlayContainer?.querySelector('button[routerLink="/login"]');
-            const signupButton = overlayContainer?.querySelector('button[routerLink="/signup"]');
-          
-            expect(loginButton).toBeNull();
-            expect(signupButton).toBeNull();
-          }));
-
-        it('should show logged-out menu options when user is not authenticated', fakeAsync(() => {
-            component.profile = null;
-            fixture.detectChanges();
-
-            const menuTriggerDebugEl = fixture.debugElement.query(By.directive(MatMenuTrigger));
-            const menuTrigger = menuTriggerDebugEl.injector.get(MatMenuTrigger);
-            menuTrigger.openMenu();
-            fixture.detectChanges();
-            tick();
-          
-            const overlayContainer = document.querySelector('.cdk-overlay-container');
-          
-            const loginButton = overlayContainer?.querySelector('button[routerLink="/login"]');
-            const signupButton = overlayContainer?.querySelector('button[routerLink="/signup"]');
-          
-            expect(loginButton).toBeTruthy();
-            expect(signupButton).toBeTruthy();
-
-            const accountDetailsButton = overlayContainer?.querySelector('button[routerLink="/account-details"]');
-            const purchaseHistoryButton = overlayContainer?.querySelector('button[routerLink="/order-history"]');
-            const signOutButton = Array.from(overlayContainer?.querySelectorAll('button') || [])
-              .find(btn => btn.textContent?.includes('Sign out'));
-          
-            expect(accountDetailsButton).toBeNull();
-            expect(purchaseHistoryButton).toBeNull();
-            expect(signOutButton).toBeUndefined();
+          expect(component.isUserDropdownOpen).toBeFalse();
         }));
-    });
+      });
+    
+      describe('mobile menu', () => {
+        it('should toggle mobile menu when hamburger is clicked', () => {
+          const hamburger = debugElement.query(By.css('.hamburger-icon'));
+          expect(component.isMobileMenuOpen).toBeFalse();
+          
+          hamburger.triggerEventHandler('click', null);
+          fixture.detectChanges();
+          
+          expect(component.isMobileMenuOpen).toBeTrue();
+          
+          hamburger.triggerEventHandler('click', null);
+          fixture.detectChanges();
+          
+          expect(component.isMobileMenuOpen).toBeFalse();
+        });
+    
+        it('should show mobile menu when toggled', () => {
+          component.isMobileMenuOpen = true;
+          fixture.detectChanges();
+          
+          const mobileMenu = debugElement.query(By.css('.bg-gray-800'));
+          expect(mobileMenu).toBeTruthy();
+        });
+    
+        it('should close all menus when closeAllMenus is called', () => {
+          component.isMobileMenuOpen = true;
+          component.isUserDropdownOpen = true;
+          
+          component.closeAllMenus();
+          
+          expect(component.isMobileMenuOpen).toBeFalse();
+          expect(component.isUserDropdownOpen).toBeFalse();
+        });
+    
+        it('should close menus when escape key is pressed', () => {
+          component.isMobileMenuOpen = true;
+          component.isUserDropdownOpen = true;
+          
+          const event = new KeyboardEvent('keydown', { key: 'Escape' });
+          document.dispatchEvent(event);
+          
+          expect(component.isMobileMenuOpen).toBeFalse();
+          expect(component.isUserDropdownOpen).toBeFalse();
+        });
+      });
 });
