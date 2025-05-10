@@ -44,10 +44,129 @@
 }
 
 .image-container-style {
-  max-height: 60vh;
+  min-height: 350px;
+  max-height: 70vh;
 }
 
 ::ng-deep .white-spinner circle {
   color: white !important;
   stroke: white !important;
+}
+
+:host {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* Animation keyframes */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+@keyframes pulse-progress {
+  0% {
+    width: 30%;
+  }
+  100% {
+    width: 70%;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -20px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Animations */
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-pulse-progress {
+  animation: pulse-progress 2s ease-in-out infinite alternate;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out forwards;
+}
+
+/* Button styles */
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Countdown timer style overrides */
+::ng-deep app-image-countdown-timer .countdown {
+  @apply bg-transparent text-center p-0 m-0;
+}
+
+::ng-deep app-image-countdown-timer .countdown p {
+  @apply text-gray-300 text-sm font-medium;
+}
+
+/* Turnstile customization */
+::ng-deep ngx-turnstile {
+  width: 100% !important;
+  display: flex !important;
+  justify-content: center !important;
+}
+
+/* Form styling */
+textarea:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.3);
+}
+
+/* Custom scrollbar for textareas */
+textarea::-webkit-scrollbar {
+  width: 8px;
+}
+
+textarea::-webkit-scrollbar-track {
+  background: #1f2937;
+  border-radius: 4px;
+}
+
+textarea::-webkit-scrollbar-thumb {
+  background: #4b5563;
+  border-radius: 4px;
+}
+
+textarea::-webkit-scrollbar-thumb:hover {
+  background: #6d28d9;
+}
+
+/* Background blur effect */
+.backdrop-blur-sm {
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* Improve accessibility - focus states */
+button:focus, a:focus {
+  outline: 2px solid rgba(139, 92, 246, 0.5);
+  outline-offset: 2px;
 }

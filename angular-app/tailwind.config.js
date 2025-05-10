@@ -24,6 +24,44 @@ module.exports = {
       },
       animation: {
         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'progress': 'progress 2s ease-in-out infinite',
+        'shimmer': 'shimmer 3s linear infinite',
+        'pulse-fast': 'pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'pulse-progress': 'pulse-progress 2s ease-in-out infinite alternate',
+        'fade-in': 'fade-in 0.3s ease-out forwards',
+        'fade-out': 'fade-out 0.3s ease-in forwards',
+      },
+      keyframes: {
+        'pulse': {
+          '0%, 100%': { opacity: '0.7' },
+          '50%': { opacity: '0.3' },
+        },
+        'progress': {
+          '0%': { width: '30%' },
+          '100%': { width: '70%' },
+        },
+        'shimmer': {
+          '0%': { backgroundPosition: '-100% 0' },
+          '100%': { backgroundPosition: '100% 0' },
+        },
+        'pulse-progress': {
+          '0%': { width: '30%' },
+          '100%': { width: '70%' },
+        },
+        'fade-in': {
+          'from': { 
+            opacity: '0',
+            transform: 'translate(-50%, -20px)'
+          },
+          'to': { 
+            opacity: '1',
+            transform: 'translate(-50%, 0)'
+          },
+        },
+        'fade-out': {
+          'from': { opacity: '1' },
+          'to': { opacity: '0' },
+        },
       },
       transitionDuration: {
         '700': '700ms',

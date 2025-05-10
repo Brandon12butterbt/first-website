@@ -53,6 +53,12 @@ export class HomeComponent implements OnInit {
         this.profile = null;
       }
     });
+
+    window.scroll({ 
+      top: 0, 
+      left: 0, 
+      behavior: 'smooth' 
+    });
   }
 
   async getProfile(session: any) {

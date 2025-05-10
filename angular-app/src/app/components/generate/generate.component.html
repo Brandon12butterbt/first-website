@@ -1,132 +1,213 @@
 <div class="h-[calc(100vh-60px)] bg-gray-900 flex flex-col">
-  <!-- Top Navigation -->
-  <!-- <app-nav-bar [userEmail]="userEmail" [profile]="profile" (signOut)="signOut()"></app-nav-bar> -->
-  
   <!-- Main Content -->
-  <div class="flex-1 p-6">
+  <div class="container mx-auto px-4 py-12 max-w-6xl">
+    <h1 class="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-500 mb-8 text-center">
+      Create Your AI Masterpiece
+    </h1>
 
-    <div *ngIf="isLoading" class="flex items-center justify-center h-full">
+    <div *ngIf="isLoading" class="flex items-center justify-center h-[60vh]">
       <div class="text-center">
-        <mat-spinner class="mx-auto"></mat-spinner>
-        <p class="mt-4 text-gray-400">Loading your images...</p>
+        <div class="w-16 h-16 mx-auto mb-4 border-4 border-t-purple-500 border-gray-700 rounded-full animate-spin"></div>
+        <p class="text-xl text-gray-300">Preparing your canvas...</p>
       </div>
     </div>
   
-    <div *ngIf="!isLoading" class="grid grid-cols-1 lg:grid-cols-2 gap-8 grid-style">
+    <div *ngIf="!isLoading" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
       <!-- Generation Form -->
-      <mat-card class="bg-gray-800 p-6 min-h-[60vh]">
-        <h2 class="text-xl font-semibold text-white mb-4 select-none flex justify-center">Image Settings</h2>
-        
-        <form [formGroup]="generateForm" (ngSubmit)="onSubmit()" class="space-y-4">
-          <mat-form-field appearance="fill" class="w-full">
-            <mat-label>Prompt</mat-label>
-            <textarea 
-              matInput 
-              formControlName="prompt" 
-              placeholder="Describe the image you want to generate" 
-              rows="12"
-              class="text-lg"
-              required></textarea>
-            <mat-error *ngIf="generateForm.get('prompt')?.hasError('required')">
-              Prompt is required
-            </mat-error>
-          </mat-form-field>
-
-          <div *ngIf="turnWidgetSiteKey !== null && !isTurnstileVerified" class="flex justify-center">
-            <ngx-turnstile 
-              [siteKey]="turnWidgetSiteKey" 
-              formControlName="turnstileToken"
-              theme="auto"
-              (resolved)="onTurnstileSuccess($event)">
-            </ngx-turnstile>
-          </div>
-
-          <div *ngIf="!isGenerating && hasCredits && countdownText === 'Ready'" class="pt-2 flex justify-center">
-            <button 
-              mat-raised-button 
-              color="primary" 
-              type="submit" 
-              class="bg-purple-600 hover:bg-purple-700 py-2"
-              [disabled]="isGenerating || !generateForm.valid || !hasCredits">
-              <span *ngIf="isGenerating">
-                <mat-spinner diameter="24" class="inline-block mr-2 white-spinner"></mat-spinner>
-                <span class="text-white">Generating...</span>
-              </span>
-              <span *ngIf="!isGenerating && hasCredits">
-                <mat-icon class="text-white">auto_awesome</mat-icon>
-                <span class="text-white">Generate Image (1 Credit)</span>
-              </span>
-            </button>
-            
-            <button 
-              *ngIf="!isGenerating && !hasCredits"
-              mat-raised-button 
-              color="accent" 
-              routerLink="/upgrade" 
-              class="w-full bg-purple-600 hover:bg-purple-700 py-2 mt-2">
-              <mat-icon class="text-white">shopping_cart</mat-icon>
-              <span class="text-white">Purchase Credits</span>
-            </button>
-          </div>
+      <div class="relative">
+        <div class="bg-gray-800/70 backdrop-blur-sm border border-gray-700 rounded-xl p-6 shadow-xl transition-all duration-300 hover:shadow-purple-900/20">
+          <h2 class="text-xl font-semibold text-center mb-6 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-500">
+            Prompt Builder
+          </h2>
           
-          <div *ngIf="errorMessage" class="text-red-500 mt-2 text-center">
-            {{ errorMessage }}
-          </div>
-
-          <div class="pt-2 flex justify-center">
-            <app-image-countdown-timer></app-image-countdown-timer>
-          </div>
-        </form>
-      </mat-card>
-      
-      <!-- Preview Area -->
-      <div class="flex flex-col">
-        <mat-card class="bg-gray-800 p-6 h-full flex flex-col min-h-[60vh]">
-          <h2 class="text-xl font-semibold text-white mb-4 select-none flex justify-center">Image Preview</h2>
-          
-          <div *ngIf="isGenerating" class="flex-1 flex items-center justify-center">
-            <div class="text-center">
-              <mat-spinner diameter="64" class="mx-auto mb-4 text-white"></mat-spinner>
-              <p class="text-gray-300">Creating your masterpiece...</p>
-              <p class="text-gray-400 text-sm mt-2">This may take up to 30 seconds</p>
+          <form [formGroup]="generateForm" (ngSubmit)="onSubmit()" class="space-y-5">
+            <div class="relative">
+              <textarea 
+                formControlName="prompt" 
+                placeholder="Describe the image you want to create in vivid detail..." 
+                rows="10"
+                class="w-full bg-gray-900 text-gray-100 border border-gray-700 rounded-lg p-4 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/50 outline-none transition-all duration-200"
+                required></textarea>
+              <div *ngIf="generateForm.get('prompt')?.hasError('required') && generateForm.get('prompt')?.touched" 
+                   class="text-red-400 text-sm mt-1 ml-1">
+                Please enter your creative vision
+              </div>
             </div>
-          </div>
-          
-          <div *ngIf="!isGenerating && !generatedImage" class="flex-1 flex items-center justify-center bg-gray-700 rounded-lg">
-            <div class="text-center p-8">
-              <mat-icon class="text-6xl text-gray-500 mb-4">image</mat-icon>
-              <p class="text-gray-400">Your generated image will appear here</p>
+
+            <!-- Generation Tips -->
+            <div class="bg-gray-900/70 border border-gray-700 rounded-lg p-4 text-sm">
+              <div class="flex items-center mb-2">
+                <mat-icon class="text-purple-400 mr-2 text-lg">lightbulb</mat-icon>
+                <h3 class="font-medium text-gray-200">Tips for Great Results</h3>
+              </div>
+              <ul class="text-gray-400 list-disc list-inside space-y-1">
+                <li>Be specific about style, colors, and lighting</li>
+                <li>Mention artistic influences (e.g., "in the style of...")</li>
+                <li>Include details about mood, atmosphere, and setting</li>
+              </ul>
             </div>
-          </div>
-          
-          <div *ngIf="!isGenerating && generatedImage" class="flex-1 flex flex-col">
-            <div class="relative flex-1 image-container-style">
-              <img [src]="generatedImage" alt="Generated image" class="w-full h-full object-contain rounded-lg">
+
+            <!-- Turnstile widget -->
+            <div *ngIf="turnWidgetSiteKey !== null && !isTurnstileVerified" class="flex flex-col items-center my-4">
+              <div class="mb-2 text-center">
+                <span class="text-purple-400 text-sm">Please complete the verification below</span>
+              </div>
+              <ngx-turnstile 
+                [siteKey]="turnWidgetSiteKey" 
+                formControlName="turnstileToken"
+                theme="dark"
+                (resolved)="onTurnstileSuccess($event)">
+              </ngx-turnstile>
             </div>
             
-            <div class="flex justify-center mt-4 gap-16">
-              <button mat-raised-button color="primary" (click)="downloadImage()" class="bg-purple-600 hover:bg-purple-700">
-                <mat-icon class="text-white">download</mat-icon>
-                <span class="text-white">Download</span>
+            <!-- Turnstile verified -->
+            <div *ngIf="isTurnstileVerified" class="flex items-center justify-center p-3 bg-green-900/30 border border-green-800 rounded-lg my-4">
+              <mat-icon class="text-green-400 mr-2">check_circle</mat-icon>
+              <span class="text-green-400">Verification complete</span>
+            </div>
+
+            <!-- Cooldown Timer -->
+            <div class="bg-gray-900/80 rounded-lg p-4 border border-gray-700">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                  <mat-icon class="text-blue-400 mr-2">timer</mat-icon>
+                  <span class="text-gray-300">Generation Status</span>
+                </div>
+
+                <div *ngIf="countdownText === 'Ready'" 
+                     class="px-3 py-1 bg-green-900/40 text-green-400 rounded-full text-sm flex items-center">
+                  <span class="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"></span>
+                  Ready
+                </div>
+                
+                <div *ngIf="countdownText !== 'Ready'" 
+                     class="px-3 py-1 bg-purple-900/40 text-purple-400 rounded-full text-sm">
+                  <span>{{ countdownText }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Generate Button -->
+            <div class="pt-2 flex justify-center">
+              <button 
+                *ngIf="!isGenerating && hasCredits && countdownText === 'Ready'"
+                type="submit" 
+                class="w-full py-3 px-6 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-medium shadow-lg hover:shadow-purple-900/40 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                [disabled]="isGenerating || !isFormValid() || !hasCredits">
+                <mat-icon>auto_awesome</mat-icon>
+                <span>Generate Image (1 Credit)</span>
               </button>
               
-              <button mat-raised-button color="accent" (click)="saveImage()" class="bg-purple-600 hover:bg-purple-700"
-                [disabled]="isSaving">
-                <mat-spinner *ngIf="isSaving" diameter="20" class="inline-block mr-2 white-spinner"></mat-spinner>
-                <mat-icon *ngIf="!isSaving" class="text-white">save</mat-icon>
-                <span class="text-white">{{ isSaving ? 'Saving...' : 'Save to Gallery' }}</span>
+              <button 
+                *ngIf="isGenerating"
+                type="button" 
+                disabled
+                class="w-full py-3 px-6 bg-gray-700 text-white rounded-lg font-medium shadow-lg flex items-center justify-center gap-2">
+                <div class="w-5 h-5 border-2 border-t-white border-white/20 rounded-full animate-spin"></div>
+                <span>Creating Magic...</span>
+              </button>
+              
+              <button 
+                *ngIf="!isGenerating && !hasCredits"
+                mat-raised-button 
+                color="accent" 
+                routerLink="/upgrade" 
+                class="w-full py-3 px-6 bg-gradient-to-r from-pink-600 to-purple-600 text-white rounded-lg font-medium shadow-lg hover:shadow-purple-900/40 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-200 flex items-center justify-center gap-2">
+                <mat-icon>shopping_cart</mat-icon>
+                <span>Purchase Credits</span>
               </button>
             </div>
+            
+            <div *ngIf="errorMessage" class="bg-red-900/30 text-red-400 border border-red-800 rounded-lg p-3 text-center text-sm">
+              {{ errorMessage }}
+            </div>
+          </form>
+        </div>
+
+        <!-- Background decorative elements -->
+        <div class="absolute -top-10 -left-10 w-32 h-32 bg-purple-500 opacity-5 rounded-full blur-3xl"></div>
+        <div class="absolute -bottom-10 -right-10 w-32 h-32 bg-blue-500 opacity-5 rounded-full blur-3xl"></div>
+      </div>
+      
+      <!-- Preview Area -->
+      <div class="relative">
+        <div class="bg-gray-800/70 backdrop-blur-sm border border-gray-700 rounded-xl p-6 shadow-xl h-full transition-all duration-300 hover:shadow-purple-900/20">
+          <h2 class="text-xl font-semibold text-center mb-6 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-500">
+            Image Preview
+          </h2>
+          
+          <!-- Loading state -->
+          <div *ngIf="isGenerating" class="flex-1 flex items-center justify-center min-h-[400px]">
+            <div class="text-center">
+              <div class="relative w-32 h-32 mx-auto mb-4">
+                <!-- Spinner with glow effect -->
+                <div class="absolute inset-0 rounded-full bg-gradient-to-r from-purple-600 to-blue-600 blur-xl opacity-30 animate-pulse"></div>
+                <div class="relative w-full h-full border-4 border-t-purple-500 border-r-blue-500 border-b-purple-500 border-l-blue-500 border-opacity-50 rounded-full animate-spin"></div>
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <mat-icon class="text-4xl text-purple-400 animate-pulse">auto_awesome</mat-icon>
+                </div>
+              </div>
+              <p class="text-xl text-purple-400 font-medium">Generating Your Masterpiece</p>
+              <p class="text-gray-400 mt-2">This may take up to 30 seconds</p>
+              
+              <!-- Animated progress bar -->
+              <div class="mt-6 w-full bg-gray-700 rounded-full h-2 overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-purple-600 to-blue-600 animate-pulse-progress"></div>
+              </div>
+            </div>
           </div>
-        </mat-card>
+          
+          <!-- Empty state -->
+          <div *ngIf="!isGenerating && !generatedImage" class="flex-1 flex items-center justify-center min-h-[400px] bg-gray-900/70 rounded-lg border border-gray-700">
+            <div class="text-center p-8">
+              <div class="w-20 h-20 rounded-full bg-gray-800 flex items-center justify-center mx-auto mb-4 border border-gray-700">
+                <mat-icon class="text-4xl text-gray-500">image</mat-icon>
+              </div>
+              <p class="text-gray-400 text-lg">Your creation will appear here</p>
+              <p class="text-gray-500 text-sm mt-2">Enter your prompt and click Generate</p>
+            </div>
+          </div>
+          
+          <!-- Generated image display -->
+          <div *ngIf="!isGenerating && generatedImage" class="flex-1 flex flex-col min-h-[400px]">
+            <div class="relative flex-1 rounded-lg overflow-hidden border border-gray-700 bg-gray-900/30">
+              <img [src]="generatedImage" alt="Generated image" class="w-full h-full object-contain">
+              
+              <!-- Image controls overlay -->
+              <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-gray-900 to-transparent">
+                <div class="flex justify-center gap-4">
+                  <button 
+                    (click)="downloadImage()" 
+                    class="py-2 px-4 bg-gray-800 hover:bg-gray-700 text-white rounded-lg font-medium shadow-lg transition-all duration-200 flex items-center gap-2 border border-gray-700 hover:border-blue-500">
+                    <mat-icon class="text-blue-400">download</mat-icon>
+                    <span>Download</span>
+                  </button>
+                  
+                  <button 
+                    (click)="saveImage()" 
+                    [disabled]="isSaving"
+                    class="py-2 px-4 bg-gray-800 hover:bg-gray-700 text-white rounded-lg font-medium shadow-lg transition-all duration-200 flex items-center gap-2 border border-gray-700 hover:border-purple-500 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <div *ngIf="isSaving" class="w-4 h-4 border-2 border-t-white border-white/20 rounded-full animate-spin mr-1"></div>
+                    <mat-icon *ngIf="!isSaving" class="text-purple-400">save</mat-icon>
+                    <span>{{ isSaving ? 'Saving...' : 'Save to Gallery' }}</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Background decorative elements -->
+        <div class="absolute -top-10 -right-10 w-32 h-32 bg-blue-500 opacity-5 rounded-full blur-3xl"></div>
+        <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-purple-500 opacity-5 rounded-full blur-3xl"></div>
       </div>
     </div>
   </div>
   
   <!-- Fixed position save notification that won't be hidden by scrolling -->
   <div *ngIf="showSaveNotification" 
-    class="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 px-6 py-4 rounded-lg text-center shadow-xl min-w-64 animate-bounce-in"
-    [ngClass]="saveMessage.includes('Error') ? 'bg-red-600 text-white' : 'bg-green-600 text-white'">
+    class="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 px-6 py-4 rounded-lg text-center shadow-xl min-w-64 animate-fade-in"
+    [ngClass]="saveMessage.includes('Error') ? 'bg-red-900/80 border border-red-700 text-white' : 'bg-green-900/80 border border-green-700 text-white'">
     <div class="flex items-center justify-center">
       <mat-icon class="mr-2">{{ saveMessage.includes('Error') ? 'error' : 'check_circle' }}</mat-icon>
       <p class="text-lg font-medium">{{ saveMessage }}</p>

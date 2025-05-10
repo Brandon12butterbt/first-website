@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
 
 import { NavBarComponent } from './components/shared/nav-bar/nav-bar.component';
 import { SupabaseAuthService } from './services/supabase-auth.service';
@@ -12,6 +13,8 @@ import { SupabaseAuthService } from './services/supabase-auth.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
+  @ViewChild('contentDiv') contentDiv!: ElementRef;
+
   title = 'AFluxGen AI Image Generator';
 
   profile: any = null;
@@ -28,6 +31,14 @@ export class AppComponent implements OnInit {
   }
 
   async ngOnInit() {
+    this.router.events
+      .pipe(filter(e => e instanceof NavigationEnd))
+      .subscribe(() => {
+        if (this.contentDiv?.nativeElement) {
+          this.contentDiv.nativeElement.scrollTop = 0;
+        }
+      });
+
     const session = await this.supabaseAuthService.ensureSessionLoaded();
     if (session) {
       this.session = session;

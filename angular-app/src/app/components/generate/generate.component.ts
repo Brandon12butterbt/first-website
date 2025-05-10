@@ -11,9 +11,9 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CommonModule } from '@angular/common';
 import { firstValueFrom } from 'rxjs';
 import { NgxTurnstileModule, NgxTurnstileFormsModule } from 'ngx-turnstile';
+import { trigger, transition, style, animate } from '@angular/animations';
 
 import { ConfigService } from '../../services/config.service';
-import { ImageCountdownComponent } from '../shared/image-countdown/image-countdown.component';
 import { SupabaseAuthService } from '../../services/supabase-auth.service';
 import { CountdownService } from '../../services/image-countdown.service';
 
@@ -31,11 +31,21 @@ import { CountdownService } from '../../services/image-countdown.service';
     MatProgressSpinnerModule,
     RouterModule,
     NgxTurnstileModule,
-    NgxTurnstileFormsModule,
-    ImageCountdownComponent
+    NgxTurnstileFormsModule
   ],
   templateUrl: './generate.component.html',
-  styleUrls: ['./generate.component.css']
+  styleUrls: ['./generate.component.css'],
+  animations: [
+    trigger('fadeInOut', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('300ms ease-out', style({ opacity: 1 })),
+      ]),
+      transition(':leave', [
+        animate('300ms ease-in', style({ opacity: 0 })),
+      ]),
+    ]),
+  ],
 })
 export class GenerateComponent implements OnInit, OnDestroy {
   generateForm: FormGroup;
@@ -71,20 +81,29 @@ export class GenerateComponent implements OnInit, OnDestroy {
     this.turnWidgetSiteKey = this.config.turnWidgetSiteKey;
     this.generateForm = this.fb.group({
       prompt: ['', [Validators.required]],
-      turnstileToken: [null, Validators.required]
+      turnstileToken: [null]
     });
   }
   
   async ngOnInit() {
     this.countdownService.countdown$.subscribe(text => {
       this.countdownText = text;
+      this.cdr.detectChanges();
     });
     
     this.countdownService.startCountdown();
 
+    // If turnstile key is not set, mark as verified (skip verification)
+    if (!this.turnWidgetSiteKey) {
+      this.isTurnstileVerified = true;
+    }
+
     this.session = await this.supabaseAuthService.ensureSessionLoaded();
     if (this.session) {
       await this.getFluxProfile(this.session);
+    } else {
+      // Still show UI even if not logged in
+      this.isLoading = false;
     }
   }
 
@@ -103,11 +122,33 @@ export class GenerateComponent implements OnInit, OnDestroy {
       console.log(error);
     } finally {
       this.isLoading = false;
+      this.cdr.detectChanges();
     }
   }
   
+  // New helper method to check form validity
+  isFormValid(): boolean {
+    // If turnstile is visible and not verified, form is invalid
+    if (this.turnWidgetSiteKey && !this.isTurnstileVerified) {
+      return false;
+    }
+    
+    // Otherwise just check if prompt is valid
+    return this.generateForm.get('prompt')?.valid === true;
+  }
+
   async onSubmit() {
-    if (this.generateForm.invalid || !this.hasCredits) return;
+    // Use our custom validator instead of the form's built-in valid state
+    if (!this.isFormValid()) {
+      // If Turnstile is required but not verified, show a specific error
+      if (this.turnWidgetSiteKey && !this.isTurnstileVerified) {
+        this.errorMessage = 'Please complete the verification before generating an image';
+        this.cdr.detectChanges();
+      }
+      return;
+    }
+    
+    if (!this.hasCredits) return;
     
     this.isGenerating = true;
     this.errorMessage = '';
@@ -125,6 +166,7 @@ export class GenerateComponent implements OnInit, OnDestroy {
           this.generatedImage = 'https://via.placeholder.com/1024x1024/3a3a3a/FFFFFF?text=Generated+Image';
           this.errorMessage = 'Generation timeout. Please try again.';
         }
+        this.cdr.detectChanges();
       }
     }, 30000);
 
@@ -135,12 +177,16 @@ export class GenerateComponent implements OnInit, OnDestroy {
       if (imageBlob.error === 'rate_limited') {
         this.errorMessage = imageBlob.message;
         this.lastUpdateTime = new Date().toLocaleTimeString() + ' (error)';
+        this.isGenerating = false;
+        this.cdr.detectChanges();
         return;
       }
     
       if (imageBlob.error === 'api_error') {
         console.error('API request failed:', imageBlob.message);
-        alert('There was a problem generating the image. Please try again.');
+        this.errorMessage = 'There was a problem generating the image. Please try again.';
+        this.isGenerating = false;
+        this.cdr.detectChanges();
         return;
       }
       
@@ -162,12 +208,11 @@ export class GenerateComponent implements OnInit, OnDestroy {
     } finally {
       this.isGenerating = false;
       this.lastUpdateTime = new Date().toLocaleTimeString() + ' (complete)';
+      this.cdr.detectChanges();
 
       // Used to trigger nav bar profile credits update
       this.supabaseAuthService.triggerAuthChange('SIGNED_IN', this.session);
     }
-
-    
   }
   
   downloadImage() {
@@ -205,65 +250,79 @@ export class GenerateComponent implements OnInit, OnDestroy {
   }
   
   async saveImage() {
-    if (this.generatedImage && this.generateForm.valid) {
-      try {
-        this.isSaving = true;
-        this.showSaveNotification = false; // Reset notification
-        const { prompt } = this.generateForm.value;
-        
-        // Convert blob URL to a data URL that can be stored persistently
-        const response = await fetch(this.generatedImage);
-        const blob = await response.blob();
+    if (!this.generatedImage || this.isSaving) return;
+    
+    this.isSaving = true;
+    this.saveMessage = '';
+    this.showSaveNotification = false;
+    
+    try {
+      const { prompt } = this.generateForm.value;
+      
+      // Convert blob URL to a data URL that can be stored persistently
+      const response = await fetch(this.generatedImage);
+      const blob = await response.blob();
 
-        // Convert blob to base64 data URL
-        const reader = new FileReader();
-        const dataUrlPromise = new Promise<string>((resolve) => {
-          reader.onloadend = () => resolve(reader.result as string);
-          reader.readAsDataURL(blob);
-        });
+      // Convert blob to base64 data URL
+      const reader = new FileReader();
+      const dataUrlPromise = new Promise<string>((resolve) => {
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.readAsDataURL(blob);
+      });
 
-        const dataUrl = await dataUrlPromise;
-        
-        // Now save the data URL to Supabase
-        await this.supabaseAuthService.saveGeneratedImage(this.profile.id, dataUrl, prompt);
-        // Show success notification
-        this.saveMessage = 'Image saved to your gallery!';
+      const dataUrl = await dataUrlPromise;
+      
+      // Save the data URL to Supabase
+      const result = await this.supabaseAuthService.saveGeneratedImage(this.profile.id, dataUrl, prompt);
+      
+      if (!result.error) {
+        this.saveMessage = 'Image saved to your gallery';
         this.showSaveNotification = true;
-        // Ensure the change is detected
-        this.cdr.detectChanges();
         
-        // Hide notification after 5 seconds (increased from 3)
+        // Auto-hide the notification after a delay
         setTimeout(() => {
           this.showSaveNotification = false;
           this.cdr.detectChanges();
-        }, 5000);
-        
-      } catch (error) {
-        console.error('Error saving image:', error);
-        this.saveMessage = 'Error saving image. Please try again.';
+        }, 3000);
+      } else {
+        console.error('Error saving image:', result.error);
+        this.saveMessage = 'Error: Failed to save image';
         this.showSaveNotification = true;
         
-        // Ensure the change is detected
-        this.cdr.detectChanges();
-        
-        // Hide notification after 5 seconds (increased from 3)
+        // Auto-hide the notification after a delay
         setTimeout(() => {
           this.showSaveNotification = false;
           this.cdr.detectChanges();
-        }, 5000);
-      } finally {
-        this.isSaving = false;
+        }, 3000);
       }
+    } catch (error) {
+      console.error('Error saving image to gallery:', error);
+      this.saveMessage = 'Error: Failed to save image';
+      this.showSaveNotification = true;
+      
+      // Auto-hide the notification after a delay
+      setTimeout(() => {
+        this.showSaveNotification = false;
+        this.cdr.detectChanges();
+      }, 3000);
+    } finally {
+      this.isSaving = false;
+      this.cdr.detectChanges();
     }
   }
-
+  
   ngOnDestroy() {
+    // Clean up any subscriptions
     if (this.generatedImage && this.generatedImage.startsWith('blob:')) {
       URL.revokeObjectURL(this.generatedImage);
     }
   }
-
+  
   onTurnstileSuccess(token: any) {
-    setTimeout(() => { this.isTurnstileVerified = true; }, 3000);
+    // Set the token value in the form
+    this.generateForm.get('turnstileToken')?.setValue(token);
+    this.isTurnstileVerified = true;
+    console.log('Turnstile verified:', token);
+    this.cdr.detectChanges();
   }
 } 
