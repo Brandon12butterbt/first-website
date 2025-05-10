@@ -59,9 +59,9 @@
             <span class="text-white select-none">{{ profile?.credits || 0 }}</span>
           </div>
 
-          <!-- Guest Login/Signup -->
-          <ng-container *ngIf="!profile">
-            <a routerLink="/login" routerLinkActive="active" class="hidden sm:flex nav-link px-3 py-2 text-gray-300 hover:text-white transition-colors duration-200 touch-manipulation">
+          <!-- Guest Login/Signup - Desktop Only -->
+          <ng-container *ngIf="!profile" class="hidden md:flex items-center space-x-2">
+            <a routerLink="/login" routerLinkActive="active" class="nav-link px-3 py-2 text-gray-300 hover:text-white transition-colors duration-200 touch-manipulation">
               <span class="flex items-center">
                 <mat-icon class="mr-1 text-sm">login</mat-icon>
                 Login
@@ -70,8 +70,7 @@
             <a routerLink="/signup" routerLinkActive="active" class="nav-link px-3 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-md transition-colors duration-200 touch-manipulation">
               <span class="flex items-center">
                 <mat-icon class="mr-1 text-sm">person_add</mat-icon>
-                <span class="hidden sm:inline">Sign Up</span>
-                <span class="sm:hidden">Sign</span>
+                Sign Up
               </span>
             </a>
           </ng-container>
@@ -118,7 +117,7 @@
           </div>
 
           <!-- Mobile Menu Button -->
-          <div class="md:hidden flex items-center">
+          <div class="md:hidden flex items-center ml-2">
             <button (click)="toggleMobileMenu()" class="p-2 touch-manipulation" aria-label="Menu">
               <div [class.open]="isMobileMenuOpen" class="hamburger-icon">
                 <span></span>
@@ -137,7 +136,6 @@
     <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
       <!-- For Authenticated Users -->
       <ng-container *ngIf="profile">
-        <!-- Credits Badge (Mobile) - Removed as it's now in the dropdown -->
         <a routerLink="/gallery" routerLinkActive="bg-gray-700" (click)="closeAllMenus()" class="block px-3 py-3 rounded-md text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white touch-manipulation">
           <span class="flex items-center">
             <mat-icon class="mr-2">dashboard</mat-icon>

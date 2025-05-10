@@ -94,3 +94,28 @@
 .nav-link:not(.active):hover::after {
     transform: scaleX(0.8);
 }
+
+/* iOS Safe Area Insets */
+@supports (padding: max(0px)) {
+    nav {
+        padding-left: max(0.5rem, env(safe-area-inset-left));
+        padding-right: max(0.5rem, env(safe-area-inset-right));
+    }
+    
+    .hamburger-icon {
+        margin-right: max(0.5rem, env(safe-area-inset-right));
+    }
+}
+
+/* Mobile Menu Improvements */
+@media (max-width: 768px) {
+    .container {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+    
+    /* Ensure hamburger menu has proper spacing */
+    .md\:hidden.flex.items-center {
+        margin-left: 0.5rem;
+    }
+}
