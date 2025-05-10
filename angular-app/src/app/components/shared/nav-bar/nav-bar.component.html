@@ -1,68 +1,192 @@
-<mat-toolbar class="bg-gray-950 border-b border-gray-800">
-  <div class="container mx-auto flex items-center justify-center">
-    <a routerLink="/" class="text-xl font-bold text-purple-400 mr-6 select-none cursor-pointer">AFluxGen</a>
-    
-    <button *ngIf="profile" mat-button routerLink="/gallery" class="text-white hover:bg-gray-700 mx-2">
-      <mat-icon>dashboard</mat-icon>
-      <span class="ml-1">Gallery</span>
-    </button>
-    
-    <button *ngIf="profile" mat-button routerLink="/generate" class="text-white hover:bg-gray-700 mx-2">
-      <mat-icon>add_photo_alternate</mat-icon>
-      <span class="ml-1">Generate</span>
-    </button>
+<!-- Navbar Container -->
+<nav class="sticky top-0 z-50 bg-gray-950 backdrop-blur border-b border-gray-800 shadow-lg text-white w-full">
+  <div class="container mx-auto px-4">
+    <div class="flex items-center justify-center h-16">
+      <!-- Logo and Navigation Wrapper -->
+      <div class="flex items-center justify-center w-full max-w-5xl">
+        <!-- Logo Section -->
+        <a routerLink="/" class="text-xl font-bold text-purple-400 hover:text-purple-300 transition-colors duration-300 select-none cursor-pointer flex items-center">
+          <span class="mr-1 text-2xl">A</span>FluxGen
+        </a>
 
-    <button *ngIf="profile" mat-button routerLink="/upgrade" class="text-white hover:bg-gray-700 mx-2">
-      <mat-icon>shopping_bag</mat-icon>
-      <span class="ml-1">Credits</span>
-    </button>
-    
-    <div *ngIf="profile" class="px-2 py-0.5 bg-gray-700 rounded-full flex items-center mx-2 text-sm">
-      <mat-icon class="text-yellow-400 mr-1" style="font-size: 16px; height: 16px; width: 16px; line-height: 16px;">stars</mat-icon>
-      <span class="text-white select-none">{{ profile?.credits || 0 }} credits</span>
-    </div>
-    
-    <!-- Logged in menu -->
-    <div *ngIf="profile">
-      <button mat-button [matMenuTriggerFor]="userMenu" class="text-white hover:bg-gray-700 mx-2">
-        <mat-icon>account_circle</mat-icon>
-        <span class="ml-1">{{ userEmail }}</span>
-      </button>
-      
-      <mat-menu #userMenu="matMenu">
-        <button mat-menu-item routerLink="/account-details">
-          <mat-icon>person</mat-icon>
-          <span>Account Details</span>
-        </button>
-        <button mat-menu-item routerLink="/order-history">
-          <mat-icon>receipt_long</mat-icon>
-          <span>Purchase History</span>
-        </button>
-        <mat-divider></mat-divider>
-        <button mat-menu-item (click)="signOutClicked()">
-          <mat-icon>exit_to_app</mat-icon>
-          <span>Sign out</span>
-        </button>
-      </mat-menu>
-    </div>
+        <!-- Desktop Navigation Links -->
+        <div class="hidden md:flex items-center space-x-4 mx-auto">
+          <!-- For Authenticated Users -->
+          <ng-container *ngIf="profile">
+            <a routerLink="/gallery" routerLinkActive="active" class="nav-link px-3 py-2 text-gray-300 hover:text-white transition-colors duration-200">
+              <span class="flex items-center">
+                <mat-icon class="mr-1 text-sm">dashboard</mat-icon>
+                Gallery
+              </span>
+            </a>
+            <a routerLink="/generate" routerLinkActive="active" class="nav-link px-3 py-2 text-gray-300 hover:text-white transition-colors duration-200">
+              <span class="flex items-center">
+                <mat-icon class="mr-1 text-sm">add_photo_alternate</mat-icon>
+                Generate
+              </span>
+            </a>
+            <a routerLink="/upgrade" routerLinkActive="active" class="nav-link px-3 py-2 text-gray-300 hover:text-white transition-colors duration-200">
+              <span class="flex items-center">
+                <mat-icon class="mr-1 text-sm">shopping_bag</mat-icon>
+                Upgrade
+              </span>
+            </a>
+          </ng-container>
 
-    <!-- Logged out menu -->
-    <div *ngIf="!profile">
-      <button mat-button [matMenuTriggerFor]="noUserMenu" class="text-white hover:bg-gray-700 mx-2">
-        <mat-icon>account_circle</mat-icon>
-        <span class="ml-1">Account</span>
-      </button>
-      
-      <mat-menu #noUserMenu="matMenu">
-        <button mat-menu-item routerLink="/login">
-          <mat-icon>login</mat-icon>
-          <span>Login</span>
-        </button>
-        <button mat-menu-item routerLink="/signup">
-          <mat-icon>add_circle_icon</mat-icon>
-          <span>Sign Up</span>
-        </button>
-      </mat-menu>
+          <!-- For Guest Users -->
+          <ng-container *ngIf="!profile">
+            <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-link px-3 py-2 text-gray-300 hover:text-white transition-colors duration-200">
+              <span class="flex items-center">
+                <mat-icon class="mr-1 text-sm">home</mat-icon>
+                Home
+              </span>
+            </a>
+          </ng-container>
+        </div>
+
+        <!-- Right Side Items -->
+        <div class="flex items-center ml-auto space-x-4">
+          <!-- Credits Badge -->
+          <div *ngIf="profile" class="px-2 py-1 bg-gray-800 rounded-full flex items-center text-sm border border-gray-700">
+            <mat-icon class="text-yellow-400 mr-1" style="font-size: 16px; height: 16px; width: 16px; line-height: 16px;">stars</mat-icon>
+            <span class="text-white select-none">{{ profile?.credits || 0 }} credits</span>
+          </div>
+
+          <!-- Guest Login/Signup -->
+          <ng-container *ngIf="!profile" class="hidden md:flex items-center space-x-2">
+            <a routerLink="/login" routerLinkActive="active" class="nav-link px-3 py-2 text-gray-300 hover:text-white transition-colors duration-200">
+              <span class="flex items-center">
+                <mat-icon class="mr-1 text-sm">login</mat-icon>
+                Login
+              </span>
+            </a>
+            <a routerLink="/signup" routerLinkActive="active" class="nav-link px-3 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-md transition-colors duration-200">
+              <span class="flex items-center">
+                <mat-icon class="mr-1 text-sm">person_add</mat-icon>
+                Sign Up
+              </span>
+            </a>
+          </ng-container>
+
+          <!-- User Profile Dropdown (Desktop) - Only for authenticated users -->
+          <div *ngIf="profile" class="relative">
+            <button (click)="toggleUserDropdown($event)" class="flex items-center px-3 py-2 rounded-md hover:bg-gray-800 transition-colors duration-200">
+              <mat-icon>account_circle</mat-icon>
+              <span class="ml-1 truncate max-w-[120px]">{{ userEmail }}</span>
+              <mat-icon>{{ isUserDropdownOpen ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</mat-icon>
+            </button>
+
+            <!-- Dropdown Menu -->
+            <div *ngIf="isUserDropdownOpen" [@dropdownAnimation] (mouseleave)="onDropdownMouseLeave()" class="absolute right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg py-1 z-10">
+              <a routerLink="/account-details" (click)="closeAllMenus()" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white">
+                <span class="flex items-center">
+                  <mat-icon class="mr-2 text-sm">person</mat-icon>
+                  Account Details
+                </span>
+              </a>
+              <a routerLink="/order-history" (click)="closeAllMenus()" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white">
+                <span class="flex items-center">
+                  <mat-icon class="mr-2 text-sm">receipt_long</mat-icon>
+                  Purchase History
+                </span>
+              </a>
+              <div class="border-t border-gray-700 my-1"></div>
+              <button (click)="signOutClicked()" class="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white">
+                <span class="flex items-center">
+                  <mat-icon class="mr-2 text-sm">exit_to_app</mat-icon>
+                  Sign out
+                </span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Mobile Menu Button -->
+          <div class="md:hidden">
+            <div (click)="toggleMobileMenu()" [class.open]="isMobileMenuOpen" class="hamburger-icon">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-</mat-toolbar>
+
+  <!-- Mobile Menu -->
+  <div *ngIf="isMobileMenuOpen" [@mobileMenuAnimation] class="md:hidden bg-gray-800">
+    <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+      <!-- For Authenticated Users -->
+      <ng-container *ngIf="profile">
+        <!-- Credits Badge (Mobile) -->
+        <div class="my-3 px-3 py-2 bg-gray-700 rounded-md flex items-center justify-between">
+          <span class="text-white">Your Credits</span>
+          <span class="px-2 py-1 bg-gray-800 rounded-full flex items-center text-sm">
+            <mat-icon class="text-yellow-400 mr-1" style="font-size: 16px; height: 16px; width: 16px; line-height: 16px;">stars</mat-icon>
+            <span class="text-white select-none">{{ profile?.credits || 0 }}</span>
+          </span>
+        </div>
+
+        <a routerLink="/gallery" routerLinkActive="bg-gray-700" (click)="closeAllMenus()" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">
+          <span class="flex items-center">
+            <mat-icon class="mr-2">dashboard</mat-icon>
+            Gallery
+          </span>
+        </a>
+        <a routerLink="/generate" routerLinkActive="bg-gray-700" (click)="closeAllMenus()" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">
+          <span class="flex items-center">
+            <mat-icon class="mr-2">add_photo_alternate</mat-icon>
+            Generate
+          </span>
+        </a>
+        <a routerLink="/upgrade" routerLinkActive="bg-gray-700" (click)="closeAllMenus()" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">
+          <span class="flex items-center">
+            <mat-icon class="mr-2">shopping_bag</mat-icon>
+            Upgrade
+          </span>
+        </a>
+        <a routerLink="/account-details" routerLinkActive="bg-gray-700" (click)="closeAllMenus()" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">
+          <span class="flex items-center">
+            <mat-icon class="mr-2">person</mat-icon>
+            Account Details
+          </span>
+        </a>
+        <a routerLink="/order-history" routerLinkActive="bg-gray-700" (click)="closeAllMenus()" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">
+          <span class="flex items-center">
+            <mat-icon class="mr-2">receipt_long</mat-icon>
+            Purchase History
+          </span>
+        </a>
+        <div class="border-t border-gray-700 my-2"></div>
+        <button (click)="signOutClicked()" class="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">
+          <span class="flex items-center">
+            <mat-icon class="mr-2">exit_to_app</mat-icon>
+            Sign out
+          </span>
+        </button>
+      </ng-container>
+
+      <!-- For Guest Users -->
+      <ng-container *ngIf="!profile">
+        <a routerLink="/" routerLinkActive="bg-gray-700" [routerLinkActiveOptions]="{exact: true}" (click)="closeAllMenus()" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">
+          <span class="flex items-center">
+            <mat-icon class="mr-2">home</mat-icon>
+            Home
+          </span>
+        </a>
+        <a routerLink="/login" routerLinkActive="bg-gray-700" (click)="closeAllMenus()" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">
+          <span class="flex items-center">
+            <mat-icon class="mr-2">login</mat-icon>
+            Login
+          </span>
+        </a>
+        <a routerLink="/signup" routerLinkActive="bg-gray-700" (click)="closeAllMenus()" class="block px-3 py-2 rounded-md text-base font-medium text-purple-400 hover:bg-gray-700 hover:text-white">
+          <span class="flex items-center">
+            <mat-icon class="mr-2">person_add</mat-icon>
+            Sign Up
+          </span>
+        </a>
+      </ng-container>
+    </div>
+  </div>
+</nav>
