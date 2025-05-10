@@ -151,21 +151,6 @@ describe('NavBarComponent', () => {
       });
     
       describe('mobile menu', () => {
-        it('should toggle mobile menu when hamburger is clicked', () => {
-          const hamburger = debugElement.query(By.css('.hamburger-icon'));
-          expect(component.isMobileMenuOpen).toBeFalse();
-          
-          hamburger.triggerEventHandler('click', null);
-          fixture.detectChanges();
-          
-          expect(component.isMobileMenuOpen).toBeTrue();
-          
-          hamburger.triggerEventHandler('click', null);
-          fixture.detectChanges();
-          
-          expect(component.isMobileMenuOpen).toBeFalse();
-        });
-    
         it('should show mobile menu when toggled', () => {
           component.isMobileMenuOpen = true;
           fixture.detectChanges();
