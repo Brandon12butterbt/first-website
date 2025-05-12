@@ -1,1 +1,214 @@
-/* No additional styles needed for the gallery component */ 
+/* Gallery component styles */
+
+/* Card hover effects */
+.group:hover {
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+}
+
+/* Image zoom effect */
+.group:hover img {
+  transition: transform 0.7s ease;
+}
+
+/* Line clamp for image prompts */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Custom transitions */
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+}
+
+/* Button hover effects */
+button.mat-raised-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+}
+
+/* Custom gradient text effect */
+.bg-clip-text {
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+/* Animation for the notification */
+@keyframes slideInDown {
+  from {
+    transform: translate(-50%, -20px);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: slideInDown 0.3s ease-out forwards;
+}
+
+/* Animation for the spinner */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Glow effect for the hero section */
+@keyframes glow {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+.filter {
+  animation: glow 4s ease-in-out infinite;
+}
+
+/* General Styling */
+.min-h-screen {
+  min-height: 100vh;
+}
+
+.text-gradient {
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+/* Gallery Grid Animations */
+.grid {
+  opacity: 1;
+  transition: opacity 0.4s ease-in-out;
+}
+
+/* Card animations */
+.group {
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.25, 0, 0.25, 1);
+}
+
+.group:hover {
+  z-index: 1;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Image hover effects */
+.group img {
+  transition: transform 0.7s cubic-bezier(0.33, 0.66, 0.66, 1);
+}
+
+.group:hover img {
+  transform: scale(1.1);
+}
+
+/* Overlay animations */
+.overlay {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.group:hover .overlay {
+  opacity: 1;
+}
+
+/* Button animations */
+button.mat-mini-fab {
+  transform: translateY(10px);
+  opacity: 0;
+  transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.group:hover button.mat-mini-fab {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* Animation delays for buttons */
+.group:hover button.mat-mini-fab:nth-child(1) {
+  transition-delay: 0.05s;
+}
+
+.group:hover button.mat-mini-fab:nth-child(2) {
+  transition-delay: 0.1s;
+}
+
+/* Success notification animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -20px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* Loading animation */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Empty state animations */
+.empty-state {
+  transition: all 0.3s ease;
+}
+
+.empty-state:hover {
+  transform: translateY(-5px);
+}
+
+/* Search bar styling */
+.search-input {
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.search-input:focus {
+  border-color: theme('colors.purple.500');
+  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.3);
+}
+
+/* Search highlight animation */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Focus styles for accessibility */
+input:focus, button:focus {
+  outline: 2px solid theme('colors.purple.500');
+  outline-offset: 2px;
+} 

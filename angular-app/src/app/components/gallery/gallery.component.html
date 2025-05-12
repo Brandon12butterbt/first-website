@@ -1,49 +1,154 @@
-<div class="h-[calc(100vh-60px)] bg-gray-900 flex flex-col">
-  
-  <!-- Payment success notification -->
-  <div *ngIf="showSuccessNotification" class="bg-green-700 text-white p-4 text-center flex justify-center items-center">
-    <mat-icon class="mr-2">check_circle</mat-icon>
-    <span>{{ successMessage }}</span>
-    <button mat-icon-button (click)="showSuccessNotification = false" class="ml-4">
+<div class="min-h-[calc(100vh-60px)] bg-gray-900 text-gray-100">
+  <!-- Success notification with animated entry -->
+  <div *ngIf="showSuccessNotification" 
+       class="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-emerald-700 text-white px-6 py-4 rounded-lg shadow-lg flex items-center animate-fade-in">
+    <mat-icon class="mr-3 text-emerald-300">check_circle</mat-icon>
+    <span class="font-medium">{{ successMessage }}</span>
+    <button mat-icon-button (click)="showSuccessNotification = false" class="ml-4 text-white hover:text-emerald-200 transition-colors duration-200">
       <mat-icon>close</mat-icon>
     </button>
   </div>
   
-  <!-- Main Content -->
-  <div class="flex-1 p-6">
+  <!-- Header section with gradient title -->
+  <header class="relative pt-16 pb-10 px-6 overflow-hidden">
+    <div class="absolute inset-0 opacity-10">
+      <div class="absolute -top-48 -right-48 w-96 h-96 bg-purple-600 rounded-full filter blur-3xl"></div>
+      <div class="absolute -bottom-48 -left-48 w-96 h-96 bg-blue-600 rounded-full filter blur-3xl"></div>
+    </div>
     
-    <div *ngIf="isLoading" class="flex items-center justify-center h-full">
-      <div class="text-center">
-        <mat-spinner class="mx-auto"></mat-spinner>
-        <p class="mt-4 text-gray-400">Loading your images...</p>
+    <div class="relative max-w-5xl mx-auto">
+      <div class="text-center mb-10">
+        <h1 class="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-purple-400 via-pink-500 to-blue-500 text-transparent bg-clip-text mb-4">Your AI Creations</h1>
+        <p class="text-gray-400 max-w-2xl mx-auto">Your personal gallery of AI-generated masterpieces. Access, download, or remove images anytime.</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main content section -->
+  <main class="max-w-6xl mx-auto px-4 pb-16">
+    <!-- Search Bar - Only shown when images exist -->
+    <div *ngIf="!isLoading && images.length > 0" class="mb-8 max-w-xl mx-auto">
+      <div class="relative group">
+        <div class="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg opacity-50 blur-sm group-hover:opacity-100 transition-all duration-300 -z-10"></div>
+        <div class="relative bg-gray-900 rounded-lg border border-gray-700 group-hover:border-purple-500 overflow-hidden flex transition-all duration-300">
+          <input 
+            type="text" 
+            [(ngModel)]="searchQuery" 
+            (keyup)="searchImages()"
+            placeholder="Search your images by prompt..." 
+            class="w-full bg-transparent text-gray-200 px-4 py-3 outline-none"
+          >
+          <button 
+            *ngIf="searchQuery" 
+            (click)="clearSearch()" 
+            class="p-3 text-gray-400 hover:text-white transition-colors"
+            matTooltip="Clear search">
+            <mat-icon>close</mat-icon>
+          </button>
+          <button 
+            (click)="searchImages()" 
+            class="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-3 flex items-center justify-center hover:from-purple-700 hover:to-blue-700 transition-colors duration-300">
+            <mat-icon>search</mat-icon>
+          </button>
+        </div>
+      </div>
+      <div *ngIf="searchQuery && filteredImages.length === 0" class="mt-4 text-center text-gray-400">
+        No matching images found. Try a different search term.
       </div>
     </div>
     
-    <div *ngIf="!isLoading && images.length === 0" class="bg-gray-800 rounded-lg p-8 text-center">
-      <mat-icon class="text-6xl text-gray-600 mb-4">image_not_supported</mat-icon>
-      <h2 class="text-xl font-semibold text-white mb-2">No images yet</h2>
-      <p class="text-gray-400 mb-6">Generate your first AI image to see it here.</p>
-      <button mat-raised-button color="primary" routerLink="/generate" class="bg-purple-600 hover:bg-purple-700">
-        <span class="text-white">Generate your first image</span>
+    <!-- Loading state with animated spinner -->
+    <div *ngIf="isLoading" class="flex flex-col items-center justify-center py-20">
+      <div class="w-16 h-16 border-4 border-purple-700 border-t-purple-400 rounded-full animate-spin mb-6"></div>
+      <p class="text-gray-400 text-lg">Curating your masterpieces...</p>
+    </div>
+    
+    <!-- Empty state with call to action -->
+    <div *ngIf="!isLoading && images.length === 0" class="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-8 text-center max-w-2xl mx-auto shadow-lg">
+      <div class="flex justify-center mb-6">
+        <div class="w-24 h-24 bg-gray-800 rounded-full flex items-center justify-center">
+          <mat-icon class="text-6xl text-gray-600">image_not_supported</mat-icon>
+        </div>
+      </div>
+      <h2 class="text-2xl font-bold text-white mb-3">Your Gallery Awaits</h2>
+      <p class="text-gray-400 mb-8 max-w-md mx-auto">Create your first AI-generated image and see it displayed here in your personal gallery.</p>
+      <button mat-raised-button routerLink="/generate" 
+              class="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-8 py-3 rounded-lg text-lg font-medium transition-all duration-200 transform hover:scale-[1.02] hover:shadow-lg">
+        <mat-icon class="mr-2">add_photo_alternate</mat-icon>
+        Generate Your First Image
       </button>
     </div>
     
-    <div *ngIf="!isLoading && images.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <mat-card *ngFor="let image of images" class="bg-gray-800 overflow-hidden">
-        <img [src]="image.image_url" [alt]="image.prompt" class="w-full h-60 object-cover">
-        <mat-card-content class="p-4">
-          <p class="text-gray-300 text-sm truncate">{{ image.prompt }}</p>
-          <p class="text-gray-500 text-xs mt-1">{{ image.created_at | date }}</p>
-        </mat-card-content>
-        <mat-card-actions class="p-4 pt-0 flex justify-between">
-          <button mat-button class="text-purple-400" (click)="downloadImage(image)">
-            <mat-icon>download</mat-icon> Download
-          </button>
-          <button mat-button class="text-red-400" (click)="deleteFluxImage(image.id)">
-            <mat-icon>delete</mat-icon> Delete
-          </button>
-        </mat-card-actions>
-      </mat-card>
+    <!-- Image gallery with grid layout -->
+    <div *ngIf="!isLoading && filteredImages.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div *ngFor="let image of filteredImages; let i = index" 
+           class="group bg-gray-900/70 border border-gray-800 rounded-xl overflow-hidden transition-all duration-200 hover:transform hover:scale-[1.02] hover:shadow-lg hover:border-purple-800">
+        <!-- Image container with hover overlay -->
+        <div class="relative aspect-square overflow-hidden bg-gray-900">
+          <img [src]="image.image_url" [alt]="image.prompt" 
+               class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+          
+          <!-- Hover overlay with quick actions -->
+          <div class="absolute inset-0 bg-gradient-to-t from-gray-900/90 via-gray-900/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-end justify-center p-4">
+            <div class="flex space-x-3">
+              <button mat-mini-fab (click)="downloadImage(image)" 
+                      class="bg-purple-600 text-white hover:bg-purple-700 transition-colors duration-200"
+                      matTooltip="Download Image">
+                <mat-icon>download</mat-icon>
+              </button>
+              <button mat-mini-fab (click)="deleteFluxImage(image.id)" 
+                      class="bg-red-600 text-white hover:bg-red-700 transition-colors duration-200"
+                      matTooltip="Delete Image">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Image details -->
+        <div class="p-4">
+          <p class="font-medium text-gray-300 line-clamp-2 mb-2">{{ image.prompt }}</p>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-500 text-sm">{{ image.created_at | date }}</span>
+            
+            <!-- Resolution badge -->
+            <span class="text-xs px-2 py-1 bg-gray-800 rounded-full text-gray-400">
+              <mat-icon class="text-xs mr-1" style="font-size: 14px; width: 14px; height: 14px;">aspect_ratio</mat-icon>
+              {{ image.width || 512 }}x{{ image.height || 512 }}
+            </span>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
+
+    <!-- No results state after search -->
+    <div *ngIf="!isLoading && images.length > 0 && filteredImages.length === 0" 
+         class="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-8 text-center max-w-2xl mx-auto shadow-lg mt-8">
+      <div class="flex justify-center mb-6">
+        <div class="w-24 h-24 bg-gray-800 rounded-full flex items-center justify-center">
+          <mat-icon class="text-6xl text-gray-600">search_off</mat-icon>
+        </div>
+      </div>
+      <h2 class="text-2xl font-bold text-white mb-3">No Matching Images</h2>
+      <p class="text-gray-400 mb-8 max-w-md mx-auto">No images match your search criteria. Try different keywords or clear the search.</p>
+      <button (click)="clearSearch()" 
+              class="bg-gray-800 hover:bg-gray-700 text-white px-6 py-2 rounded-lg font-medium transition-all duration-200">
+        <mat-icon class="mr-2">refresh</mat-icon>
+        Clear Search
+      </button>
+    </div>
+    
+    <!-- Social proof section when images exist -->
+    <div *ngIf="!isLoading && images.length > 0" class="mt-16 text-center">
+      <div class="bg-gradient-to-r from-purple-900/30 to-blue-900/30 rounded-xl p-8 backdrop-blur-sm border border-gray-800">
+        <h3 class="text-xl sm:text-2xl font-bold text-white mb-4">Unleash Your Creativity</h3>
+        <p class="text-gray-400 mb-6 max-w-lg mx-auto">Join thousands of creators who have generated over 1 million unique images with our AI technology.</p>
+        <button mat-raised-button routerLink="/generate" 
+                class="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-all duration-200 transform hover:scale-[1.02]">
+          <mat-icon class="mr-2">add_photo_alternate</mat-icon>
+          Generate More Images
+        </button>
+      </div>
+    </div>
+  </main>
 </div> 

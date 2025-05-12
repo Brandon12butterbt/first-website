@@ -59,6 +59,7 @@ export class NavBarComponent {
   clickOutside(event: Event) {
     if (!this.elementRef.nativeElement.contains(event.target)) {
       this.isUserDropdownOpen = false;
+      this.isMobileMenuOpen = false;
     }
   }
   
@@ -69,6 +70,7 @@ export class NavBarComponent {
   
   onDropdownMouseLeave() {
     this.isUserDropdownOpen = false;
+    this.isMobileMenuOpen = false;
   }
   
   signOutClicked(): void {
@@ -86,6 +88,9 @@ export class NavBarComponent {
   toggleUserDropdown(event: Event): void {
     event.stopPropagation();
     this.isUserDropdownOpen = !this.isUserDropdownOpen;
+    if (this.isUserDropdownOpen) {
+      this.isMobileMenuOpen = false;
+    }
   }
   
   closeAllMenus(): void {

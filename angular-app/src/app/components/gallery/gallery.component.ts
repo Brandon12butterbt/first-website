@@ -7,6 +7,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatInputModule } from '@angular/material/input';
+import { FormsModule } from '@angular/forms';
 
 import { SupabaseAuthService } from '../../services/supabase-auth.service';
 
@@ -19,7 +22,10 @@ import { SupabaseAuthService } from '../../services/supabase-auth.service';
     MatCardModule,
     MatButtonModule,
     MatIconModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatTooltipModule,
+    MatInputModule,
+    FormsModule
   ],
   templateUrl: './gallery.component.html',
   styleUrls: ['./gallery.component.css']
@@ -29,6 +35,8 @@ export class GalleryComponent implements OnInit {
   profile: any = null;
   isLoading = true;
   images: any[] = [];
+  filteredImages: any[] = [];
+  searchQuery: string = '';
   showSuccessNotification = false;
   successMessage = '';
 
@@ -45,17 +53,34 @@ export class GalleryComponent implements OnInit {
   async downloadImage(image: any) {
     if (!image.image_url) return;
     
-    const link = document.createElement('a');
-    link.href = image.image_url;
-    link.download = `generated-image-${Date.now()}.png`;
-    link.style.display = 'none';
-    
-    document.body.appendChild(link);
-    link.click();
-    
-    setTimeout(() => {
-      document.body.removeChild(link);
-    }, 100);
+    try {
+      const link = document.createElement('a');
+      link.href = image.image_url;
+      link.download = `ai-creation-${Date.now()}.png`;
+      link.style.display = 'none';
+      
+      document.body.appendChild(link);
+      link.click();
+      
+      setTimeout(() => {
+        document.body.removeChild(link);
+      }, 100);
+      
+      this.snackBar.open('Image download started', 'Close', {
+        duration: 3000,
+        horizontalPosition: 'center',
+        verticalPosition: 'bottom',
+        panelClass: ['bg-gray-800', 'text-white']
+      });
+    } catch (error) {
+      console.error('Error downloading image:', error);
+      this.snackBar.open('Failed to download image', 'Close', {
+        duration: 3000,
+        horizontalPosition: 'center',
+        verticalPosition: 'bottom',
+        panelClass: ['bg-red-700', 'text-white']
+      });
+    }
   }
 
   async getFluxProfile(session: any) {
@@ -95,6 +120,7 @@ export class GalleryComponent implements OnInit {
       const { data } = await this.supabaseAuthService.fluxImages(this.profile.id);
 
       this.images = data || [];
+      this.filteredImages = [...this.images];
     } catch (error) {
       console.error('Error getting generated images:', error);
       return [];
@@ -126,5 +152,22 @@ export class GalleryComponent implements OnInit {
         panelClass: ['bg-red-700', 'text-white']
       });
     }
+  }
+
+  searchImages() {
+    if (!this.searchQuery.trim()) {
+      this.filteredImages = [...this.images];
+      return;
+    }
+    
+    const query = this.searchQuery.toLowerCase();
+    this.filteredImages = this.images.filter(image => 
+      image.prompt && image.prompt.toLowerCase().includes(query)
+    );
+  }
+
+  clearSearch() {
+    this.searchQuery = '';
+    this.filteredImages = [...this.images];
   }
 } 

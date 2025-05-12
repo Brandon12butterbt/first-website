@@ -220,7 +220,7 @@ describe('GalleryComponent', () => {
 
       expect(mockCreateElement).toHaveBeenCalledWith('a');
       expect(mockAnchor.href).toBe(mockImage.image_url);
-      expect(mockAnchor.download).toMatch(/^generated-image-\d+\.png$/);
+      expect(mockAnchor.download).toMatch(/^ai-creation-\d{13}\.png$/);
       expect(mockClick).toHaveBeenCalled();
       expect(mockAppendChild).toHaveBeenCalledWith(mockAnchor);
       expect(mockRemoveChild).toHaveBeenCalledWith(mockAnchor);

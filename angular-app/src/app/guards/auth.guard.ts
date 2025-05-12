@@ -14,6 +14,7 @@ export class AuthGuard implements CanActivate {
 
   async canActivate(): Promise<boolean> {
     const session = await this.supabaseAuthService.ensureSessionLoaded();
+    
     if (!session) {
       this.router.navigate(['/']);
       return false;

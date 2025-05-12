@@ -1,62 +1,161 @@
-<div class="h-[calc(100vh-60px)] bg-gray-900 flex flex-col">
-  
-  <!-- Main Content -->
-  <div class="flex-1 p-6">
-    <div class="max-w-2xl mx-auto text-center">
-      <h1 class="text-2xl font-bold text-white mb-2">Upgrade Your Account</h1>
-      <p class="text-gray-400 mb-8">Choose a credit package to generate more amazing AI images</p>
+<div class="min-h-[calc(100vh-60px)] bg-gray-950 text-gray-100 flex flex-col">
+  <!-- Hero Section with Value Proposition -->
+  <div class="relative overflow-hidden bg-gray-900 py-12">
+    <div class="absolute inset-0 z-0 opacity-20">
+      <div class="absolute inset-0 bg-gradient-to-br from-purple-600/30 to-blue-800/20"></div>
+      <div class="absolute -top-40 -right-40 w-80 h-80 bg-purple-700/30 rounded-full filter blur-3xl float-effect"></div>
+      <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-700/30 rounded-full filter blur-3xl float-effect"></div>
     </div>
     
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <mat-card *ngFor="let pack of creditPackages" class="bg-gray-800 overflow-hidden relative">
-        <div class="absolute top-0 right-0 px-4 py-2 bg-gray-700 text-white rounded-bl-lg">
-          {{ formatPrice(pack.price) }}
+    <div class="relative z-10 max-w-5xl mx-auto px-4 text-center">
+      <h1 class="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-emerald-300 to-blue-400">
+        Unlock Your Creative Potential
+      </h1>
+      <p class="text-xl text-gray-300 max-w-3xl mx-auto mb-8">
+        Choose your perfect credit package and start generating stunning AI images today
+      </p>
+      <div class="flex flex-wrap justify-center gap-4 mb-8">
+        <div class="flex items-center py-2 px-4 bg-gray-800/60 rounded-full">
+          <mat-icon class="text-emerald-300 mr-2">verified</mat-icon>
+          <span>High-quality generations</span>
+        </div>
+        <div class="flex items-center py-2 px-4 bg-gray-800/60 rounded-full">
+          <mat-icon class="text-emerald-300 mr-2">verified</mat-icon>
+          <span>Unlimited storage</span>
+        </div>
+        <div class="flex items-center py-2 px-4 bg-gray-800/60 rounded-full">
+          <mat-icon class="text-emerald-300 mr-2">verified</mat-icon>
+          <span>Secure payments</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Pricing Section -->
+  <div class="flex-1 py-12 px-4 max-w-6xl mx-auto">
+    
+    <!-- Pricing Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div *ngFor="let pack of creditPackages" 
+           class="relative group overflow-hidden bg-gradient-to-b from-gray-800 to-gray-850 rounded-2xl transition-all duration-300 hover:scale-103 hover:shadow-xl hover:shadow-purple-900/20 pricing-card">
+        <!-- Popular badge for Standard package -->
+        <div *ngIf="pack.id === 'standard'" 
+             class="absolute top-0 left-0 right-0 bg-gradient-to-r from-purple-600 to-blue-600 text-white text-center text-sm font-medium py-1 pulse-effect">
+          MOST POPULAR
         </div>
         
-        <div class="pt-8 px-6 pb-6 text-center">
-          <h2 class="text-xl font-bold text-white mb-2">{{ pack.name }} Pack</h2>
-          <div class="text-4xl font-bold text-purple-400 my-4 flex items-center justify-center">
-            <mat-icon class="text-yellow-400 mr-2">stars</mat-icon>
-            {{ pack.credits }}
+        <!-- Card content -->
+        <div class="p-8" [class.pt-12]="pack.id === 'standard'">
+          <!-- Package name and price -->
+          <div class="flex justify-between items-start mb-6">
+            <h2 class="text-2xl font-bold">{{ pack.name }}</h2>
+            <div class="text-right">
+              <div class="text-3xl font-bold text-white">{{ formatPrice(pack.price) }}</div>
+              <p class="text-gray-400 text-sm">One-time payment</p>
+            </div>
           </div>
-          <p class="text-gray-400 mb-6">Credits</p>
           
+          <!-- Credits display -->
+          <div class="flex items-center justify-center my-8">
+            <div class="relative animated-border">
+              <div class="absolute inset-0 rounded-full bg-gradient-to-r from-purple-600/20 to-blue-600/20 blur-lg"></div>
+              <div class="relative bg-gray-900/80 rounded-full py-6 px-8 border border-gray-700 overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-blue-600/10"></div>
+                <div class="flex items-center gap-4">
+                  <mat-icon class="w-30 h-30 text-yellow-400">stars</mat-icon>
+                  <div>
+                    <div class="text-4xl font-bold text-white">{{ pack.credits }}</div>
+                    <div class="text-gray-400">Credits</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Features list -->
+          <ul class="space-y-3 mb-8">
+            <li class="flex items-start">
+              <mat-icon class="text-emerald-400 mr-2 w-30 h-30">check_circle</mat-icon>
+              <span>{{ pack.credits }} high-quality AI images</span>
+            </li>
+            <li class="flex items-start">
+              <mat-icon class="text-emerald-400 mr-2 w-30 h-30">check_circle</mat-icon>
+              <span>Full image ownership rights</span>
+            </li>
+          </ul>
+          
+          <!-- Purchase button -->
           <button 
             mat-raised-button 
-            color="primary" 
-            (click)="purchaseCredits(pack.id)" 
-            class="w-full bg-purple-600 hover:bg-purple-700 py-2"
-            [disabled]="isPurchasing">
-            <span *ngIf="!isPurchasing">
-              <mat-icon class="text-white">shopping_cart</mat-icon>
-              <span class="text-white">Purchase</span>
+            (click)="purchaseCredits(pack.id)"
+            [disabled]="isPurchasing"
+            class="w-full py-3 rounded-lg relative overflow-hidden group transition-all duration-200 ease-in-out button-hover-effect"
+            [ngClass]="{
+              'bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700': pack.id === 'standard',
+              'bg-gray-800 hover:bg-gray-700 border border-gray-700 hover:border-purple-600/50': pack.id !== 'standard'
+            }">
+            <span *ngIf="!isPurchasing" class="flex items-center justify-center">
+              <mat-icon class="mr-2 text-white">shopping_cart</mat-icon>
+              <span class="text-white">Get {{ pack.name }} Package</span>
             </span>
-            <span *ngIf="isPurchasing">
-              <mat-spinner diameter="20" class="inline-block mr-2"></mat-spinner>
-              <span class="text-white">Processing...</span>
+            <span *ngIf="isPurchasing" class="flex items-center justify-center">
+              <mat-spinner diameter="20" class="mr-2"></mat-spinner>
+              <span>Processing...</span>
             </span>
           </button>
         </div>
-        
-        <mat-divider></mat-divider>
-        
-        <div class="px-6 py-4">
-          <ul class="text-gray-300">
-            <li class="flex items-center mb-2">
-              <mat-icon class="text-green-500 mr-2">check_circle</mat-icon>
-              Generate {{ pack.credits }} images
-            </li>
-            <li class="flex items-center mb-2">
-              <mat-icon class="text-green-500 mr-2">check_circle</mat-icon>
-              High quality AI images
-            </li>
-            <li class="flex items-center">
-              <mat-icon class="text-green-500 mr-2">check_circle</mat-icon>
-              Download and edit images
-            </li>
-          </ul>
+      </div>
+    </div>
+    
+    <!-- Trust indicators and FAQ -->
+    <div class="mt-16 grid grid-cols-1 md:grid-cols-2 gap-12">
+      <!-- Payment methods -->
+      <div class="bg-gray-900/60 p-6 rounded-xl border border-gray-800 transition-all hover:border-gray-700">
+        <h3 class="text-xl font-bold mb-4 flex items-center">
+          <mat-icon class="mr-2 text-blue-400">credit_card</mat-icon>
+          Secure Payment Methods
+        </h3>
+        <div class="flex flex-wrap gap-4 items-center">
+          <div class="h-8 w-12 bg-white/10 rounded flex items-center justify-center text-xs text-gray-300">VISA</div>
+          <div class="h-8 w-12 bg-white/10 rounded flex items-center justify-center text-xs text-gray-300">MC</div>
+          <div class="h-8 w-12 bg-white/10 rounded flex items-center justify-center text-xs text-gray-300">AMEX</div>
+          <div class="h-8 w-12 bg-white/10 rounded flex items-center justify-center text-xs text-gray-300">PayPal</div>
+          <div class="ml-2 text-gray-400 text-sm">Powered by Stripe</div>
         </div>
-      </mat-card>
+      </div>
+      
+      <!-- Satisfaction guarantee -->
+      <div class="bg-gray-900/60 p-6 rounded-xl border border-gray-800 transition-all hover:border-gray-700">
+        <h3 class="text-xl font-bold mb-4 flex items-center">
+          <mat-icon class="mr-2 text-emerald-400">verified</mat-icon>
+          100% Satisfaction Guarantee
+        </h3>
+        <p class="text-gray-400">
+          Not satisfied with your images? Contact our support team within 14 days of purchase for a full refund, no questions asked.
+        </p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- FAQ Section - Collapsed by default -->
+  <div class="bg-gray-900/80 py-12 px-4">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="text-2xl font-bold text-center mb-8">Frequently Asked Questions</h2>
+      
+      <div class="space-y-4">
+        <div class="bg-gray-800 rounded-lg p-4 transition-all hover:bg-gray-800/80">
+          <h3 class="font-medium">How do credits work?</h3>
+          <p class="text-gray-400 mt-2">Each credit allows you to generate one AI image based on your text prompt. Credits never expire and can be used at any time.</p>
+        </div>
+        <div class="bg-gray-800 rounded-lg p-4 transition-all hover:bg-gray-800/80">
+          <h3 class="font-medium">Can I use the images commercially?</h3>
+          <p class="text-gray-400 mt-2">Yes, all images you generate are yours to use for personal or commercial purposes without any additional licensing fees.</p>
+        </div>
+        <div class="bg-gray-800 rounded-lg p-4 transition-all hover:bg-gray-800/80">
+          <h3 class="font-medium">How do I get more credits?</h3>
+          <p class="text-gray-400 mt-2">You can purchase additional credit packages at any time from this page. Credits are added to your account immediately after purchase.</p>
+        </div>
+      </div>
     </div>
   </div>
 </div> 

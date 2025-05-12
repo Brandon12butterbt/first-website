@@ -6,6 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RouterModule } from '@angular/router';
 import { SupabaseAuthService } from '../../services/supabase-auth.service';
+import { trigger, transition, style, animate } from '@angular/animations';
 
 interface Profile {
   id: string;
@@ -27,7 +28,15 @@ interface Profile {
     RouterModule
   ],
   templateUrl: './account-details.component.html',
-  styleUrls: ['./account-details.component.css']
+  styleUrls: ['./account-details.component.css'],
+  animations: [
+    trigger('fadeIn', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(10px)' }),
+        animate('300ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+      ])
+    ])
+  ]
 })
 export class AccountDetailsComponent implements OnInit {
   profile: Profile | null = null;
@@ -78,5 +87,49 @@ export class AccountDetailsComponent implements OnInit {
     } finally {
       this.isLoading = false;
     }
+  }
+  
+  /**
+   * Calculate a percentage for the progress bar based on images generated
+   * This is for visual purposes in the UI
+   */
+  getImageGenerationPercentage(): number {
+    if (!this.profile) return 0;
+    
+    // For UI purposes, we'll set some thresholds
+    // The more images generated, the higher the percentage (capped at 100%)
+    const images = this.profile.images_generated;
+    
+    if (images <= 10) {
+      return Math.max(10, images * 5); // At least 10% filled
+    } else if (images <= 50) {
+      return 50 + (images - 10) / 40 * 25; // 50-75% range
+    } else {
+      return Math.min(100, 75 + (images - 50) / 50 * 25); // 75-100% range
+    }
+  }
+  
+  /**
+   * Calculate a creativity score based on user activity
+   * This is a gamification element to encourage more usage
+   */
+  getCreativityScore(): string {
+    if (!this.profile) return '0';
+    
+    // Calculate based on usage metrics
+    const baseScore = this.profile.images_generated * 5;
+    const creditBonus = this.profile.credits > 0 ? Math.min(50, this.profile.credits) : 0;
+    
+    // Calculate days since sign-up for tenure bonus
+    const signupDate = new Date(this.profile.created_at);
+    const today = new Date();
+    const daysSinceSignup = Math.floor((today.getTime() - signupDate.getTime()) / (1000 * 60 * 60 * 24));
+    const tenureBonus = Math.min(100, daysSinceSignup);
+    
+    // Total score with some balance
+    const totalScore = Math.min(1000, baseScore + creditBonus + tenureBonus);
+    
+    // Format with separator
+    return totalScore.toLocaleString();
   }
 }

@@ -132,7 +132,7 @@
   </div>
 
   <!-- Mobile Menu -->
-  <div *ngIf="isMobileMenuOpen" [@mobileMenuAnimation] class="md:hidden bg-gray-800">
+  <div *ngIf="isMobileMenuOpen" [@mobileMenuAnimation] class="md:hidden bg-gray-800" (mouseleave)="onDropdownMouseLeave()">
     <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
       <!-- For Authenticated Users -->
       <ng-container *ngIf="profile">
