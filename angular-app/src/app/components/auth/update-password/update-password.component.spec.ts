@@ -25,8 +25,8 @@ describe('UpdatePasswordComponent', () => {
     ]);
 
     await TestBed.configureTestingModule({
+      declarations: [UpdatePasswordComponent],
       imports: [
-        UpdatePasswordComponent,
         RouterTestingModule,
         MatInputModule,
         MatButtonModule,
@@ -183,7 +183,7 @@ describe('UpdatePasswordComponent', () => {
     });
 
     it('should have login link', () => {
-      const loginLink = fixture.debugElement.query(By.css('a[routerLink="/login"]'));
+      const loginLink = fixture.debugElement.query(By.css('a[routerLink="/auth/login"]'));
       expect(loginLink).toBeTruthy();
       expect(loginLink.nativeElement.textContent).toContain('Sign in');
     });

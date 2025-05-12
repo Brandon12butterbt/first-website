@@ -15,6 +15,7 @@ import { AuthChangeEvent, Session, Subscription } from '@supabase/supabase-js';
 import { Router } from '@angular/router';
 import { mock } from 'node:test';
 import { AuthError } from '@supabase/supabase-js';
+import { AuthModule } from '../auth.module';
 
 
 describe('LoginComponent', () => {
@@ -41,21 +42,21 @@ describe('LoginComponent', () => {
         });
 
         await TestBed.configureTestingModule({
+            declarations: [LoginComponent],
             imports: [
-                LoginComponent,
                 RouterTestingModule,
                 MatToolbarModule,
                 MatButtonModule,
                 MatIconModule,
                 MatMenuModule,
                 MatDividerModule,
-                BrowserAnimationsModule
+                BrowserAnimationsModule,
+                ReactiveFormsModule,
+                AuthModule
             ],
             providers: [
-                {
-                    FormBuilder,
-                    provide: SupabaseAuthService, useValue: supabaseService
-                }
+                FormBuilder,
+                { provide: SupabaseAuthService, useValue: supabaseService }
             ]
         }).compileComponents();
 

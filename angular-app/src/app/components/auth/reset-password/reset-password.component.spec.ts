@@ -24,8 +24,8 @@ describe('ResetPasswordComponent', () => {
         ]);
 
         await TestBed.configureTestingModule({
+            declarations: [ResetPasswordComponent],
             imports: [
-                ResetPasswordComponent,
                 RouterTestingModule,
                 MatInputModule,
                 MatButtonModule,
@@ -125,7 +125,7 @@ describe('ResetPasswordComponent', () => {
         });
 
         it('should have login link', () => {
-            const loginLink = fixture.debugElement.query(By.css('a[routerLink="/login"]'));
+            const loginLink = fixture.debugElement.query(By.css('a[routerLink="/auth/login"]'));
             expect(loginLink).toBeTruthy();
             expect(loginLink.nativeElement.textContent).toContain('Sign in');
         });

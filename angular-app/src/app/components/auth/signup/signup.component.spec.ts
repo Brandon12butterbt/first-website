@@ -25,8 +25,8 @@ describe('SignupComponent', () => {
         ]);
 
         await TestBed.configureTestingModule({
+            declarations: [SignupComponent],
             imports: [
-                SignupComponent,
                 RouterTestingModule,
                 MatInputModule,
                 MatButtonModule,
@@ -147,7 +147,7 @@ describe('SignupComponent', () => {
             tick();
 
             expect(supabaseService.signUp).toHaveBeenCalledWith(testEmail, testPassword);
-            expect(router.navigate).toHaveBeenCalledWith(['/post-signup']);
+            expect(router.navigate).toHaveBeenCalledWith(['/auth/post-signup']);
             expect(component.errorMessage).toBe('');
             expect(component.isLoading).toBeFalse();
         }));
@@ -201,7 +201,7 @@ describe('SignupComponent', () => {
         });
 
         it('should have login link', () => {
-            const loginLink = fixture.debugElement.query(By.css('a[routerLink="/login"]'));
+            const loginLink = fixture.debugElement.query(By.css('a[routerLink="/auth/login"]'));
             expect(loginLink).toBeTruthy();
             expect(loginLink.nativeElement.textContent).toContain('Sign in');
         });

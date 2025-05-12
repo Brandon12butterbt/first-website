@@ -14,8 +14,8 @@ describe('PostSignupComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      declarations: [PostSignupComponent],
       imports: [
-        PostSignupComponent,
         RouterTestingModule,
         MatButtonModule,
         MatCardModule,
@@ -50,7 +50,7 @@ describe('PostSignupComponent', () => {
     });
 
     it('should have login button with correct link', () => {
-      const button = fixture.debugElement.query(By.css('button[routerLink="/login"]'));
+      const button = fixture.debugElement.query(By.css('button[routerLink="/auth/login"]'));
       
       expect(button).toBeTruthy();
       expect(button.nativeElement.textContent).toContain('Go to Login');

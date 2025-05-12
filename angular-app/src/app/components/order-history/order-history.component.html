@@ -1,77 +1,166 @@
-<div class="h-[calc(100vh-60px)] bg-gray-900 flex flex-col">
-  <div class="flex-1 p-6">
-    <div class="max-w-4xl mx-auto">
-      <div *ngIf="isLoading" class="flex items-center justify-center h-full">
-        <div class="text-center">
-          <mat-spinner class="mx-auto"></mat-spinner>
-          <p class="mt-4 text-gray-400">Loading purchase history...</p>
+<div class="min-h-[calc(100vh-60px)] bg-gray-900 text-white">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="flex items-center justify-center h-[calc(100vh-60px)]">
+    <div class="text-center">
+      <mat-spinner class="mx-auto"></mat-spinner>
+      <p class="mt-6 text-gray-400 animate-pulse">Loading your purchase history...</p>
+    </div>
+  </div>
+
+  <!-- Content Section -->
+  <div *ngIf="!isLoading" class="container mx-auto px-4 py-12 max-w-5xl custom-scrollbar" @fadeIn>
+    <!-- Header Section -->
+    <div class="mb-8">
+      <h1 class="text-2xl md:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-blue-400">
+        Purchase History
+      </h1>
+      <p class="text-gray-400 mt-2">View all your credit purchases and transactions</p>
+    </div>
+
+    <!-- Main Content Card -->
+    <div class="backdrop-blur-sm bg-gray-900/60 border border-gray-800 rounded-xl shadow-xl overflow-hidden transition-all duration-200 hover:shadow-purple-900/20">
+      <!-- Card Header with Actions -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between p-5 border-b border-gray-800 bg-gray-800/50">
+        <div class="flex items-center">
+          <mat-icon class="text-purple-400 mr-3">receipt_long</mat-icon>
+          <h2 class="text-xl font-semibold text-white">Your Transactions</h2>
+        </div>
+        <div class="mt-4 md:mt-0 flex">
+          <button mat-stroked-button routerLink="/account-details" class="ml-3 border border-gray-700 bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white px-4 py-2 rounded-lg transform transition duration-200 hover:scale-102">
+            <span class="flex items-center">
+              <mat-icon class="mr-2">account_circle</mat-icon>
+              <span class="hidden sm:inline">Account Details</span>
+            </span>
+          </button>
         </div>
       </div>
 
-      <div *ngIf="!isLoading">
-        <mat-card class="bg-gray-800 p-6">
-          <div class="flex justify-between items-center mb-6">
-            <h2 class="text-xl font-semibold text-purple-400">Purchase History</h2>
-            <button mat-raised-button color="primary" routerLink="/account-details" class="bg-purple-600 hover:bg-purple-700">
-              <mat-icon class="text-white">account_circle</mat-icon>
-              <span class="text-white">Account Details</span>
-            </button>
-          </div>
+      <!-- Empty State -->
+      <div *ngIf="allPurchases.length === 0" class="flex flex-col items-center justify-center py-16 px-4">
+        <div class="w-20 h-20 mb-6 flex items-center justify-center rounded-full bg-gray-800/70 border border-gray-700">
+          <mat-icon class="text-gray-500 text-4xl">receipt_long</mat-icon>
+        </div>
+        <h3 class="text-xl font-semibold text-white mb-2">No purchase history yet</h3>
+        <p class="text-gray-400 text-center max-w-md mb-6">Start creating amazing AI-generated images by purchasing credits</p>
+        <button mat-raised-button routerLink="/upgrade" class="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-6 py-3 rounded-lg shadow-lg transform transition duration-200 hover:scale-102">
+          <span class="flex items-center">
+            <mat-icon class="mr-2">shopping_cart</mat-icon>
+            Buy Credits
+          </span>
+        </button>
+      </div>
 
-          <div *ngIf="allPurchases.length === 0" class="text-center py-8">
-            <mat-icon class="text-gray-500 text-6xl mb-4">receipt_long</mat-icon>
-            <p class="text-gray-400">No purchase history found</p>
-            <button mat-raised-button color="primary" routerLink="/upgrade" class="bg-purple-600 hover:bg-purple-700 mt-4">
-              <mat-icon class="text-white">shopping_cart</mat-icon>
-              <span class="text-white">Buy Credits</span>
-            </button>
-          </div>
+      <!-- Purchases Table -->
+      <div *ngIf="allPurchases.length > 0" class="p-4">
+        <!-- Sort Header -->
+        <div matSort (matSortChange)="sortData($event)" class="header-container text-gray-400 text-sm mb-4 hidden md:flex">
+          <div mat-sort-header="date" class="header-date">Date</div>
+          <div mat-sort-header="amount" class="header-credits">Credits</div>
+          <div mat-sort-header="price" class="header-price">Price</div>
+        </div>
 
-          <div *ngIf="allPurchases.length > 0">
-            <div matSort (matSortChange)="sortData($event)" class="header-container text-gray-400 text-sm mb-4">
-              <div mat-sort-header="date" class="header-date">Date</div>
-              <div mat-sort-header="amount" class="header-credits">Credits</div>
-              <div mat-sort-header="price" class="header-price">Price</div>
-            </div>
-
-            <div class="space-y-4">
-              <div *ngFor="let purchase of displayedPurchases" class="border-l-4 border-purple-500 pl-4 py-3 bg-gray-700 rounded-r">
-                <div class="flex justify-between items-start w-full">
-                  <div class="w-1/3">
-                    <div class="text-white font-medium">
-                      {{ purchase.created_at | date:'medium' }}
-                    </div>
-                  </div>
-                  <div class="w-1/3 text-center">
-                    <div class="flex items-center justify-center">
-                      <mat-icon class="text-yellow-400 mr-2">stars</mat-icon>
-                      <span class="text-white font-medium">{{ purchase.amount }} Credits</span>
-                    </div>
-                  </div>
-                  <div class="w-1/3 text-right pr-4">
-                    <div class="text-green-400 font-medium">{{ formatPrice(purchase.price) }}</div>
-                    <div class="text-gray-400 text-sm mt-1">
-                      <span [ngClass]="{'text-green-400': purchase.status === 'succeeded',
-                                      'text-yellow-400': purchase.status === 'pending',
-                                      'text-red-400': purchase.status === 'failed'}">
-                        {{ purchase.status | titlecase }}
-                      </span>
-                    </div>
-                  </div>
+        <!-- Purchase Cards -->
+        <div class="space-y-4">
+          <div *ngFor="let purchase of displayedPurchases" 
+                class="relative overflow-hidden rounded-lg bg-gray-800/70 border border-gray-700 hover:border-purple-500/50 transition-all duration-200 hover:shadow-md hover:shadow-purple-500/10 p-4">
+            
+            <!-- Decoration Elements -->
+            <div class="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-purple-500 to-blue-500"></div>
+            <div *ngIf="purchase.status === 'succeeded'" class="absolute -top-10 -right-10 w-20 h-20 bg-green-500/10 rounded-full blur-3xl"></div>
+            
+            <!-- Mobile Layout -->
+            <div class="md:hidden space-y-3">
+              <div class="flex justify-between items-center">
+                <span class="text-xs uppercase tracking-wider text-gray-500">Date</span>
+                <span class="text-white">{{ purchase.created_at | date:'medium' }}</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-xs uppercase tracking-wider text-gray-500">Credits</span>
+                <div class="flex items-center">
+                  <mat-icon class="text-yellow-400 mr-1" style="font-size: 18px; height: 18px; width: 18px;">stars</mat-icon>
+                  <span class="text-white font-medium">{{ purchase.amount }}</span>
                 </div>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-xs uppercase tracking-wider text-gray-500">Price</span>
+                <span class="text-green-400 font-medium">{{ formatPrice(purchase.price) }}</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-xs uppercase tracking-wider text-gray-500">Status</span>
+                <span [ngClass]="{'text-green-400': purchase.status === 'succeeded',
+                                  'text-yellow-400': purchase.status === 'pending',
+                                  'text-red-400': purchase.status === 'failed'}"
+                      class="px-2 py-1 rounded-full text-xs font-medium border"
+                      [ngClass]="{'border-green-500/30 bg-green-500/10': purchase.status === 'succeeded',
+                                  'border-yellow-500/30 bg-yellow-500/10': purchase.status === 'pending',
+                                  'border-red-500/30 bg-red-500/10': purchase.status === 'failed'}">
+                  {{ purchase.status | titlecase }}
+                </span>
               </div>
             </div>
 
-            <mat-paginator
-              [length]="totalItems"
-              [pageSize]="pageSize"
-              [pageIndex]="currentPage"
-              [pageSizeOptions]="[5, 10, 25]"
-              (page)="handlePageEvent($event)"
-              class="bg-gray-800 text-white mt-4 ::ng-deep .mat-mdc-paginator-icon, ::ng-deep .mat-mdc-select-value-text, ::ng-deep .mat-mdc-select-arrow { color: white !important; }">
-            </mat-paginator>
+            <!-- Desktop Layout -->
+            <div class="hidden md:flex justify-between items-center w-full">
+              <div class="w-1/3">
+                <div class="text-white">
+                  {{ purchase.created_at | date:'medium' }}
+                </div>
+              </div>
+              <div class="w-1/3 text-center">
+                <div class="flex items-center justify-center">
+                  <div class="flex items-center justify-center px-3 py-1.5 bg-gray-900/70 rounded-full border border-gray-700">
+                    <mat-icon class="text-yellow-400 mr-2">stars</mat-icon>
+                    <span class="text-white font-medium">{{ purchase.amount }}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="w-1/3 flex justify-end items-center space-x-4">
+                <div class="text-green-400 font-medium">{{ formatPrice(purchase.price) }}</div>
+                <div>
+                  <span [ngClass]="{'text-green-400': purchase.status === 'succeeded',
+                                  'text-yellow-400': purchase.status === 'pending',
+                                  'text-red-400': purchase.status === 'failed'}"
+                        class="px-2 py-1 rounded-full text-xs font-medium border"
+                        [ngClass]="{'border-green-500/30 bg-green-500/10': purchase.status === 'succeeded',
+                                  'border-yellow-500/30 bg-yellow-500/10': purchase.status === 'pending',
+                                  'border-red-500/30 bg-red-500/10': purchase.status === 'failed'}">
+                    {{ purchase.status | titlecase }}
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
-        </mat-card>
+        </div>
+
+        <!-- Pagination -->
+        <div class="mt-6">
+          <mat-paginator
+            [length]="totalItems"
+            [pageSize]="pageSize"
+            [pageIndex]="currentPage"
+            [pageSizeOptions]="[5, 10, 25]"
+            (page)="handlePageEvent($event)"
+            class="bg-transparent border border-gray-700 rounded-lg">
+          </mat-paginator>
+        </div>
+      </div>
+    </div>
+
+    <!-- Promotional Section -->
+    <div *ngIf="allPurchases.length > 0" class="mt-8 p-6 rounded-xl bg-gradient-to-r from-purple-900/30 to-indigo-900/30 border border-purple-800/30 backdrop-blur-sm">
+      <div class="flex flex-col md:flex-row items-center">
+        <div class="md:w-2/3 mb-6 md:mb-0">
+          <h3 class="text-xl font-bold text-white mb-2">Need more credits?</h3>
+          <p class="text-gray-300">Generate even more stunning AI images with additional credits</p>
+        </div>
+        <div class="md:w-1/3 md:text-right">
+          <button mat-raised-button routerLink="/upgrade" class="bg-white text-purple-900 hover:bg-gray-100 px-6 py-3 rounded-lg shadow-lg transition duration-200 hover:shadow-purple-500/20">
+            <span class="flex items-center justify-center font-medium">
+              <mat-icon class="mr-2">shopping_cart</mat-icon>
+              Upgrade Now
+            </span>
+          </button>
+        </div>
       </div>
     </div>
   </div>

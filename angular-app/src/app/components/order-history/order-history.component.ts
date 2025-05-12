@@ -8,6 +8,7 @@ import { RouterModule } from '@angular/router';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatSortModule, Sort } from '@angular/material/sort';
 import { SupabaseAuthService } from '../../services/supabase-auth.service';
+import { trigger, transition, style, animate } from '@angular/animations';
 
 interface Purchase {
   id: string;
@@ -33,7 +34,15 @@ interface Purchase {
     MatSortModule
   ],
   templateUrl: './order-history.component.html',
-  styleUrls: ['./order-history.component.css']
+  styleUrls: ['./order-history.component.css'],
+  animations: [
+    trigger('fadeIn', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(10px)' }),
+        animate('300ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+      ])
+    ])
+  ]
 })
 export class OrderHistoryComponent implements OnInit {
   allPurchases: Purchase[] = [];

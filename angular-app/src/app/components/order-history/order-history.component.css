@@ -1,5 +1,6 @@
 ::ng-deep .mat-mdc-paginator {
   color: white;
+  background-color: rgb(31, 41, 55) !important;
 }
 
 ::ng-deep .mat-mdc-paginator-icon {
@@ -56,4 +57,39 @@
 
 ::ng-deep .header-price .mat-sort-header-container {
   justify-content: flex-end !important;
+}
+
+::ng-deep .mat-mdc-raised-button {
+  transition: all 0.2s ease-in-out !important;
+}
+
+::ng-deep .mat-mdc-raised-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(91, 33, 182, 0.2) !important;
+}
+
+.backdrop-blur-sm {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.bg-clip-text {
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+button:focus {
+  outline: 2px solid rgba(139, 92, 246, 0.5);
+  outline-offset: 2px;
+}
+
+@media (max-width: 768px) {
+  ::ng-deep .mat-mdc-paginator-page-size {
+    margin-right: 8px !important;
+  }
+  
+  ::ng-deep .mat-mdc-paginator-range-actions {
+    display: flex;
+    justify-content: center;
+  }
 }

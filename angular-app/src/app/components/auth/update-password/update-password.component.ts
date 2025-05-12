@@ -1,29 +1,12 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
-import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AbstractControl } from '@angular/forms';
 
 import { SupabaseAuthService } from '../../../services/supabase-auth.service';
 
 @Component({
   selector: 'app-update-password',
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    MatInputModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatCardModule,
-    MatIconModule,
-    RouterModule
-  ],
+  standalone: false,
   templateUrl: './update-password.component.html',
   styleUrl: './update-password.component.css'
 })
@@ -36,7 +19,6 @@ export class UpdatePasswordComponent {
 
   constructor(
     private fb: FormBuilder,
-    private router: Router,
     private supabaseAuthService: SupabaseAuthService
   ) {
     this.updateForm = this.fb.group({

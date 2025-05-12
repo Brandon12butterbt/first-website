@@ -1,29 +1,12 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
-import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
 
 import { SupabaseAuthService } from '../../../services/supabase-auth.service';
 
 @Component({
   selector: 'app-signup',
-  standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    MatInputModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatCardModule,
-    MatIconModule,
-    RouterModule
-  ],
+  standalone: false,
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.css']
 })
@@ -67,7 +50,7 @@ export class SignupComponent {
         );
         
         if (success) {
-          this.router.navigate(['/post-signup']);
+          this.router.navigate(['/auth/post-signup']);
         }
       } catch (err: any) {
         this.errorMessage = err.message || 'An error occurred during signup';

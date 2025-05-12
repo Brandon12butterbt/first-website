@@ -57,8 +57,8 @@ describe('NavBarComponent', () => {
         });
     
         it('should show login and signup links', () => {
-          const loginLink = debugElement.query(By.css('a[routerLink="/login"]'));
-          const signupLink = debugElement.query(By.css('a[routerLink="/signup"]'));
+          const loginLink = debugElement.query(By.css('a[routerLink="/auth/login"]'));
+          const signupLink = debugElement.query(By.css('a[routerLink="/auth/signup"]'));
           expect(loginLink).toBeTruthy();
           expect(signupLink).toBeTruthy();
         });

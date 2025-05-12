@@ -5,7 +5,6 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatInputModule } from '@angular/material/input';
@@ -40,7 +39,7 @@ export class GalleryComponent implements OnInit {
   showSuccessNotification = false;
   successMessage = '';
 
-  constructor(private router: Router, private snackBar: MatSnackBar, private supabaseAuthService: SupabaseAuthService) {}
+  constructor(private snackBar: MatSnackBar, private supabaseAuthService: SupabaseAuthService) {}
 
   async ngOnInit() {
     const session = await this.supabaseAuthService.ensureSessionLoaded();
