@@ -3,12 +3,13 @@ import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 
 import { NavBarComponent } from './components/shared/nav-bar/nav-bar.component';
+import { FooterComponent } from './components/shared/footer/footer.component';
 import { SupabaseAuthService } from './services/supabase-auth.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NavBarComponent],
+  imports: [RouterOutlet, NavBarComponent, FooterComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
@@ -49,6 +50,14 @@ export class AppComponent implements OnInit {
 
     this.supabaseAuthService.authChanges((event, session) => {
       this.session = session;
+    
+      if (event === 'SIGNED_OUT' || !session) {
+        this.profile = null;
+        this.user = null;
+        this.userEmail = '';
+        return;
+      }
+    
       this.getFluxProfile(session).then(() => {
         if (this.profile) {
           this.userEmail = this.profile.email;

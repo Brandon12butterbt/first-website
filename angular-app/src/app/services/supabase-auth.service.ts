@@ -1,4 +1,7 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { catchError } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
 import {
   AuthChangeEvent,
   AuthSession,
@@ -26,7 +29,7 @@ export class SupabaseAuthService {
   private _sessionTest: AuthSession | null = null;
   private authStateCallback: ((event: AuthChangeEvent, session: Session | null) => void) | null = null;
 
-  constructor(private config: ConfigService) {
+  constructor(private config: ConfigService, private http: HttpClient) {
     this.supabase = createClient(config.supabaseUrl, config.supabaseAnonKey)
   }
 
@@ -73,6 +76,16 @@ export class SupabaseAuthService {
       ]);
   }
 
+  deleteEntireProfile(id: string): Observable<any> {
+    return this.http.delete(`http://localhost:3000/admin/delete-user/${id}`)
+    .pipe(
+      catchError(error => {
+        console.error('Error deleting user:', error);
+        return of({ error: 'Failed to delete user' });
+      })
+    );
+  }
+
   authChanges(callback: (event: AuthChangeEvent, session: Session | null) => void) {
     this.authStateCallback = callback;
     return this.supabase.auth.onAuthStateChange(callback)
@@ -97,7 +110,7 @@ export class SupabaseAuthService {
   }
 
   resetPassword(email: string) {
-    return this.supabase.auth.resetPasswordForEmail(email, { redirectTo: 'https://afluxgen.com/update-password' });
+    return this.supabase.auth.resetPasswordForEmail(email, { redirectTo: 'https://afluxgen.com/auth/update-password' });
   }
 
   updatePassword(password: string) {
@@ -165,6 +178,27 @@ export class SupabaseAuthService {
   deleteTokenTracker(id: string) {
     return this.supabase
       .from('token_tracker')
+      .delete()
+      .eq('user_id', id);
+  }
+
+  deleteTokenPurchases(id: string) {
+    return this.supabase
+      .from('token_purchases')
+      .delete()
+      .eq('user_id', id);
+  }
+
+  deleteGeneratedImages(id: string) {
+    return this.supabase
+      .from('generated_images')
+      .delete()
+      .eq('user_id', id);
+  }
+
+  deleteFluxProfile(id: string) {
+    return this.supabase
+      .from('profiles')
       .delete()
       .eq('user_id', id);
   }

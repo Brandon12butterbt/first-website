@@ -64,9 +64,9 @@
 }
 
 /* Progress bar animation */
-.animate-progress {
+.animate-pulse-progress {
   width: 72%;
-  animation: progress-animation 2s ease-in-out infinite alternate;
+  animation: pulse-progress 2s ease-in-out infinite alternate;
 }
 
 @keyframes progress-animation {

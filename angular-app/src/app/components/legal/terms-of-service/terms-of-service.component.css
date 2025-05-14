@@ -1,0 +1,26 @@
+/* Custom styling for the terms of service component */
+:host {
+  display: block;
+}
+
+.mat-expansion-panel {
+  transition: all 200ms ease-in-out;
+}
+
+.mat-expansion-panel:hover {
+  border-color: #6366f1;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
+}
+
+::ng-deep .mat-expansion-panel-body {
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+::ng-deep .mat-expansion-panel-header {
+  transition: background-color 200ms ease-in-out;
+}
+
+::ng-deep .mat-expansion-panel-header:hover {
+  background-color: rgba(99, 102, 241, 0.1);
+} 

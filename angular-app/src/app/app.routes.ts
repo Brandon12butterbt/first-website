@@ -14,11 +14,17 @@ export const routes: Routes = [
     path: 'auth',
     loadChildren: () => import('./components/auth/auth.module').then(m => m.AuthModule)
   },
+  {
+    path: 'legal',
+    loadChildren: () => import('./components/legal/legal.module').then(m => m.LegalModule)
+  },
   { path: 'login', redirectTo: 'auth/login', pathMatch: 'full' },
   { path: 'signup', redirectTo: 'auth/signup', pathMatch: 'full' },
   { path: 'post-signup', redirectTo: 'auth/post-signup', pathMatch: 'full' },
   { path: 'reset-password', redirectTo: 'auth/reset-password', pathMatch: 'full' },
   { path: 'update-password', redirectTo: 'auth/update-password', pathMatch: 'full' },
+  { path: 'privacy-policy', redirectTo: 'legal/privacy-policy', pathMatch: 'full' },
+  { path: 'terms-of-service', redirectTo: 'legal/terms-of-service', pathMatch: 'full' },
   { path: '', component: HomeComponent },
   { path: 'gallery', component: GalleryComponent, canActivate: [AuthGuard] },
   { path: 'generate', component: GenerateComponent, canActivate: [AuthGuard] },

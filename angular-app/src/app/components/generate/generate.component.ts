@@ -198,6 +198,9 @@ export class GenerateComponent implements OnInit, OnDestroy {
       
       // Decrement user's credits
       await this.supabaseAuthService.imageGeneratedUpdateProfile(this.profile.id, this.profile.images_generated, this.profile.credits);
+      this.profile = null;
+      this.session = null;
+      this.session = await this.supabaseAuthService.session;
       await this.getFluxProfile(this.session);
       
     } catch (error) {

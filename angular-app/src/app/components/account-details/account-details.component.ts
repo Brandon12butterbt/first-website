@@ -7,6 +7,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RouterModule } from '@angular/router';
 import { SupabaseAuthService } from '../../services/supabase-auth.service';
 import { trigger, transition, style, animate } from '@angular/animations';
+import { Router } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 
 interface Profile {
   id: string;
@@ -39,11 +41,11 @@ interface Profile {
   ]
 })
 export class AccountDetailsComponent implements OnInit {
-  profile: Profile | null = null;
+  profile: any = null;
   isLoading = true;
   session: any = null;
 
-  constructor(private supabaseAuthService: SupabaseAuthService) {}
+  constructor(private supabaseAuthService: SupabaseAuthService, private router: Router) {}
 
   async ngOnInit() {
     this.isLoading = true;
@@ -71,7 +73,6 @@ export class AccountDetailsComponent implements OnInit {
   async getFluxProfile(session: any) {
     try {
       const { user } = session;
-      console.log('fetcching in account details', user.id);
       const { data: profile, error } = await this.supabaseAuthService.fluxProfile(user.id);
       if (error) {
         throw error;
@@ -131,5 +132,34 @@ export class AccountDetailsComponent implements OnInit {
     
     // Format with separator
     return totalScore.toLocaleString();
+  }
+
+  async deleteEntireProfile() {
+    try {
+      await this.supabaseAuthService.deleteFluxProfile(this.profile.id);
+      await this.supabaseAuthService.deleteGeneratedImages(this.profile.id);
+      await this.supabaseAuthService.deleteTokenPurchases(this.profile.id);
+      await this.supabaseAuthService.deleteTokenTracker(this.profile.id);
+
+      const result = await firstValueFrom(this.supabaseAuthService.deleteEntireProfile(this.profile.id));
+
+      if (result.error) {
+        throw result.error;
+      } else {
+        this.profile = null;
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        console.log(error);
+      }
+    } finally {
+      this.isLoading = false;
+      await this.supabaseAuthService.signOut();
+      // Used to trigger nav bar profile credits update
+      this.supabaseAuthService.triggerAuthChange('SIGNED_OUT', this.session);
+      this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+        this.router.navigate(['/']);
+      });
+    }
   }
 }

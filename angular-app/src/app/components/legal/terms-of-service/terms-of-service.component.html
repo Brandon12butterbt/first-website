@@ -1,0 +1,29 @@
+<div class="container mx-auto px-4 py-8 max-w-4xl">
+  <div class="bg-gray-800 rounded-lg shadow-lg p-6 mb-6 transition-all duration-200">
+    <h1 class="text-3xl font-bold mb-6 text-white">Terms of Service</h1>
+    <p class="text-gray-300 mb-6">
+        Last updated: May 13, 2025
+    </p>
+    
+    <p class="text-gray-300 mb-8">
+      Please read these Terms of Service carefully before using our AI-powered 
+      text-to-image generation service and gallery storage.
+    </p>
+
+    <mat-accordion class="text-gray-300">
+      <mat-expansion-panel 
+        *ngFor="let section of sections" 
+        class="bg-gray-700 mb-4 border border-gray-600 rounded-lg"
+      >
+        <mat-expansion-panel-header class="py-4">
+          <mat-panel-title class="text-xl font-medium text-white">
+            {{ section.title }}
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div class="pt-2 whitespace-pre-line text-white">
+          {{ section.content }}
+        </div>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </div>
+</div> 
