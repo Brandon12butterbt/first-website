@@ -193,23 +193,8 @@ export class GenerateComponent implements OnInit, OnDestroy {
       this.lastUpdateTime = new Date().toLocaleTimeString() + ' (success)';
       
       // Create a URL for the blob (temporary, for display only)
-      const imageUrl = URL.createObjectURL(imageBlob);
-      
-      // Validate the image loads correctly before displaying
-      const img = new Image();
-      img.onload = () => {
-        this.generatedImage = imageUrl;
-        this.cdr.detectChanges();
-      };
-      
-      img.onerror = () => {
-        console.error('Failed to load generated image');
-        this.errorMessage = 'Failed to load the generated image. Please try again.';
-        URL.revokeObjectURL(imageUrl);
-        this.cdr.detectChanges();
-      };
-      
-      img.src = imageUrl;
+      this.generatedImage = URL.createObjectURL(imageBlob);
+
       
       // Decrement user's credits
       await this.supabaseAuthService.imageGeneratedUpdateProfile(this.profile.id, this.profile.images_generated, this.profile.credits);
