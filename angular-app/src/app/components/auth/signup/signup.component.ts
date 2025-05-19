@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { SupabaseAuthService } from '../../../services/supabase-auth.service';
+import { AuthDataService } from '../../../services/auth-data.service';
 
 @Component({
   selector: 'app-signup',
@@ -21,7 +22,8 @@ export class SignupComponent {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private supabaseAuthService: SupabaseAuthService
+    private supabaseAuthService: SupabaseAuthService,
+    private authDataService: AuthDataService
   ) {
     this.signupForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -45,11 +47,14 @@ export class SignupComponent {
       this.errorMessage = '';
       
       try {
-        const success = await this.supabaseAuthService.signUp(
-          this.signupForm.get('email')?.value, this.signupForm.get('password')?.value
-        );
+        const email = this.signupForm.get('email')?.value;
+        const password = this.signupForm.get('password')?.value;
+        
+        const success = await this.supabaseAuthService.signUp(email, password);
         
         if (success) {
+          // Store the email for the post-signup component
+          this.authDataService.setSignupEmail(email);
           this.router.navigate(['/auth/post-signup']);
         }
       } catch (err: any) {

@@ -26,3 +26,72 @@
 ::ng-deep .mat-form-field-invalid .mat-form-field-ripple {
     background-color: #f44336 !important;
 }
+
+/* Custom form field styles */
+::ng-deep .custom-field .mat-form-field-flex {
+  background-color: transparent !important;
+  padding: 0 !important;
+}
+
+::ng-deep .custom-field .mat-form-field-wrapper {
+  padding-bottom: 0 !important;
+}
+
+::ng-deep .custom-field .mat-form-field-outline {
+  color: rgba(107, 114, 128, 0.5) !important;
+}
+
+::ng-deep .custom-field.mat-focused .mat-form-field-outline-thick {
+  color: rgba(147, 51, 234, 0.6) !important;
+}
+
+::ng-deep .custom-field .mat-form-field-infix {
+  padding: 0.6em 0 !important;
+  border-top: 0 !important;
+}
+
+::ng-deep .custom-field .mat-form-field-label-wrapper {
+  top: -1.2em;
+  padding-top: 0.84375em;
+}
+
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-label {
+  margin-top: -0.25em;
+}
+
+::ng-deep .custom-field .mat-input-element {
+  color: white !important;
+  caret-color: rgb(192, 132, 252) !important;
+}
+
+::ng-deep .custom-field .mat-form-field-invalid .mat-form-field-outline {
+  color: rgba(239, 68, 68, 0.6) !important;
+}
+
+::ng-deep .custom-field .mat-form-field-invalid .mat-input-element {
+  caret-color: rgb(239, 68, 68) !important;
+}
+
+/* Remove the default arrow from mat-select */
+::ng-deep .mat-select-arrow {
+  color: rgba(156, 163, 175, 0.5) !important;
+}
+
+/* Customize the placeholder color */
+::ng-deep .mat-input-element::placeholder {
+  color: rgba(156, 163, 175, 0.5) !important;
+}
+
+/* Animation for gradient movement */
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Hide image samples on smaller screens */
+@media (max-height: 700px) {
+  .sample-images {
+    display: none;
+  }
+}

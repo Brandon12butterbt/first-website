@@ -3,6 +3,9 @@ const cors = require('cors');
 const app = express();
 const PORT = 3000;
 const { createClient } = require('@supabase/supabase-js');
+const nodemailer = require('nodemailer');
+
+app.use(express.json());
 
 // Allow CORS
 app.use(cors({
@@ -20,7 +23,7 @@ app.use(cors({
 const supabaseUrl = process.env.SUPABASE_URL;
 const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE;
 
-const supabase = createClient(supabaseUrl, serviceRoleKey, {  auth: {    autoRefreshToken: false,    persistSession: false  }})
+const supabase = createClient(supabaseUrl, serviceRoleKey, {  auth: {    autoRefreshToken: false,    persistSession: false  }});
 
 app.delete('/admin/delete-user/:id', async (req, res) => {
   const userId = req.params.id;
@@ -33,6 +36,40 @@ app.delete('/admin/delete-user/:id', async (req, res) => {
 
   return res.status(200).json({ success: true });
 });
+
+//Email Support Call
+app.post('/contact', async (req, res) => {
+  const { type, description, email } = req.body;
+
+  if (!type || !description || !email) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+
+  try {
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_SUPPORT,
+        pass: process.env.EMAIL_SUPPORT_PASS
+      }
+    });
+
+    const mailOptions = {
+      from: `"Afluxgen Contact Form" <${process.env.EMAIL_SUPPORT}>`,
+      to: 'afluxgen.help@gmail.com',
+      subject: `Contact Request: ${type}`,
+      text: `Email: ${email}\n\nDescription:\n${description}`
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    return res.status(200).json({ success: true, message: 'Email sent successfully' });
+  } catch (error) {
+    console.error('Email sending error:', error);
+    return res.status(500).json({ error: 'Failed to send email' });
+  }
+});
+
 
 //all env variables
 app.get('/env', (req, res) => {
@@ -50,8 +87,7 @@ app.get('/env', (req, res) => {
   });
 });
 
-app.use(express.json());
-
+// CloudFlare worker Call for text-to-image generation
 app.post('/generate-image', async (req, res) => {
   const { prompt } = req.body;
 

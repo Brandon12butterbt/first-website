@@ -47,6 +47,12 @@ export class GalleryComponent implements OnInit {
       await this.getFluxProfile(session);
       await this.getGeneratedImages();
     }
+
+    window.scroll({ 
+      top: 0, 
+      left: 0, 
+      behavior: 'smooth' 
+    });
   }
 
   async downloadImage(image: any) {

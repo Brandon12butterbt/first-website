@@ -57,6 +57,7 @@ export class OrderHistoryComponent implements OnInit {
   constructor(private supabaseAuthService: SupabaseAuthService) {}
 
   async ngOnInit() {
+
     this.isLoading = true;
 
     const loadingTimeout = setTimeout(() => {
@@ -77,6 +78,12 @@ export class OrderHistoryComponent implements OnInit {
 
     clearTimeout(loadingTimeout);
     this.isLoading = false;
+
+    window.scroll({ 
+      top: 0, 
+      left: 0, 
+      behavior: 'smooth' 
+    });
   }
 
   async getPurchases(session: any) {

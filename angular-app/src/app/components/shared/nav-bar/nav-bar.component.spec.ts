@@ -100,12 +100,12 @@ describe('NavBarComponent', () => {
         });
     
         it('should show user email in dropdown button', () => {
-          const dropdownButton = debugElement.query(By.css('button'));
-          expect(dropdownButton.nativeElement.textContent).toContain('test@example.com');
+          const emailSpan = debugElement.query(By.css('span.truncate'));
+          expect(emailSpan.nativeElement.textContent).toContain('test@example.com');
         });
     
         it('should toggle user dropdown when clicked', () => {
-          const dropdownButton = debugElement.query(By.css('button'));
+          const dropdownButton = debugElement.query(By.css('button.spec-test-1'));
           expect(component.isUserDropdownOpen).toBeFalse();
           
           dropdownButton.triggerEventHandler('click', { stopPropagation: () => {} });

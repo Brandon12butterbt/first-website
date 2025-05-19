@@ -107,11 +107,11 @@ describe('ResetPasswordComponent', () => {
 
     describe('UI Elements', () => {
         it('should display title and subtitle', () => {
-            const titleElement = fixture.debugElement.query(By.css('mat-card-title'));
-            const subtitleElement = fixture.debugElement.query(By.css('mat-card-subtitle'));
+            const titleElement = fixture.debugElement.query(By.css('h1.text-3xl'));
+            const subtitleElement = fixture.debugElement.query(By.css('p.text-gray-400'));
 
             expect(titleElement.nativeElement.textContent).toContain('Reset Password');
-            expect(subtitleElement.nativeElement.textContent).toContain('Enter your email');
+            expect(subtitleElement.nativeElement.textContent).toContain('AFluxGen - Your AI Image Generation Studio');
         });
 
         it('should disable submit button when form is invalid', () => {
@@ -136,7 +136,7 @@ describe('ResetPasswordComponent', () => {
 
             const button = fixture.debugElement.query(By.css('button[type="submit"]'));
 
-            const loadingSpan = button.query(By.css('span.text-white.font-medium'));
+            const loadingSpan = button.query(By.css('span.submit-spec-test-loading'));
 
             expect(loadingSpan).toBeTruthy();
             expect(loadingSpan.nativeElement.textContent).toContain('Sending link...');

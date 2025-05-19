@@ -6,13 +6,19 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { By } from '@angular/platform-browser';
+import { SupabaseAuthService } from '../../../services/supabase-auth.service';
 
 describe('PostSignupComponent', () => {
   let component: PostSignupComponent;
   let fixture: ComponentFixture<PostSignupComponent>;
+  let supabaseService: jasmine.SpyObj<SupabaseAuthService>;
   let router: Router;
 
   beforeEach(async () => {
+    supabaseService = jasmine.createSpyObj('SupabaseAuthService', [
+      'resendSignUp'
+    ]);
+
     await TestBed.configureTestingModule({
       declarations: [PostSignupComponent],
       imports: [
@@ -20,6 +26,9 @@ describe('PostSignupComponent', () => {
         MatButtonModule,
         MatCardModule,
         MatIconModule
+      ],
+      providers: [
+        { provide: SupabaseAuthService, useValue: supabaseService }
       ]
     }).compileComponents();
 
@@ -40,13 +49,12 @@ describe('PostSignupComponent', () => {
       const messageElement = fixture.debugElement.query(By.css('p'));
 
       expect(titleElement.nativeElement.textContent).toContain('Verify Your Email');
-      expect(messageElement.nativeElement.textContent).toContain('Please check your email to confirm your account');
+      expect(messageElement.nativeElement.textContent).toContain('One more step to complete your registration');
     });
 
     it('should show email icon', () => {
       const iconElement = fixture.debugElement.query(By.css('mat-icon'));
       expect(iconElement.nativeElement.textContent).toContain('mark_email_read');
-      expect(iconElement.classes['text-green-500']).toBeTrue();
     });
 
     it('should have login button with correct link', () => {
@@ -59,12 +67,8 @@ describe('PostSignupComponent', () => {
 
   describe('Styling', () => {
     it('should have correct layout classes', () => {
-      const container = fixture.debugElement.query(By.css('.h-\\[calc\\(100vh-60px\\)\\]'));
-      const card = fixture.debugElement.query(By.css('mat-card'));
-      
+      const container = fixture.debugElement.query(By.css('div.bg-gray-900'));    
       expect(container).toBeTruthy();
-      expect(card.classes['bg-gray-800']).toBeTrue();
-      expect(card.classes['card-style']).toBeTrue();
     });
   });
 });

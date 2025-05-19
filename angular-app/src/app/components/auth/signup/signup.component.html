@@ -1,62 +1,127 @@
-<div class="h-[calc(100vh-60px)] flex items-center justify-center px-4 py-12 bg-gray-900">
-    <mat-card class="max-w-md w-full bg-gray-800 rounded-lg shadow-xl">
-      <mat-card-header class="text-center">
-        <mat-card-title class="text-2xl font-bold text-white mb-2">Create your account</mat-card-title>
-        <mat-card-subtitle class="text-gray-400">Start generating AI images today</mat-card-subtitle>
-      </mat-card-header>
-      
-      <mat-card-content class="p-6">
-        <form [formGroup]="signupForm" (ngSubmit)="onSubmit()" class="space-y-4">
-          <mat-form-field appearance="fill" class="w-full">
-            <mat-label>Email</mat-label>
-            <input matInput formControlName="email" type="email" placeholder="Enter your email" required>
-            <mat-error *ngIf="signupForm.get('email')?.hasError('required')">Email is required</mat-error>
-            <mat-error *ngIf="signupForm.get('email')?.hasError('email')">Invalid email format</mat-error>
-          </mat-form-field>
-          
-          <mat-form-field appearance="fill" class="w-full">
-            <mat-label>Password</mat-label>
-            <input matInput formControlName="password" [type]="hidePassword ? 'password' : 'text'" placeholder="Create a password" required>
-            <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button">
-              <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
-            </button>
-            <mat-error *ngIf="signupForm.get('password')?.hasError('required')">Password is required</mat-error>
-            <mat-error *ngIf="signupForm.get('password')?.hasError('minlength')">Password must be at least 6 characters</mat-error>
-          </mat-form-field>
-          
-          <mat-form-field appearance="fill" class="w-full">
-            <mat-label>Confirm Password</mat-label>
-            <input matInput formControlName="confirmPassword" [type]="hideConfirmPassword ? 'password' : 'text'" placeholder="Confirm your password" required>
-            <button mat-icon-button matSuffix (click)="hideConfirmPassword = !hideConfirmPassword" type="button">
-              <mat-icon>{{hideConfirmPassword ? 'visibility_off' : 'visibility'}}</mat-icon>
-            </button>
-            <mat-error *ngIf="signupForm.get('confirmPassword')?.hasError('required')">Please confirm your password</mat-error>
-            <mat-error *ngIf="signupForm.get('confirmPassword')?.hasError('passwordMismatch')">Passwords do not match</mat-error>
-          </mat-form-field>
-          
-          <div class="pt-2">
-            <button 
-              mat-raised-button 
-              color="primary" 
-              type="submit" 
-              class="w-full bg-purple-600 hover:bg-purple-700"
-              [disabled]="isLoading || !signupForm.valid">
-              <span *ngIf="isLoading" class="text-white font-medium">Creating account...</span>
-              <span *ngIf="!isLoading" class="text-white font-medium">Sign up</span>
-            </button>
+<div class="min-h-[calc(100vh-60px)] flex items-center justify-center px-4 py-6 bg-gray-900 relative overflow-hidden">
+  <!-- Background elements -->
+  <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+    <div class="absolute -top-32 -left-32 w-96 h-96 bg-violet-600/20 rounded-full filter blur-3xl animate-pulse-slow"></div>
+    <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-pink-500/20 rounded-full filter blur-3xl animate-float"></div>
+  </div>
+
+  <div class="w-full max-w-md z-10 relative">
+    <!-- Logo or app name could go here -->
+    <div class="text-center mb-6">
+      <h1 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-500 to-pink-500">Sign up for AFluxGen</h1>
+      <p class="text-gray-400 mt-1">Your AI Image Generation Studio</p>
+    </div>
+
+    <!-- Card container -->
+    <div class="bg-gray-850 border border-gray-800 rounded-xl shadow-2xl overflow-hidden transition-all duration-300 hover:shadow-violet-500/10">
+      <!-- Header section -->
+      <div class="px-6 pt-6 pb-2">
+        <h2 class="text-2xl font-bold text-white mb-1">Create your account</h2>
+        <p class="text-gray-400 text-sm">Join our community and start creating amazing AI-generated images</p>
+      </div>
+
+      <!-- Form section -->
+      <div class="p-6">
+        <form [formGroup]="signupForm" (ngSubmit)="onSubmit()" class="space-y-5">
+          <!-- Email field -->
+          <div class="space-y-1">
+            <label for="email" class="block text-sm font-medium text-gray-300">Email</label>
+            <mat-form-field appearance="outline" class="w-full bg-gray-875 rounded-lg">
+              <input matInput id="email" formControlName="email" type="email" placeholder="your.email@example.com" required 
+                     class="w-full bg-transparent text-white">
+              <mat-error *ngIf="signupForm.get('email')?.hasError('required')">Email is required</mat-error>
+              <mat-error *ngIf="signupForm.get('email')?.hasError('email')">Please enter a valid email address</mat-error>
+            </mat-form-field>
           </div>
-          
-          <div *ngIf="errorMessage" class="text-red-500 mt-2 text-center">
-            {{ errorMessage }}
+
+          <!-- Password field -->
+          <div class="space-y-1">
+            <label for="password" class="block text-sm font-medium text-gray-300">Password</label>
+            <mat-form-field appearance="outline" class="w-full bg-gray-875 rounded-lg">
+              <input matInput id="password" formControlName="password" [type]="hidePassword ? 'password' : 'text'" 
+                     placeholder="Create a secure password" required class="w-full bg-transparent text-white">
+              <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button" aria-label="Toggle password visibility">
+                <mat-icon class="text-gray-400">{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+              </button>
+              <mat-error *ngIf="signupForm.get('password')?.hasError('required')">Password is required</mat-error>
+              <mat-error *ngIf="signupForm.get('password')?.hasError('minlength')">Password must be at least 6 characters</mat-error>
+            </mat-form-field>
+          </div>
+
+          <!-- Confirm Password field -->
+          <div class="space-y-1">
+            <label for="confirmPassword" class="block text-sm font-medium text-gray-300">Confirm Password</label>
+            <mat-form-field appearance="outline" class="w-full bg-gray-875 rounded-lg">
+              <input matInput id="confirmPassword" formControlName="confirmPassword" [type]="hideConfirmPassword ? 'password' : 'text'" 
+                     placeholder="Confirm your password" required class="w-full bg-transparent text-white">
+              <button mat-icon-button matSuffix (click)="hideConfirmPassword = !hideConfirmPassword" type="button" aria-label="Toggle password visibility">
+                <mat-icon class="text-gray-400">{{hideConfirmPassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+              </button>
+              <mat-error *ngIf="signupForm.get('confirmPassword')?.hasError('required')">Please confirm your password</mat-error>
+              <mat-error *ngIf="signupForm.get('confirmPassword')?.hasError('passwordMismatch')">Passwords do not match</mat-error>
+            </mat-form-field>
+          </div>
+
+          <!-- Error message -->
+          <div *ngIf="errorMessage" class="bg-red-900/30 border border-red-800 text-red-200 rounded-lg p-3 text-sm">
+            <div class="flex items-center">
+              <mat-icon class="mr-2 text-red-400 text-base">error_outline</mat-icon>
+              <span>{{ errorMessage }}</span>
+            </div>
+          </div>
+
+          <!-- Sign up button -->
+          <button 
+            type="submit"
+            [disabled]="isLoading || !signupForm.valid"
+            class="w-full py-3 px-4 bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-500 hover:to-pink-500 
+                   text-white font-medium rounded-lg shadow-lg transform transition-all duration-300 focus:outline-none 
+                   focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-850 focus:ring-violet-500
+                   disabled:opacity-70 disabled:cursor-not-allowed"
+          >
+            <div class="flex items-center justify-center">
+              <div *ngIf="isLoading" class="mr-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              <span class="submit-span-spec-test" *ngIf="isLoading">Creating account...</span>
+              <span *ngIf="!isLoading">Create Account</span>
+            </div>
+          </button>
+
+          <!-- Features highlight -->
+          <div class="grid grid-cols-2 gap-3 pt-4">
+            <div class="bg-gray-875 rounded-lg p-3 border border-gray-800">
+              <div class="flex items-center text-violet-400 mb-1">
+                <mat-icon class="text-sm mr-1">brush</mat-icon>
+                <span class="text-xs font-medium">AI Image Generation</span>
+              </div>
+              <p class="text-gray-400 text-xs">Create stunning images with simple text prompts</p>
+            </div>
+            <div class="bg-gray-875 rounded-lg p-3 border border-gray-800">
+              <div class="flex items-center text-pink-400 mb-1">
+                <mat-icon class="text-sm mr-1">photo_library</mat-icon>
+                <span class="text-xs font-medium">Gallery Storage</span>
+              </div>
+              <p class="text-gray-400 text-xs">Store and organize all your creations</p>
+            </div>
           </div>
         </form>
-      </mat-card-content>
-      
-      <mat-card-actions class="p-6 pt-0">
-        <div class="text-center text-gray-400">
-          Already have an account? 
-          <a routerLink="/auth/login" class="text-purple-400 hover:text-purple-300">Sign in</a>
+      </div>
+
+      <!-- Footer section -->
+      <div class="bg-gray-875 px-6 py-4 border-t border-gray-800">
+        <div class="flex justify-center text-sm text-gray-400">
+          Already have an account?
+          <a routerLink="/auth/login" class="ml-1 text-violet-400 hover:text-violet-300 font-medium transition-colors">
+            Sign in
+          </a>
         </div>
-      </mat-card-actions>
-    </mat-card>
+      </div>
+    </div>
+
+    <!-- Terms and privacy links -->
+    <div class="mt-6 text-center text-xs text-gray-500">
+      By creating an account, you agree to our 
+      <a routerLink="/legal/terms" class="text-gray-400 hover:text-white transition-colors">Terms of Service</a> and 
+      <a routerLink="/legal/privacy" class="text-gray-400 hover:text-white transition-colors">Privacy Policy</a>
+    </div>
+  </div>
 </div>

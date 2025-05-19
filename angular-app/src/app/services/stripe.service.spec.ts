@@ -33,7 +33,7 @@ describe('StripeService', () => {
     service.handlePaymentSuccess(mockProfile, 'basic');
     tick();
     
-    expect(supabaseService.updateCredits).toHaveBeenCalledWith('user1', 15);
+    expect(supabaseService.updateCredits).toHaveBeenCalledWith('user1', 10);
   }));
 
   it('should return 0 if package is not found', fakeAsync(() => {

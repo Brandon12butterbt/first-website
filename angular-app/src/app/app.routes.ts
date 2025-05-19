@@ -8,6 +8,7 @@ import { AuthGuard } from './guards/auth.guard';
 import { PaymentGuard } from './guards/payment.guard';
 import { AccountDetailsComponent } from './components/account-details/account-details.component';
 import { OrderHistoryComponent } from './components/order-history/order-history.component';
+import { ContactComponent } from './components/contact/contact.component';
 
 export const routes: Routes = [
   {
@@ -31,5 +32,6 @@ export const routes: Routes = [
   { path: 'upgrade', component: UpgradeComponent, canActivate: [AuthGuard] },
   { path: 'payment-success', component: PaymentSuccessComponent, canActivate: [PaymentGuard] },
   { path: 'account-details', component: AccountDetailsComponent, canActivate: [AuthGuard] },
-  { path: 'order-history', component: OrderHistoryComponent, canActivate: [AuthGuard] }
+  { path: 'order-history', component: OrderHistoryComponent, canActivate: [AuthGuard] },
+  { path: 'contact', component: ContactComponent, canActivate: [AuthGuard] }
 ];

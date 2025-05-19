@@ -88,7 +88,7 @@
 
           <!-- User Profile Dropdown (Desktop) - Only for authenticated users -->
           <div *ngIf="profile" class="relative">
-            <button (click)="toggleUserDropdown($event)" class="flex items-center px-2 sm:px-3 py-2 rounded-md hover:bg-gray-800 transition-colors duration-200 touch-manipulation">
+            <button (click)="toggleUserDropdown($event)" class="spec-test-1 flex items-center px-2 sm:px-3 py-2 rounded-md hover:bg-gray-800 transition-colors duration-200 touch-manipulation">
               <mat-icon>account_circle</mat-icon>
               <span class="ml-1 truncate max-w-[80px] md:max-w-[120px] hidden sm:inline">{{ userEmail }}</span>
               <mat-icon>{{ isUserDropdownOpen ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</mat-icon>

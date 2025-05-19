@@ -105,6 +105,12 @@ export class GenerateComponent implements OnInit, OnDestroy {
       // Still show UI even if not logged in
       this.isLoading = false;
     }
+
+    window.scroll({ 
+      top: 0, 
+      left: 0, 
+      behavior: 'smooth' 
+    });
   }
 
   async getFluxProfile(session: any) {

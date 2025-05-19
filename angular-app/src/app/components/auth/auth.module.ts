@@ -6,6 +6,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 
@@ -31,7 +34,10 @@ import { UpdatePasswordComponent } from './update-password/update-password.compo
         MatButtonModule,
         MatFormFieldModule,
         MatCardModule,
-        MatIconModule
+        MatIconModule,
+        MatProgressSpinnerModule,
+        MatDividerModule,
+        MatSnackBarModule
     ]
 })
 export class AuthModule { } 

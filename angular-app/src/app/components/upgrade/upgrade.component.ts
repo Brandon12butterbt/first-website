@@ -52,6 +52,12 @@ export class UpgradeComponent implements OnInit {
     if (session) {
       await this.getFluxProfile(session);
     }
+
+    window.scroll({ 
+      top: 0, 
+      left: 0, 
+      behavior: 'smooth' 
+    });
   }
   
   formatPrice(price: number): string {

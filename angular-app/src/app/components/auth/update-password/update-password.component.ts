@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AbstractControl } from '@angular/forms';
+import { Router } from '@angular/router';
 
 import { SupabaseAuthService } from '../../../services/supabase-auth.service';
 
@@ -19,7 +20,8 @@ export class UpdatePasswordComponent {
 
   constructor(
     private fb: FormBuilder,
-    private supabaseAuthService: SupabaseAuthService
+    private supabaseAuthService: SupabaseAuthService,
+    private router: Router
   ) {
     this.updateForm = this.fb.group({
       newPassword: ['', [Validators.required, Validators.minLength(8),Validators.maxLength(30)]],
@@ -39,11 +41,10 @@ export class UpdatePasswordComponent {
       this.errorMessage = '';
       
       try {
-
         const success = await this.supabaseAuthService.updatePassword(this.updateForm.get('newPassword')?.value);
         
         if (success) {
-          this.successMessage = 'Password has been reset successfully';
+          this.successMessage = 'Password has been updated successfully';
           this.errorMessage = '';
           this.passwordUpdated = true;
         }

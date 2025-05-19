@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
 
 import { SupabaseAuthService } from '../../../services/supabase-auth.service';
 
@@ -30,9 +31,9 @@ export class ResetPasswordComponent {
     if (this.resetForm.valid) {
       this.isLoading = true;
       this.errorMessage = '';
+      this.successMessage = '';
       
       try {
-
         const success = await this.supabaseAuthService.resetPassword(this.resetForm.get('email')?.value);
         
         if (success) {
@@ -41,6 +42,7 @@ export class ResetPasswordComponent {
         }
       } catch (err: any) {
         this.errorMessage = err.message || 'An error occurred while resetting your password';
+        this.successMessage = '';
       } finally {
         this.isLoading = false;
       }

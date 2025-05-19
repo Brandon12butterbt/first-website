@@ -134,7 +134,7 @@ describe('UpdatePasswordComponent', () => {
       tick();
 
       expect(supabaseService.updatePassword).toHaveBeenCalledWith(newPassword);
-      expect(component.successMessage).toContain('Password has been reset successfully');
+      expect(component.successMessage).toContain('Password has been updated successfully');
       expect(component.errorMessage).toBe('');
       expect(component.isLoading).toBeFalse();
       expect(component.passwordUpdated).toBeTrue();
@@ -165,7 +165,7 @@ describe('UpdatePasswordComponent', () => {
 
   describe('UI Elements', () => {
     it('should display title', () => {
-      const titleElement = fixture.debugElement.query(By.css('mat-card-title'));
+      const titleElement = fixture.debugElement.query(By.css('h1.text-3xl'));
       expect(titleElement.nativeElement.textContent).toContain('Update Password');
     });
 
@@ -182,20 +182,14 @@ describe('UpdatePasswordComponent', () => {
       expect(submitButton.nativeElement.disabled).toBeFalse();
     });
 
-    it('should have login link', () => {
-      const loginLink = fixture.debugElement.query(By.css('a[routerLink="/auth/login"]'));
-      expect(loginLink).toBeTruthy();
-      expect(loginLink.nativeElement.textContent).toContain('Sign in');
-    });
-
     it('should show loading text while submitting', () => {
       component.isLoading = true;
       fixture.detectChanges();
       
       const button = fixture.debugElement.query(By.css('button[type="submit"]'));
 
-      const loadingSpan = button.query(By.css('span.text-white.font-medium'));
-      expect(loadingSpan.nativeElement.textContent).toContain('Updating Password...');
+      const loadingSpan = button.query(By.css('span.submit-loading-spec-test'));
+      expect(loadingSpan.nativeElement.textContent).toContain('Updating password...');
     });
 
     it('should hide password fields and sign in link after successful update', () => {

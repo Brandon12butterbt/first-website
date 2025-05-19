@@ -42,7 +42,7 @@ export class PrivacyPolicyComponent {
     },
     {
       title: 'Contact Us',
-      content: `If you have any questions about this privacy policy, please contact us at "afluxgen.help@gmail.com".`
+      content: `If you have any questions about these Terms of Service, please contact us at <a href="mailto:afluxgen.help@gmail.com">afluxgen.help@gmail.com</a> or visit our <a href="/contact">Contact Support</a> page.`
     }
   ];
 } 

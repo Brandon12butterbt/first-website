@@ -1,10 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RouterModule } from '@angular/router';
+import { MatInputModule } from '@angular/material/input';
+import { MatDialogModule, MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SupabaseAuthService } from '../../services/supabase-auth.service';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { Router } from '@angular/router';
@@ -19,6 +22,107 @@ interface Profile {
 }
 
 @Component({
+  selector: 'app-delete-account-dialog',
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatButtonModule,
+    MatIconModule,
+    MatInputModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatDialogModule
+  ],
+  template: `
+    <div class="bg-gray-850 p-6 rounded-xl max-w-md w-full">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-bold text-white">Delete Account</h2>
+        <button mat-icon-button (click)="onCancel()">
+          <mat-icon class="text-gray-400">close</mat-icon>
+        </button>
+      </div>
+      
+      <div class="mb-6">
+        <p class="text-gray-300 mb-4">This action cannot be undone. All your data, including generated images and credits, will be permanently deleted.</p>
+        <div class="bg-red-900/20 border border-red-500/30 rounded-lg p-4 mb-4">
+          <div class="flex items-start">
+            <mat-icon class="text-red-400 mr-3">warning</mat-icon>
+            <p class="text-red-200 text-sm">For security, please enter your email address to confirm deletion.</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="mb-6">
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label class="text-white">Enter your email</mat-label>
+          <input matInput [(ngModel)]="confirmEmail" placeholder="your@email.com">
+        </mat-form-field>
+      </div>
+      
+      <div class="flex justify-end space-x-3">
+        <button mat-button (click)="onCancel()" class="text-gray-300 hover:text-white bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-lg transition-colors duration-200">
+          Cancel
+        </button>
+        <button mat-raised-button [disabled]="confirmEmail !== data.email" (click)="onConfirm()" 
+          class="text-white bg-red-600 hover:bg-red-700 disabled:bg-red-900/30 disabled:text-gray-400 disabled:cursor-not-allowed px-4 py-2 rounded-lg transition-colors duration-200">
+          Confirm Deletion
+        </button>
+      </div>
+    </div>
+  `,
+  styles: [`
+    :host {
+      display: block;
+    }
+    
+    mat-form-field {
+      width: 100%;
+    }
+    
+    ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+      display: none;
+    }
+
+    ::ng-deep .mat-mdc-text-field-wrapper {
+      /* Remove the notch */
+      background-color: transparent !important;
+    }
+
+    ::ng-deep .mdc-notched-outline__notch {
+      /* Hide the middle line */
+      border-right: none !important;
+    }
+    
+    ::ng-deep .mdc-text-field--outlined {
+      --mdc-outlined-text-field-container-color: rgba(17, 24, 39, 0.8);
+      --mdc-outlined-text-field-outline-color: rgba(139, 92, 246, 0.3);
+      --mdc-outlined-text-field-label-text-color: rgba(209, 213, 219, 0.8);
+      --mdc-outlined-text-field-input-text-color: white;
+      --mdc-outlined-text-field-focus-outline-color: rgba(139, 92, 246, 0.6);
+      --mdc-outlined-text-field-hover-outline-color: rgba(139, 92, 246, 0.4);
+    }
+  `]
+})
+export class DeleteAccountDialogComponent {
+  confirmEmail: string = '';
+  
+  constructor(
+    public dialogRef: MatDialogRef<DeleteAccountDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: { email: string }
+  ) {}
+  
+  onCancel(): void {
+    this.dialogRef.close(false);
+  }
+  
+  onConfirm(): void {
+    if (this.confirmEmail === this.data.email) {
+      this.dialogRef.close(true);
+    }
+  }
+}
+
+@Component({
   selector: 'app-account-details',
   standalone: true,
   imports: [
@@ -27,7 +131,8 @@ interface Profile {
     MatIconModule,
     MatButtonModule,
     MatProgressSpinnerModule,
-    RouterModule
+    RouterModule,
+    MatDialogModule
   ],
   templateUrl: './account-details.component.html',
   styleUrls: ['./account-details.component.css'],
@@ -45,7 +150,11 @@ export class AccountDetailsComponent implements OnInit {
   isLoading = true;
   session: any = null;
 
-  constructor(private supabaseAuthService: SupabaseAuthService, private router: Router) {}
+  constructor(
+    private supabaseAuthService: SupabaseAuthService, 
+    private router: Router,
+    private dialog: MatDialog
+  ) {}
 
   async ngOnInit() {
     this.isLoading = true;
@@ -82,9 +191,7 @@ export class AccountDetailsComponent implements OnInit {
         this.profile = profile;
       }
     } catch (error) {
-      if (error instanceof Error) {
-        console.log(error);
-      }
+      console.log(error);
     } finally {
       this.isLoading = false;
     }
@@ -135,31 +242,42 @@ export class AccountDetailsComponent implements OnInit {
   }
 
   async deleteEntireProfile() {
-    try {
-      await this.supabaseAuthService.deleteFluxProfile(this.profile.id);
-      await this.supabaseAuthService.deleteGeneratedImages(this.profile.id);
-      await this.supabaseAuthService.deleteTokenPurchases(this.profile.id);
-      await this.supabaseAuthService.deleteTokenTracker(this.profile.id);
+    const dialogRef = this.dialog.open(DeleteAccountDialogComponent, {
+      width: '450px',
+      panelClass: 'custom-dialog-container',
+      data: { email: this.profile.email }
+    });
 
-      const result = await firstValueFrom(this.supabaseAuthService.deleteEntireProfile(this.profile.id));
+    dialogRef.afterClosed().subscribe(async (confirmed: boolean) => {
+      if (confirmed) {
+        this.isLoading = true;
+        try {
+          await this.supabaseAuthService.deleteFluxProfile(this.profile.id);
+          await this.supabaseAuthService.deleteGeneratedImages(this.profile.id);
+          await this.supabaseAuthService.deleteTokenPurchases(this.profile.id);
+          await this.supabaseAuthService.deleteTokenTracker(this.profile.id);
 
-      if (result.error) {
-        throw result.error;
-      } else {
-        this.profile = null;
+          const result = await firstValueFrom(this.supabaseAuthService.deleteEntireProfile(this.profile.id));
+
+          if (result.error) {
+            throw result.error;
+          } else {
+            this.profile = null;
+          }
+        } catch (error) {
+          if (error instanceof Error) {
+            console.log(error);
+          }
+        } finally {
+          this.isLoading = false;
+          await this.supabaseAuthService.signOut();
+          // Used to trigger nav bar profile credits update
+          this.supabaseAuthService.triggerAuthChange('SIGNED_OUT', this.session);
+          this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+            this.router.navigate(['/']);
+          });
+        }
       }
-    } catch (error) {
-      if (error instanceof Error) {
-        console.log(error);
-      }
-    } finally {
-      this.isLoading = false;
-      await this.supabaseAuthService.signOut();
-      // Used to trigger nav bar profile credits update
-      this.supabaseAuthService.triggerAuthChange('SIGNED_OUT', this.session);
-      this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-        this.router.navigate(['/']);
-      });
-    }
+    });
   }
 }

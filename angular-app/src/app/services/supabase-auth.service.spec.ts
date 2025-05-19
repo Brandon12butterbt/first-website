@@ -2,10 +2,12 @@ import { TestBed } from '@angular/core/testing';
 import { SupabaseAuthService } from './supabase-auth.service';
 import { ConfigService } from './config.service';
 import { AuthSession, User, WeakPassword } from '@supabase/supabase-js';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 
 describe('SupabaseAuthService', () => {
   let service: SupabaseAuthService;
   let configService: jasmine.SpyObj<ConfigService>;
+  let httpMock: HttpTestingController;
   
   const mockUser: User = {
     id: 'test-user-id',
@@ -32,6 +34,7 @@ describe('SupabaseAuthService', () => {
     });
 
     TestBed.configureTestingModule({
+      imports: [HttpClientTestingModule],
       providers: [
         SupabaseAuthService,
         { provide: ConfigService, useValue: configService }
@@ -39,6 +42,11 @@ describe('SupabaseAuthService', () => {
     });
 
     service = TestBed.inject(SupabaseAuthService);
+    httpMock = TestBed.inject(HttpTestingController);
+  });
+
+  afterEach(() => {
+    httpMock.verify();
   });
 
   it('should be created', () => {

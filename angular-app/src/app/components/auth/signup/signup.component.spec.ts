@@ -179,11 +179,11 @@ describe('SignupComponent', () => {
 
     describe('UI Elements', () => {
         it('should display title and subtitle', () => {
-            const titleElement = fixture.debugElement.query(By.css('mat-card-title'));
-            const subtitleElement = fixture.debugElement.query(By.css('mat-card-subtitle'));
+            const titleElement = fixture.debugElement.query(By.css('h2.text-2xl'));
+            const subtitleElement = fixture.debugElement.query(By.css('p.text-sm'));
 
             expect(titleElement.nativeElement.textContent).toContain('Create your account');
-            expect(subtitleElement.nativeElement.textContent).toContain('Start generating AI images today');
+            expect(subtitleElement.nativeElement.textContent).toContain('Join our community and start creating amazing AI-generated images');
         });
 
         it('should disable submit button when form is invalid', () => {
@@ -212,7 +212,7 @@ describe('SignupComponent', () => {
 
             const button = fixture.debugElement.query(By.css('button[type="submit"]'));
 
-            const loadingSpan = button.query(By.css('span.text-white.font-medium'));
+            const loadingSpan = button.query(By.css('span.submit-span-spec-test'));
             
             expect(loadingSpan).toBeTruthy();
             expect(loadingSpan.nativeElement.textContent).toContain('Creating account...');

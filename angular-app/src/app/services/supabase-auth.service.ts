@@ -109,6 +109,10 @@ export class SupabaseAuthService {
     return this.supabase.auth.signUp({ email, password});
   }
 
+  resendSignUp(email: string) {
+    return this.supabase.auth.resend({  type: 'signup',  email: email,  options: {    emailRedirectTo: 'https://afluxgen.com'  }});
+  }
+
   resetPassword(email: string) {
     return this.supabase.auth.resetPasswordForEmail(email, { redirectTo: 'https://afluxgen.com/auth/update-password' });
   }

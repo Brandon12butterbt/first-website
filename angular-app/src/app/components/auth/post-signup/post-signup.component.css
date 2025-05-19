@@ -1,7 +1,64 @@
+/* Custom styling for Angular Material components in dark theme */
+
+/* Style for Material form fields */
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
+    background-color: rgba(26, 30, 42, 0.5);
+    border-radius: 8px;
+}
+
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline-thick {
+    color: rgba(139, 92, 246, 0.5) !important;
+}
+
+::ng-deep .mat-form-field-appearance-outline.mat-focused .mat-form-field-outline-thick {
+    color: rgba(139, 92, 246, 0.7) !important;
+}
+
+/* Style for Material Icons */
 ::ng-deep .mat-icon {
-    height: 36px;
-    width: 36px;
-    font-size: 36px;
+    height: 24px;
+    width: 24px;
+    font-size: 24px;
+}
+
+::ng-deep .mat-icon.text-4xl {
+    height: 48px !important;
+    width: 48px !important;
+    font-size: 48px !important;
+}
+
+::ng-deep .mat-icon.text-sm {
+    height: 16px !important;
+    width: 16px !important;
+    font-size: 16px !important;
+}
+
+/* Custom animation for the pulse indicator */
+@keyframes pulse-dot {
+    0% {
+        transform: scale(0.8);
+        opacity: 0.6;
+    }
+    50% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0.8);
+        opacity: 0.6;
+    }
+}
+
+.bg-clip-text {
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+/* Hover effects for feature cards */
+.bg-gray-875:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.15);
+    transition: all 0.3s ease;
 }
 
 .card-style {

@@ -1,6 +1,6 @@
-<div class="app-container">
+<div class="app-container" #contentDiv>
   <app-nav-bar [userEmail]="userEmail" [profile]="profile" (signOut)="signOut()"></app-nav-bar>
-  <div class="content" #contentDiv>
+  <div class="content">
     <router-outlet></router-outlet>
   </div>
   <app-footer></app-footer>

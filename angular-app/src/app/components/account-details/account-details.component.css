@@ -109,3 +109,45 @@
     background-position: 200% 0%;
   }
 }
+
+/* Custom dialog styling */
+::ng-deep .custom-dialog-container {
+  --mdc-dialog-container-color: transparent;
+  --mdc-dialog-container-elevation-shadow: none;
+  --mdc-dialog-container-shape: 16px;
+}
+
+::ng-deep .custom-dialog-container .mat-mdc-dialog-surface {
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
+  background-color: transparent;
+  animation: dialog-fade-in 0.2s ease-out;
+  overflow: visible;
+}
+
+@keyframes dialog-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Delete button specific styling */
+.delete-btn {
+  background-color: rgba(185, 28, 28, 0.8);
+  transition: all 0.2s ease-in-out;
+}
+
+.delete-btn:hover {
+  background-color: rgba(220, 38, 38, 0.9);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.2);
+}
+
+.delete-btn:disabled {
+  background-color: rgba(185, 28, 28, 0.3);
+  color: rgba(255, 255, 255, 0.5);
+}
