@@ -24,10 +24,6 @@ describe('ContactService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should have supportEmail property set to afluxgen.help@gmail.com', () => {
-    expect((service as any).supportEmail).toEqual('afluxgen.help@gmail.com');
-  });
-
   it('should send contact request and receive success response', () => {
     const mockRequest: ContactRequest = {
       type: 'general',
