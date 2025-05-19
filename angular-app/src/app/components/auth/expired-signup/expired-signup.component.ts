@@ -38,11 +38,9 @@ export class ExpiredSignupComponent implements OnInit {
           this.errorMessage = 'Your verification link has expired.';
         } else {
           this.errorMessage = params.get('error_description') || 'Your verification link is invalid or has expired.';
-          // Replace + with spaces in the error message
           this.errorMessage = this.errorMessage.replace(/\+/g, ' ');
         }
 
-        // Check if email is available in the fragment
         const email = params.get('email');
         if (email) {
           this.expiredForm.get('email')?.setValue(email);
@@ -53,7 +51,6 @@ export class ExpiredSignupComponent implements OnInit {
   
   onSubmit(): void {
     if (this.expiredForm.invalid) {
-      // Mark the form controls as touched to trigger validation messages
       this.expiredForm.markAllAsTouched();
       return;
     }
@@ -68,7 +65,6 @@ export class ExpiredSignupComponent implements OnInit {
           this.showNotification(response.error.message || 'Failed to resend verification email', 'error-snackbar');
         } else {
           this.showNotification('Verification email resent successfully!');
-          // Store the email in the auth data service
           this.authDataService.setSignupEmail(email);
         }
       })
