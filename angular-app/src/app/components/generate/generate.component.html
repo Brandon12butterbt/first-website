@@ -1,4 +1,4 @@
-<div class="min-h-screen bg-gray-900 text-gray-100">
+<div class="bg-gray-900 flex flex-col">
   <!-- Main Content -->
   <div class="container mx-auto px-4 py-12 max-w-6xl">
     <h1 class="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-500 mb-8 text-center">
@@ -137,7 +137,7 @@
           </h2>
           
           <!-- Loading state -->
-          <div *ngIf="isGenerating" class="flex-1 flex items-center justify-center min-h-[400px]">
+          <div *ngIf="isGenerating" class="flex-1 flex items-center justify-center min-h-[300px] md:min-h-[400px]">
             <div class="text-center">
               <div class="relative w-32 h-32 mx-auto mb-4">
                 <!-- Spinner with glow effect -->
@@ -158,10 +158,10 @@
           </div>
           
           <!-- Empty state -->
-          <div *ngIf="!isGenerating && !generatedImage" class="flex-1 flex items-center justify-center min-h-[400px] bg-gray-900/70 rounded-lg border border-gray-700">
+          <div *ngIf="!isGenerating && !generatedImage" class="flex-1 flex items-center justify-center min-h-[300px] md:min-h-[400px] bg-gray-900/70 rounded-lg border border-gray-700">
             <div class="text-center p-8">
               <div class="w-20 h-20 rounded-full bg-gray-800 flex items-center justify-center mx-auto mb-4 border border-gray-700">
-                <mat-icon class="text-2xl text-gray-500 leading-none">image</mat-icon>
+                <mat-icon class="text-4xl text-gray-500">image</mat-icon>
               </div>
               <p class="text-gray-400 text-lg">Your creation will appear here</p>
               <p class="text-gray-500 text-sm mt-2">Enter your prompt and click Generate</p>
@@ -169,16 +169,29 @@
           </div>
           
           <!-- Generated image display -->
-          <div *ngIf="!isGenerating && generatedImage" class="flex-1 flex flex-col min-h-[400px]">
+          <div *ngIf="!isGenerating && generatedImage" class="flex-1 flex flex-col min-h-[300px] md:min-h-[400px]">
             <div class="relative flex-1 rounded-lg overflow-hidden border border-gray-700 bg-gray-900/30">
-              <img [src]="generatedImage" alt="Generated image" class="w-full h-full object-contain">
+              <!-- Error boundary for image display -->
+              <div *ngIf="errorMessage && !generatedImage" class="absolute inset-0 flex items-center justify-center bg-gray-900/70 p-4">
+                <div class="text-center">
+                  <mat-icon class="text-red-400 text-4xl mb-2">error_outline</mat-icon>
+                  <p class="text-red-400">{{ errorMessage }}</p>
+                  <button 
+                    (click)="errorMessage = ''" 
+                    class="mt-4 py-2 px-4 bg-red-900/40 text-red-400 rounded-lg font-medium border border-red-800 hover:bg-red-900/60 transition-all duration-200">
+                    Dismiss
+                  </button>
+                </div>
+              </div>
               
-              <!-- Image controls overlay -->
+              <img [src]="generatedImage" alt="Generated image" class="w-full h-full object-contain max-h-[60vh] mx-auto">
+              
+              <!-- Image controls overlay - fixed for mobile -->
               <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-gray-900 to-transparent">
-                <div class="flex justify-center gap-4">
+                <div class="flex flex-col sm:flex-row justify-center gap-2 sm:gap-4">
                   <button 
                     (click)="downloadImage()" 
-                    class="py-2 px-4 bg-gray-800 hover:bg-gray-700 text-white rounded-lg font-medium shadow-lg transition-all duration-200 flex items-center gap-2 border border-gray-700 hover:border-blue-500">
+                    class="py-2 px-4 bg-gray-800 hover:bg-gray-700 text-white rounded-lg font-medium shadow-lg transition-all duration-200 flex items-center justify-center gap-2 border border-gray-700 hover:border-blue-500">
                     <mat-icon class="text-blue-400">download</mat-icon>
                     <span>Download</span>
                   </button>
@@ -186,7 +199,7 @@
                   <button 
                     (click)="saveImage()" 
                     [disabled]="isSaving"
-                    class="py-2 px-4 bg-gray-800 hover:bg-gray-700 text-white rounded-lg font-medium shadow-lg transition-all duration-200 flex items-center gap-2 border border-gray-700 hover:border-purple-500 disabled:opacity-50 disabled:cursor-not-allowed">
+                    class="py-2 px-4 bg-gray-800 hover:bg-gray-700 text-white rounded-lg font-medium shadow-lg transition-all duration-200 flex items-center justify-center gap-2 border border-gray-700 hover:border-purple-500 disabled:opacity-50 disabled:cursor-not-allowed">
                     <div *ngIf="isSaving" class="w-4 h-4 border-2 border-t-white border-white/20 rounded-full animate-spin mr-1"></div>
                     <mat-icon *ngIf="!isSaving" class="text-purple-400">save</mat-icon>
                     <span>{{ isSaving ? 'Saving...' : 'Save to Gallery' }}</span>

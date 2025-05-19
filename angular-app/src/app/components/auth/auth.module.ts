@@ -10,13 +10,14 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 
 import { SignupComponent } from './signup/signup.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
 import { PostSignupComponent } from './post-signup/post-signup.component';
 import { LoginComponent } from './login/login.component';
 import { UpdatePasswordComponent } from './update-password/update-password.component';
+import { ExpiredSignupComponent } from './expired-signup/expired-signup.component';
 
 @NgModule({
     declarations: [
@@ -24,12 +25,14 @@ import { UpdatePasswordComponent } from './update-password/update-password.compo
         ResetPasswordComponent, 
         PostSignupComponent, 
         LoginComponent, 
-        UpdatePasswordComponent
+        UpdatePasswordComponent,
+        ExpiredSignupComponent
     ],
     imports: [
         RouterModule.forChild(AUTH_ROUTES),
         CommonModule,
         ReactiveFormsModule,
+        FormsModule,
         MatInputModule,
         MatButtonModule,
         MatFormFieldModule,

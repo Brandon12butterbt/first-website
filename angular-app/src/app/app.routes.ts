@@ -22,6 +22,7 @@ export const routes: Routes = [
   { path: 'login', redirectTo: 'auth/login', pathMatch: 'full' },
   { path: 'signup', redirectTo: 'auth/signup', pathMatch: 'full' },
   { path: 'post-signup', redirectTo: 'auth/post-signup', pathMatch: 'full' },
+  { path: 'expired-signup', redirectTo: 'auth/expired-signup', pathMatch: 'full' },
   { path: 'reset-password', redirectTo: 'auth/reset-password', pathMatch: 'full' },
   { path: 'update-password', redirectTo: 'auth/update-password', pathMatch: 'full' },
   { path: 'privacy-policy', redirectTo: 'legal/privacy-policy', pathMatch: 'full' },

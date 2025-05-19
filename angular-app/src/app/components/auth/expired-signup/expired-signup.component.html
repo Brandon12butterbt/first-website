@@ -1,0 +1,112 @@
+<div class="min-h-[calc(100vh-60px)] flex items-center justify-center px-4 py-6 bg-gray-900 relative overflow-hidden">
+  <!-- Background elements -->
+  <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+    <div class="absolute -top-32 -left-32 w-96 h-96 bg-violet-600/20 rounded-full filter blur-3xl animate-pulse-slow"></div>
+    <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-pink-500/20 rounded-full filter blur-3xl animate-float"></div>
+  </div>
+
+  <div class="w-full max-w-md z-10 relative">
+    <!-- Error header -->
+    <div class="text-center mb-6">
+      <h1 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-500 to-pink-500">Link Expired</h1>
+      <p class="text-gray-400 mt-1">Your verification link is no longer valid</p>
+    </div>
+
+    <!-- Card container -->
+    <div class="bg-gray-850 border border-gray-800 rounded-xl shadow-2xl overflow-hidden transition-all duration-300 hover:shadow-violet-500/10">
+      <!-- Expired verification section -->
+      <div class="p-6 text-center">
+        <div class="flex justify-center mb-6">
+          <div class="w-20 h-20 rounded-full bg-red-600/10 flex items-center justify-center">
+            <mat-icon class="text-red-400 text-4xl">schedule</mat-icon>
+          </div>
+        </div>
+        
+        <h2 class="text-2xl font-bold text-white mb-3">Verification Link Expired</h2>
+        <p class="text-gray-300 mb-4">{{ errorMessage }}</p>
+        
+        <!-- User email input if not available -->
+        <div *ngIf="!userEmail" class="mb-6">
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Your Email Address</mat-label>
+            <input matInput [(ngModel)]="userEmail" type="email" placeholder="Enter your email address">
+            <mat-icon matSuffix>email</mat-icon>
+          </mat-form-field>
+        </div>
+        
+        <!-- Display email if available -->
+        <div *ngIf="userEmail" class="mb-6">
+          <p class="text-gray-300 mb-2">Your email address:</p>
+          <p class="text-violet-400 font-medium">{{ userEmail }}</p>
+        </div>
+        
+        <!-- Status notification -->
+        <div class="bg-gray-875 border border-gray-800 rounded-lg p-4 mb-6">
+          <div class="flex items-center justify-center space-x-3">
+            <div class="h-2 w-2 rounded-full bg-red-500"></div>
+            <p class="text-gray-300 text-sm">Verification link has expired</p>
+          </div>
+        </div>
+        
+        <!-- Action buttons -->
+        <div class="space-y-3">
+          <button 
+            mat-raised-button 
+            (click)="resendVerificationEmail()"
+            [disabled]="isResending || !userEmail"
+            class="w-full py-3 px-4 bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-500 hover:to-pink-500 
+                 text-white font-medium rounded-lg shadow-lg transform transition-all duration-300 focus:outline-none 
+                 focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-850 focus:ring-violet-500">
+            <div class="flex items-center justify-center">
+              <div *ngIf="isResending" class="mr-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              <mat-icon *ngIf="!isResending" class="mr-2">refresh</mat-icon>
+              <span>{{ isResending ? 'Resending...' : 'Resend Verification Email' }}</span>
+            </div>
+          </button>
+          
+          <button 
+            mat-stroked-button
+            routerLink="/auth/login"
+            class="w-full py-3 px-4 border border-gray-700 hover:border-violet-500 
+                 text-gray-300 hover:text-white font-medium rounded-lg transition-all duration-300 focus:outline-none 
+                 focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-850 focus:ring-violet-500 bg-transparent">
+            <div class="flex items-center justify-center">
+              <mat-icon class="mr-2">login</mat-icon>
+              <span>Back to Login</span>
+            </div>
+          </button>
+        </div>
+      </div>
+      
+      <!-- Features highlight -->
+      <div class="border-t border-gray-800 p-6">
+        <p class="text-sm text-gray-400 text-center mb-4">Ready to experience these amazing features:</p>
+        <div class="grid grid-cols-2 gap-3">
+          <div class="bg-gray-875 rounded-lg p-3 border border-gray-800 hover:border-violet-500/50 transition-all duration-300">
+            <div class="flex items-center text-violet-400 mb-1">
+              <mat-icon class="text-sm mr-1">brush</mat-icon>
+              <span class="text-xs font-medium">AI Image Generation</span>
+            </div>
+            <p class="text-gray-400 text-xs">Create stunning images with simple text prompts</p>
+          </div>
+          <div class="bg-gray-875 rounded-lg p-3 border border-gray-800 hover:border-pink-500/50 transition-all duration-300">
+            <div class="flex items-center text-pink-400 mb-1">
+              <mat-icon class="text-sm mr-1">photo_library</mat-icon>
+              <span class="text-xs font-medium">Gallery Storage</span>
+            </div>
+            <p class="text-gray-400 text-xs">Store and organize all your creations</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Help section -->
+    <div class="mt-6 text-center">
+      <p class="text-gray-400 text-sm">
+        Need assistance? 
+        <a routerLink="/signup" class="text-violet-400 hover:text-violet-300 transition-colors">Sign up again</a> or 
+        <a href="#" class="text-violet-400 hover:text-violet-300 transition-colors">contact support</a>
+      </p>
+    </div>
+  </div>
+</div> 

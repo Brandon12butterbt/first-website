@@ -29,6 +29,18 @@ export class AppComponent implements OnInit {
     private supabaseAuthService: SupabaseAuthService
   ) {
     this.session = this.supabaseAuthService.session;
+
+    // Handle URL hash fragments for error codes
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        const url = event.urlAfterRedirects;
+        
+        // Check for expired link error in hash fragment
+        if (url.includes('#error=') && url.includes('error_code=otp_expired')) {
+          this.router.navigate(['/expired-signup']);
+        }
+      }
+    });
   }
 
   async ngOnInit() {

@@ -105,12 +105,6 @@ export class GenerateComponent implements OnInit, OnDestroy {
       // Still show UI even if not logged in
       this.isLoading = false;
     }
-
-    window.scroll({ 
-      top: 0, 
-      left: 0, 
-      behavior: 'smooth' 
-    });
   }
 
   async getFluxProfile(session: any) {
@@ -199,14 +193,26 @@ export class GenerateComponent implements OnInit, OnDestroy {
       this.lastUpdateTime = new Date().toLocaleTimeString() + ' (success)';
       
       // Create a URL for the blob (temporary, for display only)
-      this.generatedImage = URL.createObjectURL(imageBlob);
-
+      const imageUrl = URL.createObjectURL(imageBlob);
+      
+      // Validate the image loads correctly before displaying
+      const img = new Image();
+      img.onload = () => {
+        this.generatedImage = imageUrl;
+        this.cdr.detectChanges();
+      };
+      
+      img.onerror = () => {
+        console.error('Failed to load generated image');
+        this.errorMessage = 'Failed to load the generated image. Please try again.';
+        URL.revokeObjectURL(imageUrl);
+        this.cdr.detectChanges();
+      };
+      
+      img.src = imageUrl;
       
       // Decrement user's credits
       await this.supabaseAuthService.imageGeneratedUpdateProfile(this.profile.id, this.profile.images_generated, this.profile.credits);
-      this.profile = null;
-      this.session = null;
-      this.session = await this.supabaseAuthService.session;
       await this.getFluxProfile(this.session);
       
     } catch (error) {

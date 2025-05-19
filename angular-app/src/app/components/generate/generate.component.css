@@ -38,14 +38,16 @@
   animation: bounceIn 0.5s ease-out forwards;
 }
 
-.grid-style {
-  height: 75vh;
-  max-height: 75vh;
+/* Remove fixed height constraints */
+.image-container-style {
+  min-height: 250px;
 }
 
-.image-container-style {
-  min-height: 350px;
-  max-height: 70vh;
+/* Ensure proper image display on mobile */
+img {
+  max-width: 100%;
+  object-fit: contain;
+  display: block;
 }
 
 ::ng-deep .white-spinner circle {
@@ -169,4 +171,29 @@ textarea::-webkit-scrollbar-thumb:hover {
 button:focus, a:focus {
   outline: 2px solid rgba(139, 92, 246, 0.5);
   outline-offset: 2px;
+}
+
+/* Mobile optimizations */
+@media (max-width: 640px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  button {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+  
+  /* Fix for image display on mobile */
+  img {
+    max-height: 50vh !important;
+    width: auto !important;
+    margin: 0 auto;
+  }
+  
+  /* Ensure image container has appropriate size */
+  .image-container-style {
+    min-height: 200px;
+  }
 }

@@ -1,0 +1,106 @@
+/* Custom background and theme colors */
+:host {
+  display: block;
+  --bg-gray-850: #121218;
+  --bg-gray-875: #18181f;
+  --border-gray-800: #27272f;
+}
+
+/* Animation keyframes */
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+@keyframes pulse-fast {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+/* Animation classes */
+.animate-pulse-slow {
+  animation: pulse-slow 6s infinite ease-in-out;
+}
+
+.animate-pulse-fast {
+  animation: pulse-fast 1.5s infinite ease-in-out;
+}
+
+.animate-float {
+  animation: float 8s infinite ease-in-out;
+}
+
+/* Material form field overrides */
+::ng-deep .mat-mdc-form-field.mat-form-field-appearance-outline .mat-form-field-outline {
+  background-color: rgba(30, 30, 40, 0.5);
+  border-radius: 8px;
+}
+
+::ng-deep .mat-mdc-form-field.mat-form-field-appearance-outline .mat-form-field-outline-thick {
+  color: rgba(124, 58, 237, 0.5);
+}
+
+::ng-deep .mat-mdc-form-field.mat-form-field-appearance-outline:hover .mat-form-field-outline-thick {
+  color: rgba(124, 58, 237, 0.8);
+}
+
+::ng-deep .mat-mdc-input-element {
+  color: #ffffff;
+}
+
+::ng-deep .mat-mdc-form-field-label {
+  color: rgba(156, 163, 175, 0.8);
+}
+
+/* Button styles */
+button.mat-raised-button,
+button.mat-stroked-button {
+  height: 52px;
+}
+
+/* Utility styles */
+.bg-gray-850 {
+  background-color: var(--bg-gray-850);
+}
+
+.bg-gray-875 {
+  background-color: var(--bg-gray-875);
+}
+
+.border-gray-800 {
+  border-color: var(--border-gray-800);
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .w-96 {
+    width: 16rem;
+  }
+  
+  .w-20 {
+    width: 4rem;
+  }
+  
+  .h-20 {
+    height: 4rem;
+  }
+} 
