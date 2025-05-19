@@ -40,7 +40,7 @@ describe('FluxService', () => {
       done();
     });
 
-    const req = httpMock.expectOne('http://localhost:3000/generate-image');
+    const req = httpMock.expectOne('/api/generate-image');
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual({ prompt });
 
@@ -72,7 +72,7 @@ describe('FluxService', () => {
       done();
     });
 
-    const req = httpMock.expectOne('http://localhost:3000/generate-image');
+    const req = httpMock.expectOne('/api/generate-image');
     req.error(new ProgressEvent('Network error'));
   });
 });

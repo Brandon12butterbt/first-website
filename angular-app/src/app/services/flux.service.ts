@@ -28,7 +28,10 @@ export class FluxService {
 
     const body = { prompt };
 
-    return this.http.post('http://localhost:3000/generate-image', body, {
+    // const url = 'http://localhost:3000/generate-image';
+    const url = '/api/generate-image';
+
+    return this.http.post(url, body, {
       responseType: 'blob'
     }).pipe(
       catchError(error => {
