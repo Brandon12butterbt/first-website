@@ -77,7 +77,9 @@ export class SupabaseAuthService {
   }
 
   deleteEntireProfile(id: string): Observable<any> {
-    return this.http.delete(`http://localhost:3000/admin/delete-user/${id}`)
+    // const url = `http://localhost:3000/admin/delete-user/${id}`;
+    const url = `/api/admin/delete-user/${id}`;
+    return this.http.delete(url)
     .pipe(
       catchError(error => {
         console.error('Error deleting user:', error);

@@ -16,7 +16,9 @@ export class ContactService {
   constructor(private http: HttpClient) { }
   
   sendContactRequest(request: ContactRequest): Observable<any> {
-    return this.http.post('http://localhost:3000/contact', request)
+    // const url = 'http://localhost:3000/generate-image';
+    const url = '/api/contact';
+    return this.http.post(url, request)
     .pipe(
       catchError(error => {
         console.error('Error contacting support:', error);

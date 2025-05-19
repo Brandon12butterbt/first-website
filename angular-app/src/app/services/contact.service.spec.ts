@@ -37,7 +37,7 @@ describe('ContactService', () => {
       expect(response).toEqual(mockResponse);
     });
 
-    const req = httpMock.expectOne('http://localhost:3000/contact');
+    const req = httpMock.expectOne('/api/contact');
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual(mockRequest);
 
@@ -55,7 +55,7 @@ describe('ContactService', () => {
       expect(response).toEqual({ error: 'Failed to contact support' });
     });
 
-    const req = httpMock.expectOne('http://localhost:3000/contact');
+    const req = httpMock.expectOne('/api/contact');
     req.flush('Server error', { status: 500, statusText: 'Internal Server Error' });
   });
 }); 
