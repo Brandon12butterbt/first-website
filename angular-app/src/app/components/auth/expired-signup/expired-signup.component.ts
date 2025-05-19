@@ -51,7 +51,7 @@ export class ExpiredSignupComponent implements OnInit {
     });
   }
   
-  resendVerificationEmail(): void {
+  onSubmit(): void {
     if (this.expiredForm.invalid) {
       // Mark the form controls as touched to trigger validation messages
       this.expiredForm.markAllAsTouched();
