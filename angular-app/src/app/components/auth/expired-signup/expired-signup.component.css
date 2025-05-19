@@ -1,106 +1,84 @@
-/* Custom background and theme colors */
-:host {
-  display: block;
-  --bg-gray-850: #121218;
-  --bg-gray-875: #18181f;
-  --border-gray-800: #27272f;
+/* Custom styling for Angular Material components in dark theme */
+
+/* Style for Material form fields */
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
+    background-color: rgba(26, 30, 42, 0.5);
+    border-radius: 8px;
 }
 
-/* Animation keyframes */
-@keyframes pulse-slow {
-  0%, 100% {
-    opacity: 0.5;
-  }
-  50% {
-    opacity: 0.8;
-  }
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline-thick {
+    color: rgba(139, 92, 246, 0.5) !important;
 }
 
-@keyframes pulse-fast {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.2);
-    opacity: 0.8;
-  }
+::ng-deep .mat-form-field-appearance-outline.mat-focused .mat-form-field-outline-thick {
+    color: rgba(139, 92, 246, 0.7) !important;
 }
 
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-20px);
-  }
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
+    padding: 0.5em 0;
 }
 
-/* Animation classes */
-.animate-pulse-slow {
-  animation: pulse-slow 6s infinite ease-in-out;
+::ng-deep .mat-form-field-label-wrapper {
+    top: -1.2em;
 }
 
-.animate-pulse-fast {
-  animation: pulse-fast 1.5s infinite ease-in-out;
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-label {
+    margin-top: 0.2em;
+    color: rgba(255, 255, 255, 0.6) !important;
 }
 
-.animate-float {
-  animation: float 8s infinite ease-in-out;
+::ng-deep .mat-form-field.mat-focused .mat-form-field-label {
+    color: rgba(139, 92, 246, 0.9) !important;
 }
 
-/* Material form field overrides */
-::ng-deep .mat-mdc-form-field.mat-form-field-appearance-outline .mat-form-field-outline {
-  background-color: rgba(30, 30, 40, 0.5);
-  border-radius: 8px;
+::ng-deep .mat-form-field-appearance-outline.mat-form-field-invalid.mat-form-field-invalid .mat-form-field-outline-thick {
+    color: rgba(239, 68, 68, 0.7) !important;
 }
 
-::ng-deep .mat-mdc-form-field.mat-form-field-appearance-outline .mat-form-field-outline-thick {
-  color: rgba(124, 58, 237, 0.5);
+::ng-deep .mat-form-field.mat-form-field-invalid .mat-form-field-label {
+    color: rgba(239, 68, 68, 0.9) !important;
 }
 
-::ng-deep .mat-mdc-form-field.mat-form-field-appearance-outline:hover .mat-form-field-outline-thick {
-  color: rgba(124, 58, 237, 0.8);
+::ng-deep .mat-input-element {
+    color: white !important;
+    caret-color: rgb(139, 92, 246) !important;
 }
 
-::ng-deep .mat-mdc-input-element {
-  color: #ffffff;
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-prefix,
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-suffix {
+    top: 0;
 }
 
-::ng-deep .mat-mdc-form-field-label {
-  color: rgba(156, 163, 175, 0.8);
+/* Remove material input underline */
+::ng-deep .mat-form-field-underline {
+    display: none;
 }
 
-/* Button styles */
-button.mat-raised-button,
-button.mat-stroked-button {
-  height: 52px;
+/* Custom scrollbar for webkit browsers */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
 }
 
-/* Utility styles */
-.bg-gray-850 {
-  background-color: var(--bg-gray-850);
+::-webkit-scrollbar-track {
+    background: rgba(15, 17, 23, 0.5);
 }
 
-.bg-gray-875 {
-  background-color: var(--bg-gray-875);
+::-webkit-scrollbar-thumb {
+    background: rgba(139, 92, 246, 0.3);
+    border-radius: 3px;
 }
 
-.border-gray-800 {
-  border-color: var(--border-gray-800);
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(139, 92, 246, 0.5);
 }
 
-/* Responsive adjustments */
-@media (max-width: 640px) {
-  .w-96 {
-    width: 16rem;
-  }
-  
-  .w-20 {
-    width: 4rem;
-  }
-  
-  .h-20 {
-    height: 4rem;
-  }
-} 
+/* Hide number input arrows */
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+    -webkit-appearance: none; 
+    margin: 0; 
+}
+input[type=number] {
+    -moz-appearance: textfield;
+}

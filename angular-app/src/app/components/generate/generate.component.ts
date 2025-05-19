@@ -194,11 +194,6 @@ export class GenerateComponent implements OnInit, OnDestroy {
       
       // Create a URL for the blob (temporary, for display only)
       this.generatedImage = URL.createObjectURL(imageBlob);
-
-      
-      // Decrement user's credits
-      await this.supabaseAuthService.imageGeneratedUpdateProfile(this.profile.id, this.profile.images_generated, this.profile.credits);
-      await this.getFluxProfile(this.session);
       
     } catch (error) {
       console.error('Error in component when generating image:', error);
@@ -209,6 +204,10 @@ export class GenerateComponent implements OnInit, OnDestroy {
       this.isGenerating = false;
       this.lastUpdateTime = new Date().toLocaleTimeString() + ' (complete)';
       this.cdr.detectChanges();
+
+      // Decrement user's credits
+      await this.supabaseAuthService.imageGeneratedUpdateProfile(this.profile.id, this.profile.images_generated, this.profile.credits);
+      await this.getFluxProfile(this.session);
 
       // Used to trigger nav bar profile credits update
       this.supabaseAuthService.triggerAuthChange('SIGNED_IN', this.session);

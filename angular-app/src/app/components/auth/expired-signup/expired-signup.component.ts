@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SupabaseAuthService } from '../../../services/supabase-auth.service';
 import { AuthDataService } from '../../../services/auth-data.service';
 
@@ -12,21 +13,22 @@ import { AuthDataService } from '../../../services/auth-data.service';
 })
 export class ExpiredSignupComponent implements OnInit {
   isResending = false;
-  userEmail: string = '';
   errorMessage: string = '';
+  expiredForm: FormGroup;
   
   constructor(
     private snackBar: MatSnackBar,
     private route: ActivatedRoute,
+    private fb: FormBuilder,
     private authDataService: AuthDataService,
     private supabaseAuthService: SupabaseAuthService
-  ) {}
+  ) {
+    this.expiredForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]]
+    });
+  }
   
   ngOnInit(): void {
-    // Try to get email from AuthDataService first
-    this.userEmail = this.authDataService.getSignupEmail();
-    
-    // Parse error parameters from URL if available
     this.route.fragment.subscribe(fragment => {
       if (fragment) {
         const params = new URLSearchParams(fragment);
@@ -39,25 +41,35 @@ export class ExpiredSignupComponent implements OnInit {
           // Replace + with spaces in the error message
           this.errorMessage = this.errorMessage.replace(/\+/g, ' ');
         }
+
+        // Check if email is available in the fragment
+        const email = params.get('email');
+        if (email) {
+          this.expiredForm.get('email')?.setValue(email);
+        }
       }
     });
   }
   
   resendVerificationEmail(): void {
-    if (!this.userEmail) {
-      this.showNotification('Please enter your email address.', 'error-snackbar');
+    if (this.expiredForm.invalid) {
+      // Mark the form controls as touched to trigger validation messages
+      this.expiredForm.markAllAsTouched();
       return;
     }
     
+    const email = this.expiredForm.get('email')?.value;
     this.isResending = true;
     
-    this.supabaseAuthService.resendSignUp(this.userEmail)
+    this.supabaseAuthService.resendSignUp(email)
       .then(response => {
         this.isResending = false;
         if (response.error) {
           this.showNotification(response.error.message || 'Failed to resend verification email', 'error-snackbar');
         } else {
           this.showNotification('Verification email resent successfully!');
+          // Store the email in the auth data service
+          this.authDataService.setSignupEmail(email);
         }
       })
       .catch(error => {

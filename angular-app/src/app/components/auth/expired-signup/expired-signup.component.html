@@ -17,65 +17,44 @@
       <!-- Expired verification section -->
       <div class="p-6 text-center">
         <div class="flex justify-center mb-6">
+          <!-- <div class="w-24 h-24 rounded-full bg-red-600/10 flex items-center justify-center">
+            <mat-icon class="text-red-400 text-2xl">schedule</mat-icon>
+          </div> -->
           <div class="w-20 h-20 rounded-full bg-red-600/10 flex items-center justify-center">
-            <mat-icon class="text-red-400 text-4xl">schedule</mat-icon>
+            <mat-icon class="text-2xl text-red-400 leading-none">schedule</mat-icon>
           </div>
         </div>
         
         <h2 class="text-2xl font-bold text-white mb-3">Verification Link Expired</h2>
         <p class="text-gray-300 mb-4">{{ errorMessage }}</p>
         
-        <!-- User email input if not available -->
-        <div *ngIf="!userEmail" class="mb-6">
-          <mat-form-field appearance="outline" class="w-full">
-            <mat-label>Your Email Address</mat-label>
-            <input matInput [(ngModel)]="userEmail" type="email" placeholder="Enter your email address">
-            <mat-icon matSuffix>email</mat-icon>
-          </mat-form-field>
-        </div>
-        
-        <!-- Display email if available -->
-        <div *ngIf="userEmail" class="mb-6">
-          <p class="text-gray-300 mb-2">Your email address:</p>
-          <p class="text-violet-400 font-medium">{{ userEmail }}</p>
-        </div>
-        
-        <!-- Status notification -->
-        <div class="bg-gray-875 border border-gray-800 rounded-lg p-4 mb-6">
-          <div class="flex items-center justify-center space-x-3">
-            <div class="h-2 w-2 rounded-full bg-red-500"></div>
-            <p class="text-gray-300 text-sm">Verification link has expired</p>
+        <form [formGroup]="expiredForm" class="mb-6">
+          <div class="space-y-1">
+            <label for="email" class="block text-sm font-medium text-gray-300 text-left">Email</label>
+            <mat-form-field appearance="outline" class="w-full bg-gray-875 rounded-lg">
+              <input matInput id="email" formControlName="email" type="email" placeholder="your.email@example.com" required 
+                     class="w-full bg-transparent text-white">
+              <mat-error *ngIf="expiredForm.get('email')?.hasError('required')">Email is required</mat-error>
+              <mat-error *ngIf="expiredForm.get('email')?.hasError('email')">Please enter a valid email address</mat-error>
+            </mat-form-field>
           </div>
-        </div>
+        </form>
         
         <!-- Action buttons -->
-        <div class="space-y-3">
           <button 
-            mat-raised-button 
-            (click)="resendVerificationEmail()"
-            [disabled]="isResending || !userEmail"
+            type="submit"
+            [disabled]="isResending || !expiredForm.valid"
             class="w-full py-3 px-4 bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-500 hover:to-pink-500 
-                 text-white font-medium rounded-lg shadow-lg transform transition-all duration-300 focus:outline-none 
-                 focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-850 focus:ring-violet-500">
+                   text-white font-medium rounded-lg shadow-lg transform transition-all duration-300 focus:outline-none 
+                   focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-850 focus:ring-violet-500
+                   disabled:opacity-70 disabled:cursor-not-allowed"
+          >
             <div class="flex items-center justify-center">
               <div *ngIf="isResending" class="mr-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-              <mat-icon *ngIf="!isResending" class="mr-2">refresh</mat-icon>
-              <span>{{ isResending ? 'Resending...' : 'Resend Verification Email' }}</span>
+              <span class="submit-span-spec-test" *ngIf="isResending">Resending...</span>
+              <span *ngIf="!isResending">Resend Verification Email</span>
             </div>
           </button>
-          
-          <button 
-            mat-stroked-button
-            routerLink="/auth/login"
-            class="w-full py-3 px-4 border border-gray-700 hover:border-violet-500 
-                 text-gray-300 hover:text-white font-medium rounded-lg transition-all duration-300 focus:outline-none 
-                 focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-850 focus:ring-violet-500 bg-transparent">
-            <div class="flex items-center justify-center">
-              <mat-icon class="mr-2">login</mat-icon>
-              <span>Back to Login</span>
-            </div>
-          </button>
-        </div>
       </div>
       
       <!-- Features highlight -->
@@ -98,15 +77,6 @@
           </div>
         </div>
       </div>
-    </div>
-    
-    <!-- Help section -->
-    <div class="mt-6 text-center">
-      <p class="text-gray-400 text-sm">
-        Need assistance? 
-        <a routerLink="/signup" class="text-violet-400 hover:text-violet-300 transition-colors">Sign up again</a> or 
-        <a href="#" class="text-violet-400 hover:text-violet-300 transition-colors">contact support</a>
-      </p>
     </div>
   </div>
 </div> 
