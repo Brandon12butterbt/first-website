@@ -17,9 +17,6 @@
       <!-- Expired verification section -->
       <div class="p-6 text-center">
         <div class="flex justify-center mb-6">
-          <!-- <div class="w-24 h-24 rounded-full bg-red-600/10 flex items-center justify-center">
-            <mat-icon class="text-red-400 text-2xl">schedule</mat-icon>
-          </div> -->
           <div class="w-20 h-20 rounded-full bg-red-600/10 flex items-center justify-center">
             <mat-icon class="text-2xl text-red-400 leading-none">schedule</mat-icon>
           </div>
@@ -39,7 +36,7 @@
             </mat-form-field>
           </div>
           
-          <!-- Action buttons (moved inside the form) -->
+          <!-- Action buttons  -->
           <div class="mt-6">
             <div class="relative w-full" [ngClass]="{'disabled-button-wrapper': isResending || !expiredForm.valid}">
               <button 
@@ -60,7 +57,7 @@
           </div>
         </form>
         
-        <!-- Login button (outside the form) -->
+        <!-- Login button -->
         <button 
           mat-stroked-button
           routerLink="/auth/login"
