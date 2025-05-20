@@ -50,7 +50,6 @@ export class ExpiredSignupComponent implements OnInit {
   }
   
   async onSubmit() {
-    console.log('onSubmit');
     if (this.expiredForm.invalid) {
       this.expiredForm.markAllAsTouched();
       return;
