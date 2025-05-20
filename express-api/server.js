@@ -96,14 +96,11 @@ app.post('/generate-image', async (req, res) => {
   }
 
   try {
-    const origin = 'http://localhost:4200';
-
     const response = await fetch(process.env.FLUX_API_URL, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${process.env.FLUX_API_KEY}`,
-        'Content-Type': 'application/json',
-        'Origin': origin
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({ prompt })
     });
