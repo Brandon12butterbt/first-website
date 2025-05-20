@@ -1,0 +1,22 @@
+# robots.txt for AI-powered text-to-image generation web application
+# https://afluxgen.com
+
+User-agent: *
+Allow: /
+
+# Private user areas - no need to index
+Disallow: /gallery/
+Disallow: /generate/
+Disallow: /upgrade/
+Disallow: /account-details/
+Disallow: /order-history/
+Disallow: /contact/
+
+# Allow crawling of static pages
+Allow: /
+Allow: /auth/login
+Allow: /auth/signup
+Allow: /legal/
+
+# Sitemap
+Sitemap: https://afluxgen.com/sitemap.xml 

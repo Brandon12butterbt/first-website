@@ -38,6 +38,13 @@ app.use(
 );
 
 /**
+ * Serve sitemap.xml from the public folder
+ */
+app.get('/sitemap.xml', (req, res) => {
+  res.sendFile(resolve(browserDistFolder, 'sitemap.xml'));
+});
+
+/**
  * Handle all other requests by rendering the Angular application.
  */
 app.use('/**', (req, res, next) => {
