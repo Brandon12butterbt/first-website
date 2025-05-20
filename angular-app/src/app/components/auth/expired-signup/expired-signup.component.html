@@ -38,23 +38,41 @@
               <mat-error *ngIf="expiredForm.get('email')?.hasError('email')">Please enter a valid email address</mat-error>
             </mat-form-field>
           </div>
+          
+          <!-- Action buttons (moved inside the form) -->
+          <div class="mt-6">
+            <div class="relative w-full" [ngClass]="{'disabled-button-wrapper': isResending || !expiredForm.valid}">
+              <button 
+                type="submit"
+                [disabled]="isResending || !expiredForm.valid"
+                class="w-full py-3 px-4 bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-500 hover:to-pink-500 
+                       text-white font-medium rounded-lg shadow-lg transform transition-all duration-300 focus:outline-none 
+                       focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-850 focus:ring-violet-500
+                       disabled:opacity-70 disabled:cursor-not-allowed"
+              >
+                <div class="flex items-center justify-center">
+                  <div *ngIf="isResending" class="mr-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  <span class="submit-span-spec-test" *ngIf="isResending">Resending...</span>
+                  <span *ngIf="!isResending">Resend Verification Email</span>
+                </div>
+              </button>
+            </div>
+          </div>
         </form>
         
-        <!-- Action buttons -->
-          <button 
-            type="submit"
-            [disabled]="isResending || !expiredForm.valid"
-            class="w-full py-3 px-4 bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-500 hover:to-pink-500 
-                   text-white font-medium rounded-lg shadow-lg transform transition-all duration-300 focus:outline-none 
-                   focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-850 focus:ring-violet-500
-                   disabled:opacity-70 disabled:cursor-not-allowed"
-          >
-            <div class="flex items-center justify-center">
-              <div *ngIf="isResending" class="mr-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-              <span class="submit-span-spec-test" *ngIf="isResending">Resending...</span>
-              <span *ngIf="!isResending">Resend Verification Email</span>
-            </div>
-          </button>
+        <!-- Login button (outside the form) -->
+        <button 
+          mat-stroked-button
+          routerLink="/auth/login"
+          class="w-full py-3 px-4 border border-gray-700 hover:border-violet-500 
+               text-gray-300 hover:text-white font-medium rounded-lg transition-all duration-300 focus:outline-none 
+               focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-850 focus:ring-violet-500 bg-transparent"
+        >
+          <div class="flex items-center justify-center">
+            <mat-icon class="mr-2">login</mat-icon>
+            <span>Back to Login</span>
+          </div>
+        </button>
       </div>
       
       <!-- Features highlight -->

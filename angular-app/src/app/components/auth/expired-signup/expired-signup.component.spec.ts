@@ -101,13 +101,17 @@ describe('ExpiredSignupComponent', () => {
 
   it('should disable the submit button when form is invalid', () => {
     makeFormInvalid();
-    const submitButton = fixture.debugElement.query(By.css('button[type="submit"]'));
+    fixture.detectChanges();
+    const form = fixture.debugElement.query(By.css('form'));
+    const submitButton = form.query(By.css('button[type="submit"]'));
     expect(submitButton.nativeElement.disabled).toBeTruthy();
   });
 
   it('should enable the submit button when form is valid', () => {
     makeFormValid();
-    const submitButton = fixture.debugElement.query(By.css('button[type="submit"]'));
+    fixture.detectChanges();
+    const form = fixture.debugElement.query(By.css('form'));
+    const submitButton = form.query(By.css('button[type="submit"]'));
     expect(submitButton.nativeElement.disabled).toBeFalsy();
   });
 
@@ -185,7 +189,8 @@ describe('ExpiredSignupComponent', () => {
     component.onSubmit();
     fixture.detectChanges();
 
-    const errorMessage = fixture.debugElement.query(By.css('mat-error'));
+    const form = fixture.debugElement.query(By.css('form'));
+    const errorMessage = form.query(By.css('mat-error'));
     expect(errorMessage).toBeTruthy();
     expect(errorMessage.nativeElement.textContent).toContain('Email is required');
   });
@@ -264,6 +269,7 @@ describe('ExpiredSignupComponent', () => {
   it('should show loading indicator when resending', () => {
     makeFormValid();
     
+    // Setup the spy to return a promise that won't resolve during this test
     supabaseAuthServiceSpy.resendSignUp.and.returnValue(new Promise(() => {}));
     
     component.onSubmit();
@@ -271,8 +277,9 @@ describe('ExpiredSignupComponent', () => {
     
     expect(component.isResending).toBeTruthy();
     
-    const spinnerElement = fixture.debugElement.query(By.css('.animate-spin'));
-    const loadingText = fixture.debugElement.query(By.css('.submit-span-spec-test'));
+    const form = fixture.debugElement.query(By.css('form'));
+    const spinnerElement = form.query(By.css('.animate-spin'));
+    const loadingText = form.query(By.css('.submit-span-spec-test'));
     
     expect(spinnerElement).toBeTruthy();
     expect(loadingText).toBeTruthy();

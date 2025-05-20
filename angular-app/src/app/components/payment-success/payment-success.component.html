@@ -1,36 +1,64 @@
-<div class="h-[calc(100vh-60px)] bg-gray-900 flex flex-col">
+<div class="mt-16 bg-gradient-to-br bg-gray-900 flex flex-col justify-center items-center p-4 md:p-8">
+  <div class="w-full max-w-2xl mx-auto">
+    <!-- Loading state -->
+    <div *ngIf="isLoading" class="flex justify-center items-center py-12">
+      <mat-spinner color="accent"></mat-spinner>
+    </div>
 
-  <div class="flex-1 p-4 md:p-6">
-    <div class="max-w-xl mx-auto">
-      <div *ngIf="isLoading" class="flex justify-center py-12">
-        <mat-spinner></mat-spinner>
-      </div>
-
-      <mat-card *ngIf="!isLoading" class="bg-gray-800 p-6">
-        <div class="text-center">
-          <div class="flex justify-center mb-1 p-2">
-            <mat-icon class="text-green-500 mr2">check_circle</mat-icon>
+    <!-- Success content -->
+    <div *ngIf="!isLoading" class="success-container">
+      <div class="bg-gray-800/70 backdrop-blur-lg rounded-xl shadow-2xl overflow-hidden border border-purple-500/30">
+        <!-- Top accent bar -->
+        <div class="h-2 bg-gradient-to-r from-purple-600 via-indigo-500 to-blue-400"></div>
+        
+        <!-- Content -->
+        <div class="p-8 md:p-10">
+          <!-- Success icon -->
+          <div class="flex justify-center mb-6">
+            <div class="w-20 h-20 rounded-full bg-green-600 flex items-center justify-center">
+              <mat-icon class="text-white text-2xl leading-none">check_circle</mat-icon>
+            </div>
           </div>
-
-          <h1 class="text-2xl md:text-3xl font-bold text-white mb-4">Payment Successful!</h1>
-
-          <div class="space-y-3 mb-8">
-            <p class="text-gray-300">Your payment was processed successfully.</p>
-            <p class="text-gray-300">Your account balance is now {{newCredits}} credits!</p>
+          
+          <!-- Header -->
+          <h1 class="text-3xl md:text-4xl font-bold text-center bg-gradient-to-r from-purple-400 to-indigo-300 bg-clip-text text-transparent mb-6">Payment Successful!</h1>
+          
+          <!-- Info -->
+          <div class="space-y-4 mb-8 text-center">
+            <p class="text-gray-300 text-lg">Your payment was processed successfully.</p>
+            <div class="credits-display flex items-center justify-center">
+              <div class="px-6 py-3 bg-gray-700/50 rounded-lg border border-purple-500/20 shadow-inner">
+                <span class="text-gray-300">Your new balance:</span>
+                <span class="text-2xl font-bold ml-2 text-indigo-300 balance-text">{{newCredits}} credits</span>
+              </div>
+            </div>
           </div>
-
-          <div class="flex justify-center gap-4">
-            <button mat-raised-button color="primary" routerLink="/generate" class="bg-purple-600 hover:bg-purple-700">
-              <mat-icon class="text-white mr-2">add_photo_alternate</mat-icon>
-              <span class="text-white">Generate Images</span>
+          
+          <!-- Actions -->
+          <div class="flex flex-col sm:flex-row justify-center gap-4 mt-8">
+            <button mat-raised-button routerLink="/generate" 
+                  class="action-button generate-button px-6 py-3 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 transition-all duration-300 shadow-lg shadow-purple-500/20">
+              <mat-icon class="text-white mr-2">auto_awesome</mat-icon>
+              <span class="text-white font-medium">Start Creating</span>
             </button>
-            <button mat-raised-button color="accent" routerLink="/" class="bg-purple-600 hover:bg-purple-700">
+            
+            <button mat-raised-button routerLink="/" 
+                  class="action-button home-button px-6 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-all duration-300 border border-gray-600">
               <mat-icon class="text-white mr-2">home</mat-icon>
-              <span class="text-white">Go to Home</span>
+              <span class="text-white font-medium">Go to Home</span>
             </button>
           </div>
         </div>
-      </mat-card>
+      </div>
+
+      <div class="text-center mt-6 text-gray-400 text-sm">
+        <p>You should receive an email with your receipt shortly.</p>
+      </div>
+      
+      <!-- Bottom message -->
+      <div class="text-center mt-6 text-gray-400 text-sm">
+        <p>Thank you for your purchase! You can view your order details in your <a routerLink="/order-history" class="text-indigo-400 hover:text-indigo-300 underline transition-colors">order history</a>.</p>
+      </div>
     </div>
   </div>
 </div>

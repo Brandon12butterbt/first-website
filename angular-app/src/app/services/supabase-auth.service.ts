@@ -26,7 +26,6 @@ export interface Profile {
 export class SupabaseAuthService {
   private supabase: SupabaseClient;
   _session: AuthSession | null = null;
-  private _sessionTest: AuthSession | null = null;
   private authStateCallback: ((event: AuthChangeEvent, session: Session | null) => void) | null = null;
 
   constructor(private config: ConfigService, private http: HttpClient) {
@@ -41,10 +40,10 @@ export class SupabaseAuthService {
   }
 
   async ensureSessionLoaded(): Promise<AuthSession | null> {
-    if (this._sessionTest) return this._sessionTest;
+    if (this._session) return this._session;
     const { data } = await this.supabase.auth.getSession();
-    this._sessionTest = data.session;
-    return this._sessionTest;
+    this._session = data.session;
+    return this._session;
   }
 
   profile(user: User) {

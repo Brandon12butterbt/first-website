@@ -36,6 +36,7 @@ export class UpgradeComponent implements OnInit {
   userEmail: string = '';
   isPurchasing: boolean = false;
   creditPackages: CreditPackage[] = [];
+  session: any = null;
   
   constructor(
     private stripeService: StripeService,
@@ -52,6 +53,19 @@ export class UpgradeComponent implements OnInit {
     if (session) {
       await this.getFluxProfile(session);
     }
+
+    this.supabaseAuthService.authChanges((event, session) => {
+      this.session = session;
+      if (this.session) {
+        this.getFluxProfile(session).then(() => {
+          if (this.profile) {
+            this.userEmail = this.profile.email;
+          }
+        });
+      } else {
+        this.profile = null;
+      }
+    });
 
     window.scroll({ 
       top: 0, 
