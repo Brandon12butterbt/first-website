@@ -23,4 +23,15 @@
 
 ::ng-deep .mat-expansion-panel-header:hover {
   background-color: rgba(99, 102, 241, 0.1);
+}
+
+/* Fix for mobile highlight issue */
+@media (max-width: 768px) {
+  ::ng-deep .mat-expansion-panel-header.mat-expanded {
+    background-color: transparent !important;
+  }
+  
+  ::ng-deep .mat-expansion-panel-header.mat-expanded:hover {
+    background-color: transparent !important;
+  }
 } 
