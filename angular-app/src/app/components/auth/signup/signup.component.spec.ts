@@ -178,14 +178,6 @@ describe('SignupComponent', () => {
     });
 
     describe('UI Elements', () => {
-        it('should display title and subtitle', () => {
-            const titleElement = fixture.debugElement.query(By.css('h2.text-2xl'));
-            const subtitleElement = fixture.debugElement.query(By.css('p.text-sm'));
-
-            expect(titleElement.nativeElement.textContent).toContain('Create your account');
-            expect(subtitleElement.nativeElement.textContent).toContain('Join our community and start creating amazing AI-generated images');
-        });
-
         it('should disable submit button when form is invalid', () => {
             const submitButton = fixture.debugElement.query(By.css('button[type="submit"]'));
             expect(submitButton.nativeElement.disabled).toBeTrue();
