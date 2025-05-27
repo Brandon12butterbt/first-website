@@ -4,17 +4,10 @@
   <div class="absolute bottom-0 right-0 w-1/2 h-1/2 bg-emerald-300/10 rounded-full filter blur-3xl opacity-40 animate-pulse-slow"></div>
   
   <div class="max-w-md w-full z-10">
-    <!-- Logo/Branding section -->
-    <div class="text-center mb-8">
-      <h1 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-500 to-pink-500">Login to AFluxGen</h1>
-      <p class="text-gray-400 mt-2">AI-powered image generation</p>
-    </div>
-    
     <!-- Login card -->
     <div class="bg-gray-850 rounded-xl shadow-xl border border-gray-800 backdrop-blur-sm p-8 transition-all duration-300 hover:shadow-purple-900/20">
       <div class="text-center mb-6">
-        <h2 class="text-2xl font-bold text-white mb-1">Welcome back</h2>
-        <p class="text-gray-400 text-sm">Sign in to your account</p>
+        <h1 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-500 to-pink-500">Login</h1>
       </div>
       
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-5">
@@ -82,12 +75,12 @@
         </p>
       </div>
     </div>
-    
-    <!-- Image preview section -->
-    <div class="mt-8 text-center sample-images">
-      <p class="text-gray-500 text-xs">
-        Create stunning AI-generated images with our platform
-      </p>
+
+    <!-- Terms and privacy links -->
+    <div class="mt-6 text-center text-xs text-gray-500">
+      By logging in, you agree to our 
+      <a routerLink="/legal/terms" class="text-gray-400 hover:text-white transition-colors">Terms of Service</a> and 
+      <a routerLink="/legal/privacy" class="text-gray-400 hover:text-white transition-colors">Privacy Policy</a>
     </div>
   </div>
 </div>
