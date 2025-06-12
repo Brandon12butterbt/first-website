@@ -9,3 +9,17 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif; 
   @apply bg-gray-900 text-gray-100;
 }
+
+/* Dialog styles */
+.custom-dialog-container .mat-mdc-dialog-surface {
+  @apply bg-gray-850 border border-purple-500/20 shadow-xl;
+}
+
+.dialog-backdrop {
+  background: rgba(0, 0, 0, 0.7) !important;
+}
+
+/* Define the bg-gray-850 class if it's not already defined in your Tailwind config */
+.bg-gray-850 {
+  background-color: #1a1b26;
+}

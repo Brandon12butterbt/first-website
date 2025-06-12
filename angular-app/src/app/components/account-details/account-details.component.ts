@@ -55,7 +55,8 @@ interface Profile {
       <div class="mb-6">
         <mat-form-field appearance="outline" class="w-full">
           <mat-label class="text-white">Enter your email</mat-label>
-          <input matInput [(ngModel)]="confirmEmail" placeholder="your@email.com">
+          <input matInput [(ngModel)]="confirmEmail" placeholder="your@email.com" (keyup.enter)="confirmEmail.trim() === data.email.trim() && onConfirm()">
+          <mat-icon matSuffix *ngIf="confirmEmail.trim() === data.email.trim()" class="text-green-500">check_circle</mat-icon>
         </mat-form-field>
       </div>
       
@@ -63,7 +64,7 @@ interface Profile {
         <button mat-button (click)="onCancel()" class="text-gray-300 hover:text-white bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-lg transition-colors duration-200">
           Cancel
         </button>
-        <button mat-raised-button [disabled]="confirmEmail !== data.email" (click)="onConfirm()" 
+        <button mat-raised-button [disabled]="(confirmEmail | lowercase) !== (data.email | lowercase)" (click)="onConfirm()" 
           class="text-white bg-red-600 hover:bg-red-700 disabled:bg-red-900/30 disabled:text-gray-400 disabled:cursor-not-allowed px-4 py-2 rounded-lg transition-colors duration-200">
           Confirm Deletion
         </button>
@@ -116,7 +117,7 @@ export class DeleteAccountDialogComponent {
   }
   
   onConfirm(): void {
-    if (this.confirmEmail === this.data.email) {
+    if (this.confirmEmail.trim() === this.data.email.trim()) {
       this.dialogRef.close(true);
     }
   }
@@ -245,6 +246,7 @@ export class AccountDetailsComponent implements OnInit {
     const dialogRef = this.dialog.open(DeleteAccountDialogComponent, {
       width: '450px',
       panelClass: 'custom-dialog-container',
+      backdropClass: 'dialog-backdrop',
       data: { email: this.profile.email }
     });
 
